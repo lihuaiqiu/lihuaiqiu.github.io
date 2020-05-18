@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CTF," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="离怀秋" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="前言周四那天有点事，并没有打上月赛，赛后向几位师傅要了一下题，做了一下 Webweb1一道代码审计题，分为六个文件common.php,edit_info.php,config.php,index.php,info.php,register.php 每个文件的逻辑大概如下 common.php 1234567891011121314151617181920&lt;?php    function">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019 安恒5月赛部分wp">
+<meta property="og:url" content="http://yoursite.com/2019/06/02/2019-%E5%AE%89%E6%81%925%E6%9C%88%E8%B5%9B%E9%83%A8%E5%88%86wp/index.html">
+<meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="前言周四那天有点事，并没有打上月赛，赛后向几位师傅要了一下题，做了一下 Webweb1一道代码审计题，分为六个文件common.php,edit_info.php,config.php,index.php,info.php,register.php 每个文件的逻辑大概如下 common.php 1234567891011121314151617181920&lt;?php    function">
+<meta property="article:published_time" content="2019-06-01T23:36:07.000Z">
+<meta property="article:modified_time" content="2019-06-02T09:37:56.000Z">
+<meta property="article:author" content="离怀秋">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/02/2019-安恒5月赛部分wp/"/>
+
+
+
+
+
+  <title>2019 安恒5月赛部分wp | 离怀秋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/lihuaiqiu" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">离怀秋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">穷且益坚，不负青云之志</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/02/2019-%E5%AE%89%E6%81%925%E6%9C%88%E8%B5%9B%E9%83%A8%E5%88%86wp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="离怀秋">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="离怀秋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019 安恒5月赛部分wp</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-02T07:36:07+08:00">
+                2019-06-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>周四那天有点事，并没有打上月赛，赛后向几位师傅要了一下题，做了一下</p>
+<h3 id="Web"><a href="#Web" class="headerlink" title="Web"></a>Web</h3><h4 id="web1"><a href="#web1" class="headerlink" title="web1"></a>web1</h4><p>一道代码审计题，分为六个文件<code>common.php,edit_info.php,config.php,index.php,info.php,register.php</code></p>
+<p>每个文件的逻辑大概如下</p>
+<p><strong>common.php</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">waf</span><span class="params">($arr)</span></span>&#123;</span><br><span class="line">        <span class="keyword">foreach</span> ($arr <span class="keyword">as</span> $key =&gt; $value) &#123;</span><br><span class="line">            <span class="keyword">if</span>(!is_array($value))&#123;</span><br><span class="line">                $arr[$key] = addslashes($value);</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                $arr[$key] = waf($arr[$key]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> $arr;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $_POST = waf($_POST);</span><br><span class="line">    $_GET = waf($_GET);</span><br><span class="line"></span><br><span class="line">    $role = <span class="number">1</span>;</span><br><span class="line">    $table = <span class="string">"users"</span>;</span><br><span class="line"></span><br><span class="line">    extract($_POST,EXTR_SKIP);</span><br><span class="line">    extract($_GET,EXTR_SKIP);</span><br></pre></td></tr></table></figure>
+
+<p>利用<code>waf</code>函数，将<code>POST与GET</code>的数组变量进行<code>addslashes</code>函数过滤单引号，双引号，反斜杠，而且这里的extract函数多了一个<code>EXTR_SKIP</code>参数，则表示此文件中传入的POST与GET变量不可覆盖，并且给<strong>$role赋值了1</strong>(这里后面会用到).</p>
+<p><strong>config.php</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">sql</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> $servername = <span class="string">"127.0.0.1"</span>;</span><br><span class="line">    <span class="keyword">private</span> $name = <span class="string">"root"</span>;</span><br><span class="line">    <span class="keyword">private</span> $passwd = <span class="string">"**********"</span>;</span><br><span class="line">    <span class="keyword">public</span> $conn;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;conn = <span class="keyword">new</span> mysqli(<span class="keyword">$this</span>-&gt;servername, <span class="keyword">$this</span>-&gt;name, <span class="keyword">$this</span>-&gt;passwd);</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">$this</span>-&gt;conn-&gt;connect_error)&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">"conn error!"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        mysqli_select_db(<span class="keyword">$this</span>-&gt;conn,<span class="string">'12_29_web'</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">getone</span><span class="params">($sql)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $result = <span class="keyword">$this</span>-&gt;conn-&gt;query($sql);</span><br><span class="line">        $row = mysqli_fetch_array($result);</span><br><span class="line">        <span class="keyword">return</span> $row;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">register</span><span class="params">($sql)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;conn-&gt;query($sql);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此文件用于与数据库建立，可以序列化的重要性，又提供了数据库两个查询接口函数</p>
+<p><strong>register.php</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="keyword">require_once</span>(<span class="string">"common.php"</span>);</span><br><span class="line">    <span class="keyword">require_once</span>(<span class="string">"config.php"</span>);</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>($tem))&#123;</span><br><span class="line">        <span class="keyword">require</span>(<span class="string">"template/$tem.php"</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">require</span>(<span class="string">"template/index.php"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>($_POST[<span class="string">'username'</span>])&amp;&amp;$_POST[<span class="string">'password'</span>])&#123;</span><br><span class="line">        $sql_ = <span class="string">"select * from users where username='$username'"</span>;</span><br><span class="line">        $db = <span class="keyword">new</span> sql();</span><br><span class="line">        $row = $db-&gt;getone($sql_);</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">empty</span>($row))&#123;</span><br><span class="line">            $sql_ = <span class="string">"insert into users (username,password,role) values('$username','$password',$role)"</span>;</span><br><span class="line">            $db-&gt;register($sql_);</span><br><span class="line">            header(<span class="string">"Location: index.php"</span>);</span><br><span class="line">            <span class="keyword">exit</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>主要逻辑就是注册功能，先从数据库查找一下有没有注册的账户名密码，没有的话插入数据库完成注册</p>
+<p><strong>index.php</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="keyword">require_once</span>(<span class="string">"common.php"</span>);</span><br><span class="line">    <span class="keyword">require_once</span>(<span class="string">"config.php"</span>);</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>($tem))&#123;</span><br><span class="line">        <span class="keyword">require</span>(<span class="string">"template/$tem.php"</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">require</span>(<span class="string">"template/index.php"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>($_POST[<span class="string">'username'</span>])&amp;&amp;$_POST[<span class="string">'password'</span>])&#123;</span><br><span class="line">        $sql_ = <span class="string">"select * from users where username='$username' and password='$password'"</span>;</span><br><span class="line">        $db = <span class="keyword">new</span> sql();</span><br><span class="line">        $row = $db-&gt;getone($sql_);</span><br><span class="line">        <span class="keyword">if</span>(!<span class="keyword">empty</span>($row))&#123;</span><br><span class="line">            session_start();</span><br><span class="line">            $_SESSION[<span class="string">'username'</span>] = $username;</span><br><span class="line">            header(<span class="string">"Location: info.php"</span>);</span><br><span class="line">            <span class="keyword">exit</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>程序逻辑就是看有无<code>post</code>这个用户，有的话跳转到<code>info.php</code>页面，这个程序是存在一些漏洞的，<strong>如果可控制$tem参数，则可造成任意文件包含。</strong></p>
+<p><strong>info.php</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="keyword">require_once</span>(<span class="string">"common.php"</span>);</span><br><span class="line">    <span class="keyword">require_once</span>(<span class="string">"config.php"</span>);</span><br><span class="line">    session_start();</span><br><span class="line">    $username = $_SESSION[<span class="string">'username'</span>];</span><br><span class="line">    $sql_ = <span class="string">"select * from users where username='$username'"</span>;</span><br><span class="line">    $db = <span class="keyword">new</span> sql();</span><br><span class="line">    $row = $db-&gt;getone($sql_);</span><br><span class="line">    $username = $row[<span class="string">'username'</span>];</span><br><span class="line">    $role = $row[<span class="string">'role'</span>];</span><br><span class="line">    $sql_ = <span class="string">"select info from info where role='$role'"</span>;</span><br><span class="line">    $row = $db-&gt;getone($sql_);</span><br><span class="line">    $info = $row[<span class="string">'info'</span>];</span><br><span class="line">    <span class="keyword">require</span>(<span class="string">"template/info.php"</span>);</span><br></pre></td></tr></table></figure>
+
+<p>通过数据库查询语句回显信息的文件</p>
+<p><strong>edit_info.php</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    extract($_GET);</span><br><span class="line">    <span class="keyword">require_once</span>(<span class="string">"common.php"</span>);</span><br><span class="line">    <span class="keyword">require_once</span>(<span class="string">"config.php"</span>);</span><br><span class="line">    session_start();</span><br><span class="line">    <span class="keyword">if</span>(is_numeric($role))&#123;</span><br><span class="line">        $username = $_SESSION[<span class="string">'username'</span>];</span><br><span class="line">        $role = addslashes($role);</span><br><span class="line">        $sql_ = <span class="string">"update users set role=$role where username='$username'"</span>;</span><br><span class="line">        $db = <span class="keyword">new</span> sql();</span><br><span class="line">        $db-&gt;register($sql_);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里文件功能为更新用户信息，漏洞点在于extract处，产生变量覆盖。</p>
+<h4 id="攻击点思考"><a href="#攻击点思考" class="headerlink" title="攻击点思考"></a>攻击点思考</h4><p>在edit_info.php中进行变量覆盖$role值，$role值覆盖为注入语句的十六进制值，绕过<code>is_numeric($role)</code>,update的语句会将十六进制值转化为对应的字符串，进而在info.php中<code>$sql_ = &quot;select info from info where role=&#39;$role&#39;&quot;</code>产生注入，得到值。</p>
+<p>但是这里存在一个问题如果我们在edit_info.php中直接传入role值去覆盖，则不会产生覆盖的结果，原因如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">extract($_GET);</span><br><span class="line"><span class="keyword">require_once</span>(<span class="string">"common.php"</span>);</span><br><span class="line"><span class="keyword">require_once</span>(<span class="string">"config.php"</span>);</span><br></pre></td></tr></table></figure>
+<p>可以看到这个代码的执行顺序，先进行变量覆盖，再进行文件包含，在<code>common.php</code>中给<code>$role</code>赋值为1，所以我们的十六进制注入语句不会生效。接下来寻找一下绕过点，发现在<code>index.php</code>中</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require_once</span>(<span class="string">"common.php"</span>);</span><br><span class="line"><span class="keyword">require_once</span>(<span class="string">"config.php"</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($tem))&#123;</span><br><span class="line"> <span class="keyword">require</span>(<span class="string">"template/$tem.php"</span>);</span><br><span class="line">   &#125;<span class="keyword">else</span>&#123;</span><br><span class="line"> <span class="keyword">require</span>(<span class="string">"template/index.php"</span>);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个就是我们之前提起的有文件包含漏洞的文件，如果我们去包含一下<code>edit_info.php</code>,执行顺序则变成了</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require_once</span>(<span class="string">"common.php"</span>);</span><br><span class="line"><span class="keyword">require_once</span>(<span class="string">"config.php"</span>);</span><br><span class="line"><span class="comment">//包含进来的文件</span></span><br><span class="line">extract($_GET);</span><br><span class="line"><span class="keyword">require_once</span>(<span class="string">"common.php"</span>);</span><br><span class="line"><span class="keyword">require_once</span>(<span class="string">"config.php"</span>);</span><br></pre></td></tr></table></figure>
+
+<p><code>require_once</code>函数只能进行包含一次文件，所以我们实际上执行语句如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require_once</span>(<span class="string">"common.php"</span>);</span><br><span class="line"><span class="keyword">require_once</span>(<span class="string">"config.php"</span>);</span><br><span class="line"><span class="comment">//包含进来的文件</span></span><br><span class="line">extract($_GET);</span><br></pre></td></tr></table></figure>
+
+<p>即成功进行变量覆盖，绕过了$role=1的限制。然后将我们构造好的注入语句转化为16进制，update将16进制数据转化为字符串，最终在<code>info.php</code>中<code>select info from info where role=&#39;$role&#39;&quot;</code>中产生注入数据，得到flag。</p>
+<h3 id="Crypto"><a href="#Crypto" class="headerlink" title="Crypto"></a>Crypto</h3><p><strong>Crypto1</strong></p>
+<p>已经e,d,n,求p,q,脚本如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> random </span><br><span class="line"><span class="keyword">from</span> md5 <span class="keyword">import</span> md5   </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gcd</span><span class="params">(a, b)</span>:</span>  </span><br><span class="line">   <span class="keyword">if</span> a &lt; b:  </span><br><span class="line">     a, b = b, a  </span><br><span class="line">   <span class="keyword">while</span> b != <span class="number">0</span>:  </span><br><span class="line">     temp = a % b  </span><br><span class="line">     a = b  </span><br><span class="line">     b = temp  </span><br><span class="line">   <span class="keyword">return</span> a    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getpq</span><span class="params">(n,e,d)</span>:</span>  </span><br><span class="line">    p = <span class="number">1</span>  </span><br><span class="line">    q = <span class="number">1</span>  </span><br><span class="line">    <span class="keyword">while</span> p==<span class="number">1</span> <span class="keyword">and</span> q==<span class="number">1</span>:  </span><br><span class="line">        k = d * e - <span class="number">1</span>  </span><br><span class="line">        g = random.randint ( <span class="number">0</span> , n )  </span><br><span class="line">        <span class="keyword">while</span> p==<span class="number">1</span> <span class="keyword">and</span> q==<span class="number">1</span> <span class="keyword">and</span> k % <span class="number">2</span> == <span class="number">0</span>:  </span><br><span class="line">            k /= <span class="number">2</span>  </span><br><span class="line">            y = pow(g,k,n)  </span><br><span class="line">            <span class="keyword">if</span> y!=<span class="number">1</span> <span class="keyword">and</span> gcd(y<span class="number">-1</span>,n)&gt;<span class="number">1</span>:  </span><br><span class="line">                p = gcd(y<span class="number">-1</span>,n)  </span><br><span class="line">                q = n/p  </span><br><span class="line">    <span class="keyword">return</span> p,q    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span>  </span><br><span class="line">    n =<span class="number">0x8189919220df44ed66be4e916c99d8c34b81acaa20427d9f34bcf137d6fba2b3d58bccdc2aa579d4ad29edf43c2a82f949a62ea625e1bf347a39a5082fb4dae1f96761b0d300bbd721756661413d1bad777ee2e1398809c902738b3edd52a8cf290cd3925b3db19822947fa3e117bca67f0240c03436ea0f1506147f65aae7eb5b8681fe209edb895ebfd4c79d12198c139508d1d0ab191f45c169f3f6da1429e6de4149ec4e90ae5c4746fc01c69f300464b9e91553de43d045c060c93ab538fd430f34ad4c930bfb6c52a03b6f8dfe75953ece44837e5ec4d39bf93e4f6282c2d8865a7fb04a8371249eba1cd55be10a7db12b673d9fb1ff619ad25dbaec65</span></span><br><span class="line">    e =<span class="number">0x10001</span></span><br><span class="line">    d =<span class="number">0x4aefe3a7ce9e7b087f8c8e7530875bcfb6e9a09296b1006d4e9c134bc371b53125d38742c2e511b2c82e5e7b112762b78634bdfdde225773ab5597b441acf5870eba10d8b36854426317c08f78a73a50c2b543d919682a88ff830a45e6d17fd8c01dac739996fa1b51bde88d4c9567cc45e36ec40230d67cbd23d44dd2e9e8d9fb1714050630f394d07de6688d0e37678267d0080c442b61ce608bb9057aa5907be6862ab1e57b0644d6ec2f602040ddcd9643e49999248fd3872dc4e496d74bebee1029c8cfa498e1b4f4f5c9cf3660f2776c72a3876a61b9544ac53fcf35fedf1a1c8f3027331b22e88c395c697a1436f1dcb8e9f91cf106a993ea69d7dead</span></span><br><span class="line">    p,q = getpq(n,e,d)  </span><br><span class="line">    <span class="comment">#print "p: "+hex(p)</span></span><br><span class="line">    <span class="comment">#print "q: "+hex(q) </span></span><br><span class="line">c=<span class="number">0xbf601e007a3d5e7b6935018e7d434d416ee444b34cf965466bc8c5e41f05523f076d413a183b6a36265933d4d47c095f2261be78ee04c5ba1da24e68817b25386a4facda9187a3b934e38143f03ba7f3fd113e34befbe2b7fc94e875ee7ac5ed85763f6a870fa8acfcd2d39aa88b2276d94e6aa54c596a60e10569af948d106f</span></span><br><span class="line">d=<span class="number">0xad47b81df70b41a2c785414f430cb4ee32e7c0fe6b3201608dd7eb2572f7aaa5edbe23590e83c933a457a224fe6b5c6697819c91b58c454762025a814f1de9c693b503368d103178db40688bd853690a8d86bb190bb44f10e210cc643a21dbfad21c35f40d313e955782731b73dd9a7b31bb288d48e87f1e5b82fae19656d26b</span></span><br><span class="line"><span class="keyword">print</span> md5(str(c+d)).hexdigest()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:  </span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+<p>解得<code>flag:e7ddad281ff7dfc99eb3379e0efd46f8</code></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CTF/" rel="tag"># CTF</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/01/%E7%94%B1%E4%B8%80%E9%81%93%E9%A2%98%E5%BC%95%E5%8F%91%E5%AF%B9CTF%E6%80%9D%E7%BB%B4%E7%9A%84%E6%80%9D%E8%80%83/" rel="next" title="由一道题引发对CTF思维的思考">
+                <i class="fa fa-chevron-left"></i> 由一道题引发对CTF思维的思考
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/03/RCTF-nextphp/" rel="prev" title="RCTF-nextphp">
+                RCTF-nextphp <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">离怀秋</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lihuaiqiu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://southseast.cc" title="南溟师傅" target="_blank">南溟师傅</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web"><span class="nav-number">2.</span> <span class="nav-text">Web</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#web1"><span class="nav-number">2.1.</span> <span class="nav-text">web1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#攻击点思考"><span class="nav-number">2.2.</span> <span class="nav-text">攻击点思考</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Crypto"><span class="nav-number">3.</span> <span class="nav-text">Crypto</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">离怀秋</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

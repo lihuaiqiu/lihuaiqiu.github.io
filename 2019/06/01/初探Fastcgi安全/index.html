@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Web安全," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="离怀秋" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="中间件，服务器，容器与web服务器服务器:服务器指的是一个管理资源并为用户提供服务的计算机软件，通常分为文件服务器、数据库服务器和应用程序服务器。运行以上软件的计算机或计算机系统也被称为服务器，应该就例如我之前购买的阿里云学生机以及vultr，就是一个简单的服务器，而没有搭建任何web服务，也就是没有服务器中间件去解析http协议，所以无法正常返回html等页面。 中间件：中间件是服务器上负责解析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初探Fastcgi安全">
+<meta property="og:url" content="http://yoursite.com/2019/06/01/%E5%88%9D%E6%8E%A2Fastcgi%E5%AE%89%E5%85%A8/index.html">
+<meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="中间件，服务器，容器与web服务器服务器:服务器指的是一个管理资源并为用户提供服务的计算机软件，通常分为文件服务器、数据库服务器和应用程序服务器。运行以上软件的计算机或计算机系统也被称为服务器，应该就例如我之前购买的阿里云学生机以及vultr，就是一个简单的服务器，而没有搭建任何web服务，也就是没有服务器中间件去解析http协议，所以无法正常返回html等页面。 中间件：中间件是服务器上负责解析">
+<meta property="og:image" content="https://www.leavesongs.com/media/attachment/2017/04/25/e29518b1-3574-426f-b75f-8cabbb89a15a.9efc537226ce.jpg">
+<meta property="article:published_time" content="2019-06-01T08:41:13.000Z">
+<meta property="article:modified_time" content="2019-06-01T08:42:26.000Z">
+<meta property="article:author" content="离怀秋">
+<meta property="article:tag" content="Web安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.leavesongs.com/media/attachment/2017/04/25/e29518b1-3574-426f-b75f-8cabbb89a15a.9efc537226ce.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/01/初探Fastcgi安全/"/>
+
+
+
+
+
+  <title>初探Fastcgi安全 | 离怀秋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/lihuaiqiu" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">离怀秋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">穷且益坚，不负青云之志</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/01/%E5%88%9D%E6%8E%A2Fastcgi%E5%AE%89%E5%85%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="离怀秋">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="离怀秋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">初探Fastcgi安全</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-01T16:41:13+08:00">
+                2019-06-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="中间件，服务器，容器与web服务器"><a href="#中间件，服务器，容器与web服务器" class="headerlink" title="中间件，服务器，容器与web服务器"></a>中间件，服务器，容器与web服务器</h3><p>服务器:服务器指的是一个管理资源并为用户提供服务的计算机软件，通常分为文件服务器、数据库服务器和应用程序服务器。运行以上软件的计算机或计算机系统也被称为服务器，<strong>应该就例如我之前购买的阿里云学生机以及vultr，就是一个简单的服务器，而没有搭建任何web服务，也就是没有服务器中间件去解析http协议，所以无法正常返回html等页面。</strong></p>
+<p>中间件：<strong>中间件是服务器上负责解析http请求的一组应用程序</strong>，负责接受并解析http请求，在服务器上找到请求对应的文件，返回给客户端。<strong>如果http请求的是动态脚本文件(如php)，则中间件会依靠web容器去解析动态语言，靠CGI与脚本语言解析软件进行交互，处理好动态脚本文件后，再将处理后的文件其返回给浏览器。</strong></p>
+<p>web服务器：提供w3服务的软件或主机，即Web服务器软件或装有Web服务器软件的计算机。例如：IIS、Apache、nginx、Lighttpd。Web服务器可以处理 HTTP 协议，响应针对静态页面或图片的请求，进行页面跳转，或者把动态请求委托其它程序（它的扩展、某种语言的解释引擎、Web容器。</p>
+<blockquote>
+<p>所属的类别</p>
+<p>web服务器：IIS、Apache、nginx、tomcat、weblogic、websphere等。</p>
+<p>web中间件：apache tomcat、BEA WebLogic、IBM WebSphere等。</p>
+<p>web容器：JSP容器、SERVLET容器、ASP容器等</p>
+</blockquote>
+<h3 id="Fastcgi协议分析"><a href="#Fastcgi协议分析" class="headerlink" title="Fastcgi协议分析"></a>Fastcgi协议分析</h3><p>相对于http协议，Fastcgi同样也是一种通信协议(相对于cgi的升级协议)，下面跟随P牛的脚步来分析一下Fastcgi以及产生的部分漏洞</p>
+<p>HTTP协议是浏览器和服务器中间件进行数据交换的协议，浏览器将HTTP头和HTTP体用某个规则组装成数据包，以TCP的方式发送到服务器中间件，服务器中间件按照规则将数据包解码，并在服务器上按要求拿到用户需要的数据，再以HTTP协议的规则打包返回给客户端。</p>
+<p>类比HTTP协议来说，fastcgi协议则是服务器中间件和某个语言后端进行数据交换的协议。也就是实现了web中间件对动态语言的解析—–<strong>如果http数据包所请求的是一个动态脚本文件，如php等，中间件就要靠CGI与脚本语言解析软件进行交互，处理好动态脚本文件后，再将处理后的文件其返回给浏览器。</strong></p>
+<p>Fastcgi协议由多个record进行，每个record中也有对应的header和body，header大多都是八个字节，body是由头中的contentLength指定，Fastcgi将这个内容发送给语言后端，语言后端将请求解码，到服务器上拿到对应请求回来的文件，返回给客户端.Fastcgi协议内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">typedef struct &#123;</span><br><span class="line">  &#x2F;* Header *&#x2F;</span><br><span class="line">  unsigned char version; &#x2F;&#x2F; 版本</span><br><span class="line">  unsigned char type; &#x2F;&#x2F; 本次record的类型</span><br><span class="line">  unsigned char requestIdB1; &#x2F;&#x2F; 本次record对应的请求id</span><br><span class="line">  unsigned char requestIdB0;</span><br><span class="line">  unsigned char contentLengthB1; &#x2F;&#x2F; body体的大小</span><br><span class="line">  unsigned char contentLengthB0;</span><br><span class="line">  unsigned char paddingLength; &#x2F;&#x2F; 额外块大小</span><br><span class="line">  unsigned char reserved; </span><br><span class="line"></span><br><span class="line">  &#x2F;* Body *&#x2F;</span><br><span class="line">  unsigned char contentData[contentLength];</span><br><span class="line">  unsigned char paddingData[paddingLength];</span><br><span class="line">&#125; FCGI_Record;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到requestIdB1是唯一的标志ID，contentlength代表的则是body的体的大小，record头文件中共有八个UNchar类型，这两个变量各占两个字节，padding部分起保留作用，在不需要的时候可以设置为0</p>
+<h3 id="Fastcgi-type"><a href="#Fastcgi-type" class="headerlink" title="Fastcgi type"></a>Fastcgi type</h3><p><code>fastcgi type</code>代表着是本次交互的数据包，一个record可能不足以全部代表本次发送的数据包，所以一次数据请求需要伴随着多个record的传递.type分别代表的意思</p>
+<p><img src="https://www.leavesongs.com/media/attachment/2017/04/25/e29518b1-3574-426f-b75f-8cabbb89a15a.9efc537226ce.jpg" alt="14931267923354.jpg"></p>
+<p>产生漏洞最常出现的是<code>type4</code>，传递环境变量参数.下面四种把<code>body中的</code>环境参数转化为key-value形式的四种环境变量结构</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">typedef struct &#123;</span><br><span class="line">  unsigned char nameLengthB0;  &#x2F;* nameLengthB0  &gt;&gt; 7 &#x3D;&#x3D; 0 *&#x2F;</span><br><span class="line">  unsigned char valueLengthB0; &#x2F;* valueLengthB0 &gt;&gt; 7 &#x3D;&#x3D; 0 *&#x2F;</span><br><span class="line">  unsigned char nameData[nameLength];</span><br><span class="line">  unsigned char valueData[valueLength];</span><br><span class="line">&#125; FCGI_NameValuePair11;</span><br><span class="line"></span><br><span class="line">typedef struct &#123;</span><br><span class="line">  unsigned char nameLengthB0;  &#x2F;* nameLengthB0  &gt;&gt; 7 &#x3D;&#x3D; 0 *&#x2F;</span><br><span class="line">  unsigned char valueLengthB3; &#x2F;* valueLengthB3 &gt;&gt; 7 &#x3D;&#x3D; 1 *&#x2F;</span><br><span class="line">  unsigned char valueLengthB2;</span><br><span class="line">  unsigned char valueLengthB1;</span><br><span class="line">  unsigned char valueLengthB0;</span><br><span class="line">  unsigned char nameData[nameLength];</span><br><span class="line">  unsigned char valueData[valueLength</span><br><span class="line">          ((B3 &amp; 0x7f) &lt;&lt; 24) + (B2 &lt;&lt; 16) + (B1 &lt;&lt; 8) + B0];</span><br><span class="line">&#125; FCGI_NameValuePair14;</span><br><span class="line"></span><br><span class="line">typedef struct &#123;</span><br><span class="line">  unsigned char nameLengthB3;  &#x2F;* nameLengthB3  &gt;&gt; 7 &#x3D;&#x3D; 1 *&#x2F;</span><br><span class="line">  unsigned char nameLengthB2;</span><br><span class="line">  unsigned char nameLengthB1;</span><br><span class="line">  unsigned char nameLengthB0;</span><br><span class="line">  unsigned char valueLengthB0; &#x2F;* valueLengthB0 &gt;&gt; 7 &#x3D;&#x3D; 0 *&#x2F;</span><br><span class="line">  unsigned char nameData[nameLength</span><br><span class="line">          ((B3 &amp; 0x7f) &lt;&lt; 24) + (B2 &lt;&lt; 16) + (B1 &lt;&lt; 8) + B0];</span><br><span class="line">  unsigned char valueData[valueLength];</span><br><span class="line">&#125; FCGI_NameValuePair41;</span><br><span class="line"></span><br><span class="line">typedef struct &#123;</span><br><span class="line">  unsigned char nameLengthB3;  &#x2F;* nameLengthB3  &gt;&gt; 7 &#x3D;&#x3D; 1 *&#x2F;</span><br><span class="line">  unsigned char nameLengthB2;</span><br><span class="line">  unsigned char nameLengthB1;</span><br><span class="line">  unsigned char nameLengthB0;</span><br><span class="line">  unsigned char valueLengthB3; &#x2F;* valueLengthB3 &gt;&gt; 7 &#x3D;&#x3D; 1 *&#x2F;</span><br><span class="line">  unsigned char valueLengthB2;</span><br><span class="line">  unsigned char valueLengthB1;</span><br><span class="line">  unsigned char valueLengthB0;</span><br><span class="line">  unsigned char nameData[nameLength</span><br><span class="line">          ((B3 &amp; 0x7f) &lt;&lt; 24) + (B2 &lt;&lt; 16) + (B1 &lt;&lt; 8) + B0];</span><br><span class="line">  unsigned char valueData[valueLength</span><br><span class="line">          ((B3 &amp; 0x7f) &lt;&lt; 24) + (B2 &lt;&lt; 16) + (B1 &lt;&lt; 8) + B0];</span><br><span class="line">&#125; FCGI_NameValuePair44;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>key、value均小于128字节，用<code>FCGI_NameValuePair11</code></li>
+<li>key大于128字节，value小于128字节，用<code>FCGI_NameValuePair41</code></li>
+<li>key小于128字节，value大于128字节，用<code>FCGI_NameValuePair14</code></li>
+<li>key、value均大于128字节，用<code>FCGI_NameValuePair44</code></li>
+</ul>
+<h3 id="PHP-FPM"><a href="#PHP-FPM" class="headerlink" title="PHP-FPM"></a>PHP-FPM</h3><p><strong>PHP</strong>–<strong>FPM</strong>(FastCGI Process Manager：FastCGI进程管理器)是一个<strong>PHP</strong>FastCGI管理器，对于<strong>PHP</strong> 5.3.3之前的<strong>php</strong>来说，是一个补丁包 ，旨在将FastCGI进程管理整合进<strong>PHP</strong>包中。</p>
+<p>也就是phpcgi传输协议中的内容是去交给PHP-FPM去解析的，解析完毕后才会去服务器上取所需数据返回给客户端。</p>
+<p><strong>FPM按照fastcgi的协议将TCP流解析成真正的数据</strong></p>
+<p>例如用户访问<code>http://127.0.0.1/index.php?a=1&amp;b=2</code>，对应传递的环境变量参数为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &#39;GATEWAY_INTERFACE&#39;: &#39;FastCGI&#x2F;1.0&#39;,</span><br><span class="line">    &#39;REQUEST_METHOD&#39;: &#39;GET&#39;,</span><br><span class="line">    &#39;SCRIPT_FILENAME&#39;: &#39;&#x2F;var&#x2F;www&#x2F;html&#x2F;index.php&#39;,</span><br><span class="line">    &#39;SCRIPT_NAME&#39;: &#39;&#x2F;index.php&#39;,</span><br><span class="line">    &#39;QUERY_STRING&#39;: &#39;?a&#x3D;1&amp;b&#x3D;2&#39;,</span><br><span class="line">    &#39;REQUEST_URI&#39;: &#39;&#x2F;index.php?a&#x3D;1&amp;b&#x3D;2&#39;,</span><br><span class="line">    &#39;DOCUMENT_ROOT&#39;: &#39;&#x2F;var&#x2F;www&#x2F;html&#39;,</span><br><span class="line">    &#39;SERVER_SOFTWARE&#39;: &#39;php&#x2F;fcgiclient&#39;,</span><br><span class="line">    &#39;REMOTE_ADDR&#39;: &#39;127.0.0.1&#39;,</span><br><span class="line">    &#39;REMOTE_PORT&#39;: &#39;12345&#39;,</span><br><span class="line">    &#39;SERVER_ADDR&#39;: &#39;127.0.0.1&#39;,</span><br><span class="line">    &#39;SERVER_PORT&#39;: &#39;80&#39;,</span><br><span class="line">    &#39;SERVER_NAME&#39;: &quot;localhost&quot;,</span><br><span class="line">    &#39;SERVER_PROTOCOL&#39;: &#39;HTTP&#x2F;1.1&#39;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>并且由fpm解析后可得需要访问的文件为<code>SCRIPT_NAME</code>所指向的文件<code>/var/www/html/index.php</code>，进而从服务器取得数据返回客户端</p>
+<h3 id="Nginx-IIS7解析漏洞"><a href="#Nginx-IIS7解析漏洞" class="headerlink" title="Nginx/IIS7解析漏洞"></a>Nginx/IIS7解析漏洞</h3><p>在用户访问<code>http://127.0.0.1/favicon.ico/.php</code>时会传递如下环境变量参数给FPM解析</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    ...</span><br><span class="line">    &#39;SCRIPT_FILENAME&#39;: &#39;&#x2F;var&#x2F;www&#x2F;html&#x2F;favicon.ico&#x2F;.php&#39;,</span><br><span class="line">    &#39;SCRIPT_NAME&#39;: &#39;&#x2F;favicon.ico&#x2F;.php&#39;,</span><br><span class="line">    &#39;REQUEST_URI&#39;: &#39;&#x2F;favicon.ico&#x2F;.php&#39;,</span><br><span class="line">    &#39;DOCUMENT_ROOT&#39;: &#39;&#x2F;var&#x2F;www&#x2F;html&#39;,</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先我们需要先来了解一下<code>Path Info</code>模式，这是一种URL重写功能，例如如下URL <code>http://your_ip/index.php/article</code>这里的index.php并不是目录，而是使用了url重写功能来实现了更好的加载静态资源文件，而<code>fix_pathinfo</code>正属于<code>Path Info</code>下的一种产物，其作用是如果遇到了不认识的文件名会向前递归，本意是为了处理<code>http://your_ip/index.php/test</code>这种url，但是如果传递了之前的那种<code>SCRIPT_NAME</code>为<code>/favicon.ico/.php</code>的文件，就会把ico文件当作php文件来解析</p>
+<p>第二种利用存在的文件名取Path Info,例如<code>http://127.0.0.1/1.jpg/1.php</code>，将<code>script_name</code>传给php-fpm来解析，<strong>fpm会将1.jpg作为php文件来解析，而将1.php作为path_info，</strong>最终getshell</p>
+<h3 id="fpm任意代码执行漏洞"><a href="#fpm任意代码执行漏洞" class="headerlink" title="fpm任意代码执行漏洞"></a>fpm任意代码执行漏洞</h3><p>之前我们利用的解析漏洞所能达到的效果是执行服务器上的你想去执行的文件，但我们并不能去执行我们所需要执行的php代码，这时需要用到php的两个设置<code>auto_prepend_file</code>和<code>auto_append_file</code>.</p>
+<blockquote>
+<p><code>auto_prepend_file</code>是告诉PHP，在执行目标文件之前，先包含<code>auto_prepend_file</code>中指定的文件；<code>auto_append_file</code>是告诉PHP，在执行完成目标文件后，包含<code>auto_append_file</code>指向的文件。</p>
+</blockquote>
+<p>这里可以用<code>auto_prepend_file</code>和<code>php:input//</code>去getshell，将auto_prepend_file设置为php://input，这样每次运行文件都要将php://input所post的内容包含并且执行，也就是将我们所需要执行的代码放在fastcgi中的body，那么每次就可以造成RCE漏洞，注意php.ini需要allow_url_include</p>
+<p>设置auto_prepend的方法：<code>PHP_VALUE</code>和<code>PHP_ADMIN_VALUE</code>，<code>PHP_VALUE</code>可以设置模式为<code>PHP_INI_USER</code>和<code>PHP_INI_ALL</code>的选项，<code>PHP_ADMIN_VALUE</code>可以设置所有选项。传入如下环境变量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &#39;GATEWAY_INTERFACE&#39;: &#39;FastCGI&#x2F;1.0&#39;,</span><br><span class="line">    &#39;REQUEST_METHOD&#39;: &#39;GET&#39;,</span><br><span class="line">    &#39;SCRIPT_FILENAME&#39;: &#39;&#x2F;var&#x2F;www&#x2F;html&#x2F;index.php&#39;,</span><br><span class="line">    &#39;SCRIPT_NAME&#39;: &#39;&#x2F;index.php&#39;,</span><br><span class="line">    &#39;QUERY_STRING&#39;: &#39;?a&#x3D;1&amp;b&#x3D;2&#39;,</span><br><span class="line">    &#39;REQUEST_URI&#39;: &#39;&#x2F;index.php?a&#x3D;1&amp;b&#x3D;2&#39;,</span><br><span class="line">    &#39;DOCUMENT_ROOT&#39;: &#39;&#x2F;var&#x2F;www&#x2F;html&#39;,</span><br><span class="line">    &#39;SERVER_SOFTWARE&#39;: &#39;php&#x2F;fcgiclient&#39;,</span><br><span class="line">    &#39;REMOTE_ADDR&#39;: &#39;127.0.0.1&#39;,</span><br><span class="line">    &#39;REMOTE_PORT&#39;: &#39;12345&#39;,</span><br><span class="line">    &#39;SERVER_ADDR&#39;: &#39;127.0.0.1&#39;,</span><br><span class="line">    &#39;SERVER_PORT&#39;: &#39;80&#39;,</span><br><span class="line">    &#39;SERVER_NAME&#39;: &quot;localhost&quot;,</span><br><span class="line">    &#39;SERVER_PROTOCOL&#39;: &#39;HTTP&#x2F;1.1&#39;</span><br><span class="line">    &#39;PHP_VALUE&#39;: &#39;auto_prepend_file &#x3D; php:&#x2F;&#x2F;input&#39;,</span><br><span class="line">    &#39;PHP_ADMIN_VALUE&#39;: &#39;allow_url_include &#x3D; On&#39;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将想要执行的代码放入body中，即可造成任意代码执行</p>
+<p>P牛写的工具：<a href="https://gist.github.com/phith0n/9615e2420f31048f7e30f3937356cf75" target="_blank" rel="noopener">https://gist.github.com/phith0n/9615e2420f31048f7e30f3937356cf75</a></p>
+<p>实际上也可以通过这个生成gopher payload去打内网fastcgi</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Web%E5%AE%89%E5%85%A8/" rel="tag"># Web安全</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/01/xml%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB/" rel="next" title="xml注入攻击">
+                <i class="fa fa-chevron-left"></i> xml注入攻击
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/01/HDCTF-Crypto%E9%83%A8%E5%88%86/" rel="prev" title="HDCTF Crypto部分">
+                HDCTF Crypto部分 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">离怀秋</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lihuaiqiu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://southseast.cc" title="南溟师傅" target="_blank">南溟师傅</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#中间件，服务器，容器与web服务器"><span class="nav-number">1.</span> <span class="nav-text">中间件，服务器，容器与web服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fastcgi协议分析"><span class="nav-number">2.</span> <span class="nav-text">Fastcgi协议分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fastcgi-type"><span class="nav-number">3.</span> <span class="nav-text">Fastcgi type</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PHP-FPM"><span class="nav-number">4.</span> <span class="nav-text">PHP-FPM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nginx-IIS7解析漏洞"><span class="nav-number">5.</span> <span class="nav-text">Nginx&#x2F;IIS7解析漏洞</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fpm任意代码执行漏洞"><span class="nav-number">6.</span> <span class="nav-text">fpm任意代码执行漏洞</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">离怀秋</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

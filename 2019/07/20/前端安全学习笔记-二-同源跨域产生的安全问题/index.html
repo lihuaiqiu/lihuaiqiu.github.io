@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Web," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="离怀秋" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="同源问题首先引入同源策略这个概念。  同源策略（Same origin policy）是一种约定，它是浏览器最核心也最基本的安全功能，如果缺少了同源策略，则浏览器的正常功能可能都会受到影响。 可以说Web是构建在同源策略基础之上的，浏览器只是针对同源策略的一种实现。 同源策略，它是由Netscape提出的一个著名的安全策略。  最初，它的含义是指，A网页设置的 Cookie，B网页不能打开，除非这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前端安全学习笔记(二)-同源跨域产生的安全问题">
+<meta property="og:url" content="http://yoursite.com/2019/07/20/%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%BA%8C-%E5%90%8C%E6%BA%90%E8%B7%A8%E5%9F%9F%E4%BA%A7%E7%94%9F%E7%9A%84%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="同源问题首先引入同源策略这个概念。  同源策略（Same origin policy）是一种约定，它是浏览器最核心也最基本的安全功能，如果缺少了同源策略，则浏览器的正常功能可能都会受到影响。 可以说Web是构建在同源策略基础之上的，浏览器只是针对同源策略的一种实现。 同源策略，它是由Netscape提出的一个著名的安全策略。  最初，它的含义是指，A网页设置的 Cookie，B网页不能打开，除非这">
+<meta property="og:image" content="https://s2.ax1x.com/2019/07/18/Zjn6v6.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/07/19/ZjjmqK.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/07/19/ZjqV74.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/07/19/Zjq6EQ.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/07/19/ZvFB7R.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/07/19/ZvVGb4.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/07/19/ZvQajI.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/07/19/ZvU8sg.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/07/19/ZvcbJe.png">
+<meta property="article:published_time" content="2019-07-20T06:01:08.000Z">
+<meta property="article:modified_time" content="2019-07-20T09:12:42.000Z">
+<meta property="article:author" content="离怀秋">
+<meta property="article:tag" content="Web">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.ax1x.com/2019/07/18/Zjn6v6.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/07/20/前端安全学习笔记-二-同源跨域产生的安全问题/"/>
+
+
+
+
+
+  <title>前端安全学习笔记(二)-同源跨域产生的安全问题 | 离怀秋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/lihuaiqiu" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">离怀秋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">穷且益坚，不负青云之志</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/20/%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%BA%8C-%E5%90%8C%E6%BA%90%E8%B7%A8%E5%9F%9F%E4%BA%A7%E7%94%9F%E7%9A%84%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="离怀秋">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="离怀秋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">前端安全学习笔记(二)-同源跨域产生的安全问题</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-20T14:01:08+08:00">
+                2019-07-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="同源问题"><a href="#同源问题" class="headerlink" title="同源问题"></a>同源问题</h3><p>首先引入同源策略这个概念。</p>
+<blockquote>
+<p><strong>同源策略</strong>（Same origin policy）是一种约定，它是浏览器最核心也最基本的安全功能，如果缺少了<strong>同源策略</strong>，则浏览器的正常功能可能都会受到影响。 可以说Web是构建在<strong>同源策略</strong>基础之上的，浏览器只是针对<strong>同源策略</strong>的一种实现。 <strong>同源策略</strong>，它是由Netscape提出的一个著名的安全<strong>策略</strong>。</p>
+</blockquote>
+<p>最初，它的含义是指，A网页设置的 Cookie，B网页不能打开，除非这两个网页”同源”。所谓”同源”指的是”三个相同”。</p>
+<ul>
+<li>协议相同</li>
+<li>域名相同</li>
+<li>端口相同</li>
+</ul>
+<p>如下是官方给出的检测案例：</p>
+<p><img src="https://s2.ax1x.com/2019/07/18/Zjn6v6.png" alt="Zjn6v6.png"></p>
+<h3 id="同源策略的目的"><a href="#同源策略的目的" class="headerlink" title="同源策略的目的"></a>同源策略的目的</h3><p>同源策略的真正目的在于保护用户的安全，防止用户数据被盗取。</p>
+<p>如果没有同源策略的存在，那么可能存在如下问题：</p>
+<p>当用户浏览了A网站，然后再去浏览B网站，那么B网站就有读取到A网站cookie的可能性，进而冒充用户做一些危害用户安全的事情，所以，可以通过同源策略的限制来达到保护用户安全的目的，使得B网站无法获得A网站的数据。</p>
+<h4 id="同源策略的限制范围"><a href="#同源策略的限制范围" class="headerlink" title="同源策略的限制范围"></a>同源策略的限制范围</h4><p>（1） Cookie、LocalStorage 和 IndexDB 无法读取。</p>
+<p>（2） DOM 无法获得。</p>
+<p>（3） AJAX 请求不能发送。（Fetch请求受到限制)</p>
+<p>其实真正意义上来说，AJAX的请求并非不能发送，而是在发送给服务器后，服务器在返回对应数据Respense的过程被浏览器所拦截，达到限制的目的。</p>
+<h3 id="规避同源策略的几种方法"><a href="#规避同源策略的几种方法" class="headerlink" title="规避同源策略的几种方法"></a>规避同源策略的几种方法</h3><h4 id="document-domain规避"><a href="#document-domain规避" class="headerlink" title="document.domain规避"></a>document.domain规避</h4><h5 id="cookie跨域获取"><a href="#cookie跨域获取" class="headerlink" title="cookie跨域获取"></a>cookie跨域获取</h5><p>当两个网页一级域名相同，只是二级域名不同，浏览器允许通过设置<code>document.domain</code>共享 Cookie。</p>
+<p>如A网页：<code>http://aaa.huaiqiu.com</code> , B网页：<code>http://bbb.huaiqiu.com</code></p>
+<p>那么在设置document.domain=<a href="http://www.huaiqiu.com的情况下，如下通过document.cookie给A网页设置了一个cookie：name">http://www.huaiqiu.com的情况下，如下通过document.cookie给A网页设置了一个cookie：name</a>: Hello，那么在B网页就可以通过document.cookie读取到A网页的cookie，达到跨域目的。</p>
+<h5 id="iframe跨域获取"><a href="#iframe跨域获取" class="headerlink" title="iframe跨域获取"></a>iframe跨域获取</h5><p><strong>所谓iframe跨域并不是指只通过src属性把所需要的页面拿过来，而是只与拿过来的页面进行数据间的交互。</strong>更具体的例子如下：</p>
+<p><img src="https://s2.ax1x.com/2019/07/19/ZjjmqK.png" alt="ZjjmqK.png"></p>
+<p><strong>在子窗口去调用父窗口的函数来改变自身窗体的大小。</strong></p>
+<p>如果两个网页不同源，就无法拿到对方的DOM。典型的例子是<code>iframe</code>窗口和<code>window.open</code>方法打开的窗口，它们与父窗口无法通信。实验一下</p>
+<p>在我的vps写入如下语句<code>&lt;iframe id=&#39;1&#39; src=&#39;http://www.baidu.com&#39;&gt;&lt;/iframe&gt;</code>,百度的页面与我的父窗口是不同源的，接下我来我们试着获取windows对象</p>
+<p><img src="https://s2.ax1x.com/2019/07/19/ZjqV74.png" alt="ZjqV74.png"></p>
+<p>可以看到由于同源问题我们没法去获得子窗口的contentwindow属性，子窗口无法获得父窗口的dom，父窗口也无法获得子窗口的dom,对于子窗口而言，<code>window.parent.document</code>同样因为同源问题报错,那么只要这两个窗口一级域名一样，二级域名不同，同样可以通过设置document.domain来使得两个页面同源，进而操作dom属性。同样也会产生一些安全问题，如果在页面存在xss漏洞，那么可以威胁到其他设置了document.domain的页面甚至父域。</p>
+<p><img src="https://s2.ax1x.com/2019/07/19/Zjq6EQ.png" alt="Zjq6EQ.png"></p>
+<p><strong>也就是说如果通过iframe这种方式来引入其他子窗口，那么在设置了document.domain的情况下，很可能实现”跨域攻击”。</strong></p>
+<p>document.domain需要注意的一些事情</p>
+<ol>
+<li>document.domain只可以设置为当前域以及父域。</li>
+<li>document.domain赋值后端口会变成NULL,也就是说a.b.com仅凭document.domain赋值为b.com是无法与b.com进行交互的，因为此时端口仍然不同，还是不同源，这样就能避免了子域存在xss漏洞，而对父域造成攻击的影响，但是还是可以影响到其他子域的，例如上面的例子。</li>
+</ol>
+<h4 id="location-hash跨域"><a href="#location-hash跨域" class="headerlink" title="location.hash跨域"></a>location.hash跨域</h4><p>实例：利用location.hash实现跨域iframe自适应宽高</p>
+<p><a href="https://dj4kobe.iteye.com/blog/842322" target="_blank" rel="noopener">https://dj4kobe.iteye.com/blog/842322</a></p>
+<p>主要原理，通过location.hash将数据传给与a.html同域名的的c.html,c.html通过两层parent获取a的windows属性，实现自适应高度，比较容易理解使用。</p>
+<h4 id="window-name跨域"><a href="#window-name跨域" class="headerlink" title="window.name跨域"></a>window.name跨域</h4><p>window对象有个name属性，该属性有个特征：即在一个窗口(window)的生命周期内,窗口载入的所有的页面都是共享一个window.name的，每个页面对window.name都有读写的权限，window.name是持久存在一个窗口载入过的所有页面中的，并不会因新页面的载入而进行重置。</p>
+<p><strong>first_vps/6.html</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">id</span>=<span class="string">'test'</span> <span class="attr">src</span>=<span class="string">'http://second_vps/2.html'</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript">alert(<span class="built_in">window</span>.name)&lt;<span class="regexp">/scrispt&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p><strong>first_vps/5.html</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">alert(<span class="built_in">window</span>.name)</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>second_vps/2.html</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">    <span class="built_in">window</span>.name = <span class="string">"flag&#123;this_is_test&#125;"</span>;</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>首先通过6.html来得到2.html的window.name对象，再通过引入5.html将值打印出。</p>
+<p><img src="https://s2.ax1x.com/2019/07/19/ZvFB7R.png" alt="ZvFB7R.png"></p>
+<p><strong>这里的载入过页面也就是只经过src引用的5.html和2.html，所以二者共享一个window.name对象，通过alert可将window.name弹出。</strong></p>
+<p>安全性思考：敏感信息不应该放在window.name属性中，因为可以通过如上方式，两个窗口的载入，来共享一个window.name，并且获得其值。</p>
+<h4 id="PostMessage跨域"><a href="#PostMessage跨域" class="headerlink" title="PostMessage跨域"></a>PostMessage跨域</h4><p>html5引入的message的API可以更方便、有效、安全的解决这些难题。postMessage()方法允许来自不同源的脚本采用异步方式进行有限的通信，可以实现跨文本档、多窗口、跨域消息传递。</p>
+<p>postMessage(data,origin)方法接受两个参数</p>
+<p> 1.<strong>data</strong>:要传递的数据，html5规范中提到该参数可以是JavaScript的任意基本类型或可复制的对象，然而并不是所有浏览器都做到了这点儿，部分浏览器只能处理字符串参数，所以我们在传递参数的时候需要使用JSON.stringify()方法对对象参数序列化，在低版本IE中引用json2.js可以实现类似效果。</p>
+<p>2.<strong>origin</strong>：字符串参数，指明目标窗口的源，协议+主机+端口号[+URL]，URL会被忽略，所以可以不写，这个参数是为了安全考虑，postMessage()方法只会将message传递给指定窗口，当然如果愿意也可以建参数设置为”*”，这样可以传递给任意窗口，如果要指定和当前窗口同源的话设置为”/“。</p>
+<p>实验如下</p>
+<p>第一个vps上的2.html开启监听</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">id</span>=<span class="string">'test'</span> <span class="attr">src</span>=<span class="string">"//your_vps/5.html"</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="built_in">window</span>.addEventListener(<span class="string">'message'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">        <span class="built_in">console</span>.log(e.data);</span></span><br><span class="line">    &#125;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>第二个vps上的5.html传入数据</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="actionscript">    parent.postMessage(<span class="string">'test'</span>,<span class="string">'first_vps/2.html'</span>);</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.ax1x.com/2019/07/19/ZvVGb4.png" alt="ZvVGb4.png"></p>
+<p>成功得到数据，安全性问题(以下例子来自evoA师傅的文章)</p>
+<h5 id="事件监听没有判断来源造成的安全问题"><a href="#事件监听没有判断来源造成的安全问题" class="headerlink" title="事件监听没有判断来源造成的安全问题"></a>事件监听没有判断来源造成的安全问题</h5><p>对于如下代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">setcookie(<span class="string">"flag"</span>,<span class="string">"flag&#123;this_is_test&#125;"</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line">&lt;iframe id=<span class="string">'iframe'</span> src=<span class="string">"//True_url/5.html"</span>&gt;&lt;/iframe&gt;</span><br><span class="line"></span><br><span class="line">&lt;h1 id=<span class="string">"name"</span>&gt;&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">    window.addEventListener(<span class="string">'message'</span>,<span class="function"><span class="keyword">function</span><span class="params">(e)</span></span>&#123;</span><br><span class="line">        document.getElementById(<span class="string">'name'</span>).innerHTML = e.data;</span><br><span class="line">    &#125;)</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>对于如上代码，原理是监听True_url下的5.html所发送的数据进行给h1赋值，但是我们可以通过恶意iframe进行引入</p>
+<p>创建test.html页面，内容为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;iframe id&#x3D;&#39;test&#39; src&#x3D;&#39;http:&#x2F;&#x2F;120.77.174.89:10080&#x2F;2.php&#39;&gt;&lt;&#x2F;iframe&gt;</span><br></pre></td></tr></table></figure>
+
+<p>即可进行恶意引入xss进行获得管理员cookie等操作</p>
+<p><img src="https://s2.ax1x.com/2019/07/19/ZvQajI.png" alt="ZvQajI.png"></p>
+<h5 id="当正则设置有误时，可以通过适当的域名绕过"><a href="#当正则设置有误时，可以通过适当的域名绕过" class="headerlink" title="当正则设置有误时，可以通过适当的域名绕过"></a>当正则设置有误时，可以通过适当的域名绕过</h5><p><img src="https://s2.ax1x.com/2019/07/19/ZvU8sg.png" alt="ZvU8sg.png"></p>
+<p>如上是一个简单的过滤样例。</p>
+<h4 id="CORS跨域"><a href="#CORS跨域" class="headerlink" title="CORS跨域"></a>CORS跨域</h4><p>CORS是一个W3C标准，全称是”跨域资源共享”（Cross-origin resource sharing）。它允许浏览器向跨源服务器，发出<a href="http://www.ruanyifeng.com/blog/2012/09/xmlhttprequest_level_2.html" target="_blank" rel="noopener"><code>XMLHttpRequest</code></a>请求，从而克服了AJAX只能<a href="http://www.ruanyifeng.com/blog/2016/04/same-origin-policy.html" target="_blank" rel="noopener">同源</a>使用的限制。整个CORS通信过程，都是浏览器自动完成，不需要用户参与。对于开发者来说，CORS通信与同源的AJAX通信没有差别，代码完全一样。浏览器一旦发现AJAX请求跨源，就会自动添加一些附加的头信息，有时还会多出一次附加的请求，但用户不会有感觉。因此，实现CORS通信的关键是服务器。只要服务器实现了CORS接口，就可以跨源通信。</p>
+<p>浏览器将CORS请求分成两类：简单请求（simple request）和非简单请求（not-so-simple request）。</p>
+<p>下面主要说一下<code>simple request</code></p>
+<p>简单请求的定义为：</p>
+<p>（1) 请求方法是以下三种方法之一：</p>
+<ul>
+<li>HEAD</li>
+<li>GET</li>
+<li>POST</li>
+</ul>
+<p>（2）HTTP的头信息不超出以下几种字段：</p>
+<ul>
+<li>Accept</li>
+<li>Accept-Language</li>
+<li>Content-Language</li>
+<li>Last-Event-ID</li>
+<li>Content-Type：只限于三个值<code>application/x-www-form-urlencoded</code>、<code>multipart/form-data</code>、<code>text/plain</code></li>
+</ul>
+<p>满足以上条件的为简单请求，不满足的为非简单请求。</p>
+<p>当浏览器发现<code>AJAX</code>请求是简单请求，就会自动在头部信息中，添加一个<code>Origin</code>字段，如下：</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GET</span> <span class="string">/cors</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Origin</span>: http://api.bob.com</span><br><span class="line"><span class="attribute">Host</span>: api.alice.com</span><br><span class="line"><span class="attribute">Accept-Language</span>: en-US</span><br><span class="line"><span class="attribute">Connection</span>: keep-alive</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0...</span><br></pre></td></tr></table></figure>
+
+<p>服务器会通过Origin的值来判断此次请求是否在允许的范围内，如果不在允许的范围内，服务器返回一个正常的但是没有Access-Control-Allow-Origin的http请求，浏览器通过检测出错误，然后抛出异常，如果在允许的范围内，则会多出如下几下响应头部字段：</p>
+<blockquote>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Access-Control-Allow-Origin</span>: http://api.bob.com</span><br><span class="line"><span class="attribute">Access-Control-Allow-Credentials</span>: true</span><br><span class="line"><span class="attribute">Access-Control-Expose-Headers</span>: FooBar</span><br><span class="line"><span class="attribute">Content-Type</span>: text/html; charset=utf-8</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</blockquote>
+<ul>
+<li><strong>Access-Control-Allow-Origin</strong>:该字段为必须值，*的情况下代表接受任意域名的请求。</li>
+<li><strong>Access-Control-Allow-Credentials</strong>:布尔值，代表此次请求是否需要cookie</li>
+<li><strong>Access-Control-Expose-Headers</strong>：指定额外的header字段，如果请求想要拿取额外指定的header字段，必须添加此形式getResponseHeader(‘test’)，才可以获得test字段的值</li>
+</ul>
+<p>进行一次实验</p>
+<p>2.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">header(<span class="string">"Access-Control-Allow-Origin: *"</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"You Get it"</span>;</span><br><span class="line"><span class="meta">?&gt;</span>p</span><br></pre></td></tr></table></figure>
+
+<p>test.html</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"button"</span> <span class="attr">onclick</span>=<span class="string">"loadDoc()"</span>&gt;</span>修改内容<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span> <span class="attr">id</span>=<span class="string">'demo'</span>&gt;</span>1<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="actionscript"><span class="function"><span class="keyword">function</span> <span class="title">loadDoc</span><span class="params">()</span> </span>&#123;</span></span><br><span class="line"><span class="actionscript">  <span class="keyword">var</span> xhttp = <span class="keyword">new</span> XMLHttpRequest();</span></span><br><span class="line"><span class="actionscript">  xhttp.onreadystatechange = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>&#123;</span></span><br><span class="line"><span class="actionscript">    <span class="keyword">if</span> (<span class="keyword">this</span>.readyState == <span class="number">4</span> &amp;&amp; <span class="keyword">this</span>.status == <span class="number">200</span>) &#123;</span></span><br><span class="line"><span class="javascript">      <span class="built_in">document</span>.getElementById(<span class="string">"demo"</span>).innerHTML =</span></span><br><span class="line"><span class="actionscript">      <span class="keyword">this</span>.responseText;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line"><span class="actionscript">  xhttp.open(<span class="string">"GET"</span>, <span class="string">"http://120.77.174.89:10080/2.php"</span>, <span class="literal">true</span>);</span></span><br><span class="line">  xhttp.send();</span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>抓包看一下</p>
+<p><img src="https://s2.ax1x.com/2019/07/19/ZvcbJe.png" alt="ZvcbJe.png"></p>
+<p>成功看到之前我们所说的Origin与服务器返回的字段。</p>
+<p><strong>注意，如果要发送cookie，Access-Control-Allow-Origin就不能设置*，必须要与请求网页的域名一致。</strong></p>
+<p>同样存在不正确的正则匹配问题，如下代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(preg_match(<span class="string">"/http:\/\/.*\.?test.club/"</span>,getallheaders()[<span class="string">'Origin'</span>]))</span><br><span class="line">&#123;</span><br><span class="line">    header(<span class="string">"Access-Control-Allow-Origin: "</span>.getallheaders()[<span class="string">'Origin'</span>]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>并未用<code>^和$</code>进行约束，导致可以构造域名绕过，达到跨域访问，例如域名<code>http://test.club.hack.com</code>即可达到攻击目的。</p>
+<h4 id="JSONP跨域"><a href="#JSONP跨域" class="headerlink" title="JSONP跨域"></a>JSONP跨域</h4><p>通过<code>script</code>的src属性实现跨域，再加上一个回调函数，返回所得的数据，这里只做大概介绍，下篇文章会详细讲解。</p>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="https://evoa.me/index.php/archives/43/" target="_blank" rel="noopener">https://evoa.me/index.php/archives/43/</a></p>
+<p><a href="http://www.ruanyifeng.com/blog/2016/04/same-origin-policy.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2016/04/same-origin-policy.html</a></p>
+<p><a href="http://www.ruanyifeng.com/blog/2016/04/cors.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2016/04/cors.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Web/" rel="tag"># Web</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/20/%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%B8%80-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="next" title="前端安全学习笔记(一)-基础知识">
+                <i class="fa fa-chevron-left"></i> 前端安全学习笔记(一)-基础知识
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/20/%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%B8%89-JSONP%E5%8A%AB%E6%8C%81/" rel="prev" title="前端安全学习笔记(三)-JSONP劫持">
+                前端安全学习笔记(三)-JSONP劫持 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">离怀秋</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lihuaiqiu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://southseast.cc" title="南溟师傅" target="_blank">南溟师傅</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#同源问题"><span class="nav-number">1.</span> <span class="nav-text">同源问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同源策略的目的"><span class="nav-number">2.</span> <span class="nav-text">同源策略的目的</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#同源策略的限制范围"><span class="nav-number">2.1.</span> <span class="nav-text">同源策略的限制范围</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#规避同源策略的几种方法"><span class="nav-number">3.</span> <span class="nav-text">规避同源策略的几种方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#document-domain规避"><span class="nav-number">3.1.</span> <span class="nav-text">document.domain规避</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#cookie跨域获取"><span class="nav-number">3.1.1.</span> <span class="nav-text">cookie跨域获取</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#iframe跨域获取"><span class="nav-number">3.1.2.</span> <span class="nav-text">iframe跨域获取</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#location-hash跨域"><span class="nav-number">3.2.</span> <span class="nav-text">location.hash跨域</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#window-name跨域"><span class="nav-number">3.3.</span> <span class="nav-text">window.name跨域</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PostMessage跨域"><span class="nav-number">3.4.</span> <span class="nav-text">PostMessage跨域</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#事件监听没有判断来源造成的安全问题"><span class="nav-number">3.4.1.</span> <span class="nav-text">事件监听没有判断来源造成的安全问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#当正则设置有误时，可以通过适当的域名绕过"><span class="nav-number">3.4.2.</span> <span class="nav-text">当正则设置有误时，可以通过适当的域名绕过</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CORS跨域"><span class="nav-number">3.5.</span> <span class="nav-text">CORS跨域</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JSONP跨域"><span class="nav-number">3.6.</span> <span class="nav-text">JSONP跨域</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考链接"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">离怀秋</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

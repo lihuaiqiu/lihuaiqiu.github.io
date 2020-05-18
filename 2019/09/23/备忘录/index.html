@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lihuaiqiu.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="离怀秋" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="Mysql一些基本操作12345678910111213141516drop table if exists  &#96;user&#96;;create table &#96;user&#96; (    &#96;id&#96; int(32) primary key auto_increment,    &#96;username&#96; varchar(40) not null,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="备忘录">
+<meta property="og:url" content="http://yoursite.com/2019/09/23/%E5%A4%87%E5%BF%98%E5%BD%95/index.html">
+<meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="Mysql一些基本操作12345678910111213141516drop table if exists  &#96;user&#96;;create table &#96;user&#96; (    &#96;id&#96; int(32) primary key auto_increment,    &#96;username&#96; varchar(40) not null,">
+<meta property="og:image" content="https://s2.ax1x.com/2019/09/06/nuOBB4.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/09/06/nK4A9e.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/09/06/nKXpk9.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/09/06/nMS3dO.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/09/10/nUo6zQ.png">
+<meta property="article:published_time" content="2019-09-23T04:23:06.000Z">
+<meta property="article:modified_time" content="2019-10-28T10:43:12.000Z">
+<meta property="article:author" content="离怀秋">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.ax1x.com/2019/09/06/nuOBB4.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/23/备忘录/"/>
+
+
+
+
+
+  <title>备忘录 | 离怀秋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/lihuaiqiu" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">离怀秋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">穷且益坚，不负青云之志</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/23/%E5%A4%87%E5%BF%98%E5%BD%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="离怀秋">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="离怀秋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">备忘录</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-23T12:23:06+08:00">
+                2019-09-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Mysql一些基本操作"><a href="#Mysql一些基本操作" class="headerlink" title="Mysql一些基本操作"></a>Mysql一些基本操作</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">drop table if exists  &#96;user&#96;;</span><br><span class="line"></span><br><span class="line">create table &#96;user&#96; (</span><br><span class="line">    &#96;id&#96; int(32) primary key auto_increment,</span><br><span class="line">    &#96;username&#96; varchar(40) not null,</span><br><span class="line">    &#96;password&#96; varchar(40) not null</span><br><span class="line">) ENGINE&#x3D;InnoDB DEFAULT CHARSET&#x3D;utf8 ;</span><br><span class="line"></span><br><span class="line">insert into &#96;user&#96; (&#96;id&#96;,&#96;username&#96;,&#96;password&#96;) values (&#39;1&#39;,&#39;admin&#39;,&#39;__FLAG__&#39;);</span><br><span class="line">drop table if exists &#96;html&#96;;</span><br><span class="line"></span><br><span class="line">create table &#96;html&#96; (</span><br><span class="line">    &#96;id&#96; int(32) primary key  auto_increment,</span><br><span class="line">    &#96;userid&#96; int(32) not null,</span><br><span class="line">    &#96;dom&#96; text not null</span><br><span class="line">)ENGINE&#x3D;InnoDB DEFAULT CHARSET&#x3D;utf8 ;</span><br></pre></td></tr></table></figure>
+
+<h3 id="IDE基本调试操作"><a href="#IDE基本调试操作" class="headerlink" title="IDE基本调试操作"></a>IDE基本调试操作</h3><p>step into：单步执行，遇到子函数就进入并且继续单步执行（简而言之，进入子函数），一句一句代码执行，类似VS中的逐语句；</p>
+<p>step over：在单步执行时，在函数内遇到子函数时不会进入子函数内单步执行，而是将子函数整个执行完再停止，也就是把子函数整个作为一步。有一点,经过我们简单的调试，在不存在子函数的情况下是和step into效果一样的（简而言之，越过子函数，但子函数会执行），类似VS中的逐过程。</p>
+<p>step out：当单步执行到子函数内时，用step out就可以执行完子函数余下部分，并返回到上一层函数，可以理解为执行完当前模块并跳出。</p>
+<h3 id="Thinkphp备忘"><a href="#Thinkphp备忘" class="headerlink" title="Thinkphp备忘"></a>Thinkphp备忘</h3><h4 id="Thinkphp安装"><a href="#Thinkphp安装" class="headerlink" title="Thinkphp安装"></a>Thinkphp安装</h4><p>利用composer安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer create-project topthink&#x2F;think&#x3D;5.1.* tp5</span><br></pre></td></tr></table></figure>
+
+<p>通过上面的安装命令即可在tp5子目录生成项目文件</p>
+<h4 id="Thinkphp目录结构"><a href="#Thinkphp目录结构" class="headerlink" title="Thinkphp目录结构"></a>Thinkphp目录结构</h4><p><a href="https://blog.csdn.net/jimo_lonely/article/details/52958751" target="_blank" rel="noopener">https://blog.csdn.net/jimo_lonely/article/details/52958751</a></p>
+<p>这里用的是thinkphp5.1，目录结构如下</p>
+<p><img src="https://s2.ax1x.com/2019/09/06/nuOBB4.png" alt="nuOBB4.png"></p>
+<p>简单说一下各个目录的作用</p>
+<ul>
+<li>application: 应用目录</li>
+<li>config: 配置文件</li>
+<li>extend: 非composer下载的php第三方库，而是由自己定义的第三方类</li>
+<li>public: 访问入口</li>
+<li>route: 路由</li>
+<li>runtime: 包括框架运行的日志和缓存文件（可以用来调错</li>
+<li>think: 框架核心，包含很多核心类库</li>
+<li>vendor: composer下载的第三方库</li>
+</ul>
+<h4 id="extend与vendor"><a href="#extend与vendor" class="headerlink" title="extend与vendor"></a>extend与vendor</h4><p>extend与vendor区别如下：</p>
+<p>extend是自己定义的类文件，而vendor大部分都是composer类库文件，二者的引用方式分别为：</p>
+<p>extend主要通过use来引用，使用例子如下：</p>
+<p>在extend/test/Foo.php，写入Foo类</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">test</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">h1llo</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'HEllo lihuaiqiu'</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在controller中进行引入调用此自定义类的h1llo函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">controller</span>;</span><br><span class="line"><span class="keyword">use</span> \<span class="title">test</span>\<span class="title">Foo</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Index</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">test1</span><span class="params">()</span></span>&#123;</span><br><span class="line">    $foo=<span class="keyword">new</span> Foo();</span><br><span class="line">    <span class="keyword">return</span> $foo-&gt;h1llo();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过路由成功访问</p>
+<p><a href="http://127.0.0.1/tp5/public/index.php/index/index/test1" target="_blank" rel="noopener">http://127.0.0.1/tp5/public/index.php/index/index/test1</a></p>
+<p>vender的使用方法其实和extend差不多，可通过Import或者vender两个助手函数进行加载</p>
+<p>第三方类位于</p>
+<p>vendor/lib/cwb.php</p>
+<p>通过以下语句进行调用</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import(<span class="string">'lib.cwb'</span>,VENDOR_PATH,<span class="string">'.class.php'</span>);</span><br></pre></td></tr></table></figure>
+
+<p>实例化：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$obj = <span class="keyword">new</span>  \Cwb();</span><br></pre></td></tr></table></figure>
+
+<p>详细参考连接<a href="https://blog.csdn.net/qq_42728978/article/details/82428083" target="_blank" rel="noopener">https://blog.csdn.net/qq_42728978/article/details/82428083</a></p>
+<p><a href="http://www.zhangkeda.com/archives/96.html" target="_blank" rel="noopener">http://www.zhangkeda.com/archives/96.html</a></p>
+<h4 id="模板与视图"><a href="#模板与视图" class="headerlink" title="模板与视图"></a>模板与视图</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">controller</span>;</span><br><span class="line"><span class="keyword">use</span> \<span class="title">test</span>\<span class="title">Foo</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Index</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> view(<span class="string">'test'</span>);</span><br><span class="line">        </span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过view函数将同模块下/view/控制器名字/参数.html渲染，在无参数的情况下渲染为同模块下/view/控制器名字/方法名.html</p>
+<p>admin模块渲染测试</p>
+<p><img src="https://s2.ax1x.com/2019/09/06/nK4A9e.png" alt="nK4A9e.png"></p>
+<h4 id="数据库操作"><a href="#数据库操作" class="headerlink" title="数据库操作"></a>数据库操作</h4><p>Thinkphp中给了两种数据库操作的的方法，第一种操作方法是利用db类，第二种方法是利用model</p>
+<h5 id="db类操作数据库"><a href="#db类操作数据库" class="headerlink" title="db类操作数据库"></a>db类操作数据库</h5><p>首先在config/app.php配置一下自己数据库的基本信息，通过如下调用即可进行数据操作</p>
+<p><img src="https://s2.ax1x.com/2019/09/06/nKXpk9.png" alt="nKXpk9.png"></p>
+<h5 id="Model进行数据库操作"><a href="#Model进行数据库操作" class="headerlink" title="Model进行数据库操作"></a>Model进行数据库操作</h5><p>Model其实为数据表的抽象描述，主要用于操作相应的数据表(表对应的类goods.class.php、category.class.php、user.class.php)</p>
+<p>首先建立model文件夹，在model中写入AdminUser类</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">model</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">think</span>\<span class="title">Model</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AdminUser</span> <span class="keyword">extends</span> <span class="title">Model</span></span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> $table=<span class="string">'tp_user'</span>;</span><br><span class="line">    <span class="keyword">protected</span> $pk = <span class="string">'id'</span>;</span><br></pre></td></tr></table></figure>
+
+<p>在controller中调用取出数据</p>
+<p><img src="https://s2.ax1x.com/2019/09/06/nMS3dO.png" alt="nMS3dO.png"></p>
+<p>通过Model,controller,view三个层构造了MVC模式：</p>
+<ul>
+<li>用户首先通过View层输入数据</li>
+<li>controller通过Model的调用来进行数据操作并且取出数据</li>
+<li>controller取出的数据再交给View层，通过View来将用户想要查看的数据输出。</li>
+</ul>
+<p><a href="https://www.cnblogs.com/yifangtongxing/p/5512032.html" target="_blank" rel="noopener">https://www.cnblogs.com/yifangtongxing/p/5512032.html</a></p>
+<h3 id="Python-Requests上传文件"><a href="#Python-Requests上传文件" class="headerlink" title="Python Requests上传文件"></a>Python Requests上传文件</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">data = &#123;</span><br><span class="line">    <span class="string">'name'</span>: <span class="string">'nginx'</span></span><br><span class="line">&#125;</span><br><span class="line">files = &#123;<span class="string">'file'</span>: open(<span class="string">"abc.csv"</span>, <span class="string">'rb'</span>)&#125;</span><br><span class="line"></span><br><span class="line">response = requests.post(url, data=data, files=files)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Nodejs篇"><a href="#Nodejs篇" class="headerlink" title="Nodejs篇"></a>Nodejs篇</h3><h4 id="简单应用创建"><a href="#简单应用创建" class="headerlink" title="简单应用创建"></a>简单应用创建</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</span><br><span class="line"></span><br><span class="line">http.createServer(<span class="function"><span class="keyword">function</span> (<span class="params">request, response</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 发送 HTTP 头部</span></span><br><span class="line"><span class="comment">// HTTP 状态值: 200 : OK</span></span><br><span class="line"><span class="comment">// 内容类型: text/plain</span></span><br><span class="line">response.writeHead(<span class="number">200</span>, &#123;<span class="string">'Content-Type'</span>: <span class="string">'image/png'</span>&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 发送响应数据 "Hello World"</span></span><br><span class="line">response.end(<span class="string">'Hello World\n'</span>);</span><br><span class="line"></span><br><span class="line">&#125;).listen(<span class="number">8888</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 终端打印如下信息</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'Server running at http://127.0.0.1:8888/'</span>);</span><br></pre></td></tr></table></figure>
+
+<p>引入http模块，创建服务器，并设置返回文件类型为image/png，并且返回内容Hello World</p>
+<h4 id="npm常用命令"><a href="#npm常用命令" class="headerlink" title="npm常用命令"></a>npm常用命令</h4><p>还是cnpm比较好，速度更快一些</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">npm ls</span><br><span class="line"></span><br><span class="line">npm unintsall</span><br><span class="line"></span><br><span class="line">npm update</span><br><span class="line"></span><br><span class="line">npm search</span><br><span class="line"></span><br><span class="line">npm init(创建package.json)</span><br></pre></td></tr></table></figure>
+
+<h4 id="回调函数与异步编程"><a href="#回调函数与异步编程" class="headerlink" title="回调函数与异步编程"></a>回调函数与异步编程</h4><p>阻塞与非阻塞—–阻塞需要按顺序执行，而非阻塞则不需要，通过非阻塞可以不需要等待上面程序执行完毕，直接去执行下面的，也就是异步。在nodejs里的fs模块有两个函数</p>
+<ul>
+<li>同步：readFileSync函数</li>
+<li>异步：readFile函数</li>
+</ul>
+<p>如下两种代码即可输出不同效果</p>
+<p>异步</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">"fs"</span>);</span><br><span class="line"></span><br><span class="line">fs.readFile(<span class="string">'input.txt'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">err, data</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (err) <span class="keyword">return</span> <span class="built_in">console</span>.error(err);</span><br><span class="line">    <span class="built_in">console</span>.log(data.toString());  <span class="comment">//后显示文件读取结果</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"程序执行结束!"</span>);</span><br></pre></td></tr></table></figure>
+
+<p>同步</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">"fs"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> data = fs.readFileSync(<span class="string">'input.txt'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(data.toString());   <span class="comment">//先显示文件读取结果</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"程序执行结束!"</span>);</span><br></pre></td></tr></table></figure>
+
+<p>Node.js 是单进程单线程应用程序，但是因为 V8 引擎提供的异步执行回调接口，通过这些接口可以处理大量的并发，所以性能非常高。详细解释如下</p>
+<p>目前对事件循环的理解还是比较浅，作用就是通过v8的异步执行回调接口处理并发，补足了javascript是单线程的缺点</p>
+<p><a href="http://lynnelv.github.io/js-event-loop-nodejs这篇文章剖析的比较详细，等有机会的时候单独写一篇文章剖析一下Node.js的事件循环。" target="_blank" rel="noopener">http://lynnelv.github.io/js-event-loop-nodejs这篇文章剖析的比较详细，等有机会的时候单独写一篇文章剖析一下Node.js的事件循环。</a></p>
+<h4 id="EventEmitter"><a href="#EventEmitter" class="headerlink" title="EventEmitter"></a>EventEmitter</h4><p><a href="https://www.runoob.com/nodejs/nodejs-event.html" target="_blank" rel="noopener">https://www.runoob.com/nodejs/nodejs-event.html</a></p>
+<p>主要就是创建绑定监听器，并且通过emit触发事件，去调用回调函数</p>
+<p>其实看到这里，大概对事件循环的理解就是</p>
+<p><strong>事件循环的监听器是一个主循环，当检测到异步事件的时候就会去触发回调函数</strong>，还是等以后结合底层源码单独去剖析一下事件循环这个有趣的东西吧</p>
+<h4 id="Buffer缓冲区处理Tcp或文件流等二进制数据"><a href="#Buffer缓冲区处理Tcp或文件流等二进制数据" class="headerlink" title="Buffer缓冲区处理Tcp或文件流等二进制数据"></a>Buffer缓冲区处理Tcp或文件流等二进制数据</h4><p><a href="https://www.runoob.com/nodejs/nodejs-buffer.html" target="_blank" rel="noopener">https://www.runoob.com/nodejs/nodejs-buffer.html</a></p>
+<h4 id="常见流操作"><a href="#常见流操作" class="headerlink" title="常见流操作"></a>常见流操作</h4><ul>
+<li>从流中读取数据</li>
+<li>写入文件</li>
+<li>管道流—从一个输出流到另一个输入流</li>
+<li>链式流—-解压和压缩文件</li>
+</ul>
+<p><a href="https://www.runoob.com/nodejs/nodejs-stream.html" target="_blank" rel="noopener">https://www.runoob.com/nodejs/nodejs-stream.html</a></p>
+<h4 id="模块"><a href="#模块" class="headerlink" title="模块"></a>模块</h4><p><a href="https://imgchr.com/i/nUo6zQ" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/09/10/nUo6zQ.png" alt="nUo6zQ.png"></a></p>
+<p>自行封装并进行引入。</p>
+<h4 id="匿名函数"><a href="#匿名函数" class="headerlink" title="匿名函数"></a>匿名函数</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">execute</span>(<span class="params">someFunction, value</span>) </span>&#123;</span><br><span class="line">  someFunction(value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">execute(<span class="function"><span class="keyword">function</span>(<span class="params">word</span>)</span>&#123; <span class="built_in">console</span>.log(word) &#125;, <span class="string">"Hello"</span>);</span><br></pre></td></tr></table></figure>
+
+<p>将函数作为变量传递—我们不需要为这个函数起名字—-匿名函数</p>
+<p>创建http服务的代码也是调用匿名函数的过程</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">"http"</span>);</span><br><span class="line"></span><br><span class="line">http.createServer(<span class="function"><span class="keyword">function</span>(<span class="params">request, response</span>) </span>&#123;</span><br><span class="line">  response.writeHead(<span class="number">200</span>, &#123;<span class="string">"Content-Type"</span>: <span class="string">"text/plain"</span>&#125;);</span><br><span class="line">  response.write(<span class="string">"Hello World"</span>);</span><br><span class="line">  response.end();</span><br><span class="line">&#125;).listen(<span class="number">8888</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h4><p><a href="https://www.runoob.com/nodejs/nodejs-router.html" target="_blank" rel="noopener">https://www.runoob.com/nodejs/nodejs-router.html</a></p>
+<h4 id="Util模块"><a href="#Util模块" class="headerlink" title="Util模块"></a>Util模块</h4><p>这里简写两个函数</p>
+<h5 id="util-inherits"><a href="#util-inherits" class="headerlink" title="util.inherits"></a>util.inherits</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> util = <span class="built_in">require</span>(<span class="string">'util'</span>);</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Base</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.name = <span class="string">'base'</span>;</span><br><span class="line">    <span class="keyword">this</span>.base = <span class="number">1991</span>;</span><br><span class="line">    <span class="keyword">this</span>.sayHello = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'Hello '</span> + <span class="keyword">this</span>.name);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line">Base.prototype.showName = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Sub</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.name = <span class="string">'sub'</span>;</span><br><span class="line">&#125;</span><br><span class="line">util.inherits(Sub, Base);</span><br><span class="line"><span class="keyword">var</span> objBase = <span class="keyword">new</span> Base();</span><br><span class="line">objBase.showName();</span><br><span class="line">objBase.sayHello();</span><br><span class="line"><span class="built_in">console</span>.log(objBase);</span><br><span class="line"><span class="keyword">var</span> objSub = <span class="keyword">new</span> Sub();</span><br><span class="line">objSub.showName();</span><br><span class="line"><span class="comment">//objSub.sayHello();</span></span><br><span class="line"><span class="built_in">console</span>.log(objSub);</span><br></pre></td></tr></table></figure>
+
+<p>Sub类仅仅继承了Base在原型中定义的函数showname，而base属性和sayHello函数都没有继承。</p>
+<h5 id="util-inspect"><a href="#util-inspect" class="headerlink" title="util.inspect"></a>util.inspect</h5><p>这个倒是有点像序列化和反序列化</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> util = <span class="built_in">require</span>(<span class="string">'util'</span>);</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.name = <span class="string">'byvoid'</span>;</span><br><span class="line">    <span class="keyword">this</span>.toString = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.name;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj = <span class="keyword">new</span> Person();</span><br><span class="line"><span class="built_in">console</span>.log(util.inspect(obj));</span><br></pre></td></tr></table></figure>
+
+<p>输出结果</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Person &#123; <span class="attr">name</span>: <span class="string">'byvoid'</span>, <span class="attr">toString</span>: [<span class="built_in">Function</span>] &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="利用fs模块进行文件操作"><a href="#利用fs模块进行文件操作" class="headerlink" title="利用fs模块进行文件操作"></a>利用fs模块进行文件操作</h4><p><a href="https://www.runoob.com/nodejs/nodejs-fs.html" target="_blank" rel="noopener">https://www.runoob.com/nodejs/nodejs-fs.html</a></p>
+<h4 id="GET-POST"><a href="#GET-POST" class="headerlink" title="GET/POST"></a>GET/POST</h4><h5 id="GET型"><a href="#GET型" class="headerlink" title="GET型"></a>GET型</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</span><br><span class="line"><span class="keyword">var</span> url = <span class="built_in">require</span>(<span class="string">'url'</span>);</span><br><span class="line"><span class="keyword">var</span> util = <span class="built_in">require</span>(<span class="string">'util'</span>);</span><br><span class="line">http.createServer(<span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>)</span>&#123;</span><br><span class="line">res.writeHead(<span class="number">200</span>, &#123;<span class="string">'Content-Type'</span>: <span class="string">'text/plain'</span>&#125;);</span><br><span class="line"><span class="comment">// 解析 url 参数</span></span><br><span class="line"><span class="keyword">var</span> params = url.parse(req.url, <span class="literal">true</span>).query;</span><br><span class="line">res.write(<span class="string">"网站名："</span> + params.name);</span><br><span class="line">res.write(<span class="string">"\n"</span>);</span><br><span class="line">res.write(<span class="string">"网站 URL："</span> + params.url);</span><br><span class="line">res.end();</span><br><span class="line">&#125;).listen(<span class="number">3000</span>);</span><br></pre></td></tr></table></figure>
+
+<h5 id="POST型基本格式"><a href="#POST型基本格式" class="headerlink" title="POST型基本格式"></a>POST型基本格式</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</span><br><span class="line"><span class="keyword">var</span> querystring = <span class="built_in">require</span>(<span class="string">'querystring'</span>);</span><br><span class="line"><span class="keyword">var</span> util = <span class="built_in">require</span>(<span class="string">'util'</span>);</span><br><span class="line">http.createServer(<span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>)</span>&#123;</span><br><span class="line"><span class="comment">// 定义了一个post变量，用于暂存请求体的信息</span></span><br><span class="line"><span class="keyword">var</span> post = <span class="string">''</span>;     </span><br><span class="line"><span class="comment">// 通过req的data事件监听函数，每当接受到请求体的数据，就累加到post变量中</span></span><br><span class="line">req.on(<span class="string">'data'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">chunk</span>)</span>&#123;    </span><br><span class="line">post += chunk;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 在end事件触发后，通过querystring.parse将post解析为真正的POST请求格式，然后向客户端返回。</span></span><br><span class="line">req.on(<span class="string">'end'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;    </span><br><span class="line">post = querystring.parse(post);</span><br><span class="line">res.end(util.inspect(post));</span><br><span class="line">&#125;);</span><br><span class="line">&#125;).listen(<span class="number">3000</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>POST型+表单</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</span><br><span class="line"><span class="keyword">var</span> querystring = <span class="built_in">require</span>(<span class="string">'querystring'</span>);</span><br><span class="line"><span class="keyword">var</span> postHTML = </span><br><span class="line"><span class="string">'&lt;html&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;title&gt;Test&lt;/title&gt;&lt;/head&gt;'</span> +</span><br><span class="line"><span class="string">'&lt;body&gt;'</span> +</span><br><span class="line"><span class="string">'&lt;form method="post"&gt;'</span> +</span><br><span class="line"><span class="string">'网站名： &lt;input name="name"&gt;&lt;br&gt;'</span> +</span><br><span class="line"><span class="string">'网站 URL： &lt;input name="url"&gt;&lt;br&gt;'</span> +</span><br><span class="line"><span class="string">'&lt;input type="submit"&gt;'</span> +</span><br><span class="line"><span class="string">'&lt;/form&gt;'</span> +</span><br><span class="line"><span class="string">'&lt;/body&gt;&lt;/html&gt;'</span>;</span><br><span class="line">http.createServer(<span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</span><br><span class="line"><span class="keyword">var</span> body = <span class="string">""</span>;</span><br><span class="line">req.on(<span class="string">'data'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">chunk</span>) </span>&#123;</span><br><span class="line">body += chunk;</span><br><span class="line">&#125;);</span><br><span class="line">req.on(<span class="string">'end'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"><span class="comment">// 解析参数</span></span><br><span class="line">body = querystring.parse(body);</span><br><span class="line"><span class="comment">// 设置响应头部信息及编码</span></span><br><span class="line">res.writeHead(<span class="number">200</span>, &#123;<span class="string">'Content-Type'</span>: <span class="string">'text/html; charset=utf8'</span>&#125;);</span><br><span class="line"><span class="keyword">if</span>(body.name &amp;&amp; body.url) &#123; <span class="comment">// 输出提交的数据</span></span><br><span class="line">res.write(<span class="string">"网站名："</span> + body.name);</span><br><span class="line">res.write(<span class="string">"&lt;br&gt;"</span>);</span><br><span class="line">res.write(<span class="string">"网站 URL："</span> + body.url);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;  <span class="comment">// 输出表单</span></span><br><span class="line">res.write(postHTML);</span><br><span class="line">&#125;</span><br><span class="line">res.end();</span><br><span class="line">&#125;);</span><br><span class="line">&#125;).listen(<span class="number">3000</span>);</span><br></pre></td></tr></table></figure>
+
+<p>大概代码逻辑为监听data和end，储存request时data的数据，并且在监听end的同时将数据respone。</p>
+<h5 id="模拟请求百度"><a href="#模拟请求百度" class="headerlink" title="模拟请求百度"></a>模拟请求百度</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">"http"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> req = http.get(<span class="string">"http://www.baidu.com"</span>, <span class="function"><span class="keyword">function</span>(<span class="params">res</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"STATUS: "</span> + res.statusCode);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> bodyChunks = [];</span><br><span class="line">res.on(<span class="string">'data'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">chunk</span>) </span>&#123;</span><br><span class="line">    bodyChunks.push(chunk);</span><br><span class="line">&#125;)</span><br><span class="line">    .on(<span class="string">'end'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> body = Buffer.concat(bodyChunks);</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"Response BODY: "</span> + body);</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'The request end...'</span>)</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">req.on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"ERROR: "</span> + e.message);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="简单node实现Web服务"><a href="#简单node实现Web服务" class="headerlink" title="简单node实现Web服务"></a>简单node实现Web服务</h4><h5 id="Web服务端"><a href="#Web服务端" class="headerlink" title="Web服务端"></a>Web服务端</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</span><br><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"><span class="keyword">var</span> url = <span class="built_in">require</span>(<span class="string">'url'</span>);</span><br><span class="line"><span class="comment">// 创建服务器</span></span><br><span class="line">http.createServer( <span class="function"><span class="keyword">function</span> (<span class="params">request, response</span>) </span>&#123;  </span><br><span class="line"><span class="comment">// 解析请求，包括文件名</span></span><br><span class="line"><span class="keyword">var</span> pathname = url.parse(request.url).pathname;</span><br><span class="line"><span class="comment">// 输出请求的文件名</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"Request for "</span> + pathname + <span class="string">" received."</span>);</span><br><span class="line"><span class="comment">// 从文件系统中读取请求的文件内容</span></span><br><span class="line">fs.readFile(pathname.substr(<span class="number">1</span>), <span class="function"><span class="keyword">function</span> (<span class="params">err, data</span>) </span>&#123;</span><br><span class="line"><span class="keyword">if</span> (err) &#123;</span><br><span class="line"><span class="built_in">console</span>.log(err);</span><br><span class="line"><span class="comment">// HTTP 状态码: 404 : NOT FOUND</span></span><br><span class="line"><span class="comment">// Content Type: text/html</span></span><br><span class="line">response.writeHead(<span class="number">404</span>, &#123;<span class="string">'Content-Type'</span>: <span class="string">'text/html'</span>&#125;);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;             </span><br><span class="line"><span class="comment">// HTTP 状态码: 200 : OK</span></span><br><span class="line"><span class="comment">// Content Type: text/html</span></span><br><span class="line">response.writeHead(<span class="number">200</span>, &#123;<span class="string">'Content-Type'</span>: <span class="string">'text/html'</span>&#125;);    </span><br><span class="line"><span class="comment">// 响应文件内容</span></span><br><span class="line">response.write(data.toString());        </span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//  发送响应数据</span></span><br><span class="line">response.end();</span><br><span class="line">&#125;);   </span><br><span class="line">&#125;).listen(<span class="number">8080</span>);</span><br><span class="line"><span class="comment">// 控制台会输出以下信息</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'Server running at http://127.0.0.1:8080/'</span>);</span><br></pre></td></tr></table></figure>
+
+<p>通过异步读取请求的文件名得到请求的资源作为response返回。</p>
+<h5 id="Web客户端"><a href="#Web客户端" class="headerlink" title="Web客户端"></a>Web客户端</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</span><br><span class="line"><span class="comment">// 用于请求的选项</span></span><br><span class="line"><span class="keyword">var</span> options = &#123;</span><br><span class="line">host: <span class="string">'localhost'</span>,</span><br><span class="line">port: <span class="string">'8080'</span>,</span><br><span class="line">path: <span class="string">'/index.html'</span>  </span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 处理响应的回调函数</span></span><br><span class="line"><span class="keyword">var</span> callback = <span class="function"><span class="keyword">function</span>(<span class="params">response</span>)</span>&#123;</span><br><span class="line"><span class="comment">// 不断更新数据</span></span><br><span class="line"><span class="keyword">var</span> body = <span class="string">''</span>;</span><br><span class="line">response.on(<span class="string">'data'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line">body += data;</span><br><span class="line">&#125;);</span><br><span class="line">response.on(<span class="string">'end'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line"><span class="comment">// 数据接收完成</span></span><br><span class="line"><span class="built_in">console</span>.log(body);</span><br><span class="line">&#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 向服务端发送请求</span></span><br><span class="line"><span class="keyword">var</span> req = http.request(options, callback);</span><br><span class="line">req.end();</span><br></pre></td></tr></table></figure>
+
+<h4 id="Express框架"><a href="#Express框架" class="headerlink" title="Express框架"></a>Express框架</h4><h5 id="正则匹配请求"><a href="#正则匹配请求" class="headerlink" title="正则匹配请求"></a>正则匹配请求</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">app.get(<span class="string">'/ab*cd'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;   </span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"/ab*cd GET 请求"</span>);</span><br><span class="line">res.send(<span class="string">'正则匹配'</span>);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h5 id="静态文件设置"><a href="#静态文件设置" class="headerlink" title="静态文件设置"></a>静态文件设置</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.use(&#39;&#x2F;public&#39;, express.static(&#39;public&#39;));</span><br></pre></td></tr></table></figure>
+
+<h5 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">app.post(<span class="string">'/file_upload'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</span><br><span class="line"><span class="built_in">console</span>.log(req.files[<span class="number">0</span>]);  <span class="comment">// 上传的文件信息</span></span><br><span class="line"><span class="keyword">var</span> des_file = __dirname + <span class="string">"/"</span> + req.files[<span class="number">0</span>].originalname;</span><br><span class="line">fs.readFile( req.files[<span class="number">0</span>].path, <span class="function"><span class="keyword">function</span> (<span class="params">err, data</span>) </span>&#123;</span><br><span class="line">fs.writeFile(des_file, data, <span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</span><br><span class="line"><span class="keyword">if</span>( err )&#123;</span><br><span class="line"><span class="built_in">console</span>.log( err );</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">response = &#123;</span><br><span class="line">message:<span class="string">'File uploaded successfully'</span>, </span><br><span class="line">filename:req.files[<span class="number">0</span>].originalname</span><br><span class="line">&#125;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log( response );</span><br><span class="line">res.end( <span class="built_in">JSON</span>.stringify( response ) );</span><br><span class="line">&#125;);</span><br><span class="line">&#125;);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="Cookie使用"><a href="#Cookie使用" class="headerlink" title="Cookie使用"></a>Cookie使用</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> express      = <span class="built_in">require</span>(<span class="string">'express'</span>)</span><br><span class="line"><span class="keyword">var</span> cookieParser = <span class="built_in">require</span>(<span class="string">'cookie-parser'</span>)</span><br><span class="line"><span class="keyword">var</span> util = <span class="built_in">require</span>(<span class="string">'util'</span>);</span><br><span class="line"><span class="keyword">var</span> app = express()</span><br><span class="line">app.use(cookieParser())</span><br><span class="line">app.get(<span class="string">'/'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"Cookies: "</span> + util.inspect(req.cookies));</span><br><span class="line">&#125;)</span><br><span class="line">app.listen(<span class="number">8081</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="Mysql"><a href="#Mysql" class="headerlink" title="Mysql"></a>Mysql</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> mysql      = <span class="built_in">require</span>(<span class="string">'mysql'</span>);</span><br><span class="line"><span class="keyword">var</span> connection = mysql.createConnection(&#123;</span><br><span class="line">    host     : <span class="string">'localhost'</span>,</span><br><span class="line">    user     : <span class="string">'root'</span>,</span><br><span class="line">    password : <span class="string">'root'</span>,</span><br><span class="line">    database : <span class="string">'tp_test'</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">connection.connect();</span><br><span class="line"></span><br><span class="line">connection.query(<span class="string">'select * from tp_user where id=1'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">error, results, fields</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (error) <span class="keyword">throw</span> error;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'The solution is: '</span>, results);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>通过引入mysql来进行数据操作。</p>
+<h3 id="Nginx错误配置导致目录穿越"><a href="#Nginx错误配置导致目录穿越" class="headerlink" title="Nginx错误配置导致目录穿越"></a>Nginx错误配置导致目录穿越</h3>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/27/De1CTF2019/" rel="next" title="De1CTF2019">
+                <i class="fa fa-chevron-left"></i> De1CTF2019
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/23/XNUCA2019-Ezphp/" rel="prev" title="XNUCA2019-Ezphp">
+                XNUCA2019-Ezphp <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">离怀秋</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lihuaiqiu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://southseast.cc" title="南溟师傅" target="_blank">南溟师傅</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Mysql一些基本操作"><span class="nav-number">1.</span> <span class="nav-text">Mysql一些基本操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IDE基本调试操作"><span class="nav-number">2.</span> <span class="nav-text">IDE基本调试操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Thinkphp备忘"><span class="nav-number">3.</span> <span class="nav-text">Thinkphp备忘</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Thinkphp安装"><span class="nav-number">3.1.</span> <span class="nav-text">Thinkphp安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Thinkphp目录结构"><span class="nav-number">3.2.</span> <span class="nav-text">Thinkphp目录结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#extend与vendor"><span class="nav-number">3.3.</span> <span class="nav-text">extend与vendor</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#模板与视图"><span class="nav-number">3.4.</span> <span class="nav-text">模板与视图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据库操作"><span class="nav-number">3.5.</span> <span class="nav-text">数据库操作</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#db类操作数据库"><span class="nav-number">3.5.1.</span> <span class="nav-text">db类操作数据库</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Model进行数据库操作"><span class="nav-number">3.5.2.</span> <span class="nav-text">Model进行数据库操作</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Python-Requests上传文件"><span class="nav-number">4.</span> <span class="nav-text">Python Requests上传文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nodejs篇"><span class="nav-number">5.</span> <span class="nav-text">Nodejs篇</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#简单应用创建"><span class="nav-number">5.1.</span> <span class="nav-text">简单应用创建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#npm常用命令"><span class="nav-number">5.2.</span> <span class="nav-text">npm常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#回调函数与异步编程"><span class="nav-number">5.3.</span> <span class="nav-text">回调函数与异步编程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#EventEmitter"><span class="nav-number">5.4.</span> <span class="nav-text">EventEmitter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Buffer缓冲区处理Tcp或文件流等二进制数据"><span class="nav-number">5.5.</span> <span class="nav-text">Buffer缓冲区处理Tcp或文件流等二进制数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常见流操作"><span class="nav-number">5.6.</span> <span class="nav-text">常见流操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#模块"><span class="nav-number">5.7.</span> <span class="nav-text">模块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#匿名函数"><span class="nav-number">5.8.</span> <span class="nav-text">匿名函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#路由"><span class="nav-number">5.9.</span> <span class="nav-text">路由</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Util模块"><span class="nav-number">5.10.</span> <span class="nav-text">Util模块</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#util-inherits"><span class="nav-number">5.10.1.</span> <span class="nav-text">util.inherits</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#util-inspect"><span class="nav-number">5.10.2.</span> <span class="nav-text">util.inspect</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#利用fs模块进行文件操作"><span class="nav-number">5.11.</span> <span class="nav-text">利用fs模块进行文件操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GET-POST"><span class="nav-number">5.12.</span> <span class="nav-text">GET&#x2F;POST</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#GET型"><span class="nav-number">5.12.1.</span> <span class="nav-text">GET型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#POST型基本格式"><span class="nav-number">5.12.2.</span> <span class="nav-text">POST型基本格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#模拟请求百度"><span class="nav-number">5.12.3.</span> <span class="nav-text">模拟请求百度</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#简单node实现Web服务"><span class="nav-number">5.13.</span> <span class="nav-text">简单node实现Web服务</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Web服务端"><span class="nav-number">5.13.1.</span> <span class="nav-text">Web服务端</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Web客户端"><span class="nav-number">5.13.2.</span> <span class="nav-text">Web客户端</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Express框架"><span class="nav-number">5.14.</span> <span class="nav-text">Express框架</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#正则匹配请求"><span class="nav-number">5.14.1.</span> <span class="nav-text">正则匹配请求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#静态文件设置"><span class="nav-number">5.14.2.</span> <span class="nav-text">静态文件设置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#文件上传"><span class="nav-number">5.14.3.</span> <span class="nav-text">文件上传</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cookie使用"><span class="nav-number">5.15.</span> <span class="nav-text">Cookie使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mysql"><span class="nav-number">5.16.</span> <span class="nav-text">Mysql</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nginx错误配置导致目录穿越"><span class="nav-number">6.</span> <span class="nav-text">Nginx错误配置导致目录穿越</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">离怀秋</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
