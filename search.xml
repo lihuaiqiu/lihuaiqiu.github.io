@@ -52,10 +52,14 @@
   <entry>
     <title>Javascript中变量声明带来的Tags Broken</title>
     <url>/2020/04/09/Javascript%E4%B8%AD%E5%8F%98%E9%87%8F%E5%A3%B0%E6%98%8E%E5%B8%A6%E6%9D%A5%E7%9A%84Tags-Broken/</url>
-    <content><![CDATA[<h3 id="问题产生"><a href="#问题产生" class="headerlink" title="问题产生"></a>问题产生</h3><p><img src="https://s1.ax1x.com/2020/04/08/GW8xXt.png" alt="GW8xXt.png"></p>
-<p>上文给出的例子如下</p>
+    <content><![CDATA[<h3 id="问题产生"><a href="#问题产生" class="headerlink" title="问题产生"></a>问题产生</h3><p>问题代码如下</p>
+<a id="more"></a>
+
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="actionscript">        <span class="keyword">var</span> example = <span class="string">'Consider this string: &lt;!-- &lt;script&gt;'</span>;</span></span><br><span class="line"><span class="javascript">        <span class="built_in">console</span>.log(example);</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">/</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
+
+
+<p><img src="https://s1.ax1x.com/2020/04/08/GW8xXt.png" alt="GW8xXt.png"></p>
 <p>看一下会造成的影响</p>
 <p><img src="https://s1.ax1x.com/2020/04/08/GWGI3j.png" alt="GWGI3j.png"></p>
 <p>很明显可见的是img标签以及下面的html全部被吃掉了</p>
@@ -130,13 +134,15 @@
 <h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>文章内容还是有些地方不太成熟.见谅…</p>
 ]]></content>
       <tags>
-        <tag>Web安全</tag>
+        <tag>Javascript</tag>
       </tags>
   </entry>
   <entry>
     <title>DOM Clobbering Attack</title>
     <url>/2020/04/15/DOM-Clobbering-Attack/</url>
-    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>一种很有趣的攻击手法：DOM Clobbering Attack</p>
+    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>介绍一种很有趣的攻击手法：DOM Clobbering Attack</p>
+<a id="more"></a>
+
 <h3 id="Dom-Clobbering-Attack概述"><a href="#Dom-Clobbering-Attack概述" class="headerlink" title="Dom Clobbering Attack概述"></a>Dom Clobbering Attack概述</h3><p>大概简述下这个技术的主要攻击手法：</p>
 <p>通过标签中定义的name和id属性进行全局变量覆盖或劫持，进而造成其他通过全局变量实现效果的代码出现可控情况，造成漏洞。</p>
 <h4 id="简单了解下id与name"><a href="#简单了解下id与name" class="headerlink" title="简单了解下id与name"></a>简单了解下id与name</h4><p><img src="https://s1.ax1x.com/2020/04/12/GO03h6.png" alt="GO03h6.png"></p>
@@ -199,8 +205,9 @@
     <url>/2020/05/12/intigriti-Easter-XSS-challenge/</url>
     <content><![CDATA[<p>文章首发于先知</p>
 <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>国外的一个xss challenge(规定时间内做出可得一年的Burp Suite正版证书)</p>
+<a id="more"></a>
+
 <p><img src="https://s1.ax1x.com/2020/04/22/JY7U10.png" alt="JY7U10.png"></p>
-<p>&lt; !– more – &gt;</p>
 <h3 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h3><p>主要的功能逻辑代码为script.js, 如下：</p>
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> hash = <span class="built_in">document</span>.location.hash.substr(<span class="number">1</span>);</span><br><span class="line"><span class="keyword">if</span>(hash)&#123;</span><br><span class="line">  displayReason(hash);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">document</span>.getElementById(<span class="string">"reasons"</span>).onchange = <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(e.target.value != <span class="string">""</span>)</span><br><span class="line">    displayReason(e.target.value);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">reasonLoaded</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> reason = <span class="built_in">document</span>.getElementById(<span class="string">"reason"</span>);</span><br><span class="line">    reason.innerHTML = <span class="built_in">unescape</span>(<span class="keyword">this</span>.responseText);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">displayReason</span>(<span class="params">reason</span>)</span>&#123;</span><br><span class="line">  <span class="built_in">window</span>.location.hash = reason;</span><br><span class="line">  <span class="keyword">var</span> xhr = <span class="keyword">new</span> XMLHttpRequest();</span><br><span class="line">  xhr.addEventListener(<span class="string">"load"</span>, reasonLoaded);</span><br><span class="line">  xhr.open(<span class="string">"GET"</span>,<span class="string">`./reasons/<span class="subst">$&#123;reason&#125;</span>.txt`</span>);</span><br><span class="line">  xhr.send();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -243,7 +250,7 @@
 <p><img src="https://s1.ax1x.com/2020/04/22/JtvIGF.png" alt="JtvIGF.png"></p>
 ]]></content>
       <tags>
-        <tag>XSS</tag>
+        <tag>intigriti Easter XSS challenge</tag>
       </tags>
   </entry>
   <entry>
@@ -356,9 +363,10 @@
     <title>从浏览器渲染与解码原理重新认识xss</title>
     <url>/2020/02/14/%E4%BB%8E%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93%E4%B8%8E%E8%A7%A3%E7%A0%81%E5%8E%9F%E7%90%86%E9%87%8D%E6%96%B0%E8%AE%A4%E8%AF%86xss/</url>
     <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>从浏览器渲染的角度重新理解一下xss</p>
-<a id="more"></a>
 <h3 id="浏览器的渲染原理"><a href="#浏览器的渲染原理" class="headerlink" title="浏览器的渲染原理"></a>浏览器的渲染原理</h3><p>目前主要的两个渲染引擎为 webkit和Gecko</p>
 <p>Geoko为Firefox使用，而Chrome和Safari主要使用是Webkit</p>
+<a id="more"></a>
+
 <p>Webkit渲染引擎流程如下：</p>
 <p><img src="https://user-gold-cdn.xitu.io/2018/2/22/161bb3c9b220f8cb?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
 <p>渲染的五个步骤如下：</p>
@@ -550,6 +558,8 @@
     <title>Prototype Pollution Attack</title>
     <url>/2019/09/25/Prototype-Pollution-Attack/</url>
     <content><![CDATA[<h3 id="原型与原型链"><a href="#原型与原型链" class="headerlink" title="原型与原型链"></a>原型与原型链</h3><h4 id="javascript对象"><a href="#javascript对象" class="headerlink" title="javascript对象"></a>javascript对象</h4><p>在Javascript中同样是有一切皆对象这种说法的，下面是在javascript中创建对象的三种方式</p>
+<a id="more"></a>
+
 <ul>
 <li>普通创建</li>
 </ul>

@@ -6,16 +6,16 @@
   
   <title>从浏览器渲染与解码原理重新认识xss | 离怀秋</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="前言从浏览器渲染的角度重新理解一下xss">
+  <meta name="description" content="前言从浏览器渲染的角度重新理解一下xss 浏览器的渲染原理目前主要的两个渲染引擎为 webkit和Gecko Geoko为Firefox使用，而Chrome和Safari主要使用是Webkit">
 <meta property="og:type" content="article">
 <meta property="og:title" content="从浏览器渲染与解码原理重新认识xss">
 <meta property="og:url" content="http://yoursite.com/2020/02/14/%E4%BB%8E%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93%E4%B8%8E%E8%A7%A3%E7%A0%81%E5%8E%9F%E7%90%86%E9%87%8D%E6%96%B0%E8%AE%A4%E8%AF%86xss/index.html">
 <meta property="og:site_name" content="离怀秋">
-<meta property="og:description" content="前言从浏览器渲染的角度重新理解一下xss">
+<meta property="og:description" content="前言从浏览器渲染的角度重新理解一下xss 浏览器的渲染原理目前主要的两个渲染引擎为 webkit和Gecko Geoko为Firefox使用，而Chrome和Safari主要使用是Webkit">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/2/22/161bb3c9b220f8cb?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://s2.ax1x.com/2020/02/12/1bsdcF.png">
 <meta property="article:published_time" content="2020-02-14T06:44:07.000Z">
-<meta property="article:modified_time" content="2020-07-13T04:08:34.577Z">
+<meta property="article:modified_time" content="2020-07-13T05:17:49.953Z">
 <meta property="article:author" content="离怀秋">
 <meta property="article:tag" content="Web">
 <meta name="twitter:card" content="summary">
@@ -96,9 +96,10 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>从浏览器渲染的角度重新理解一下xss</p>
-<a id="more"></a>
 <h3 id="浏览器的渲染原理"><a href="#浏览器的渲染原理" class="headerlink" title="浏览器的渲染原理"></a>浏览器的渲染原理</h3><p>目前主要的两个渲染引擎为 webkit和Gecko</p>
 <p>Geoko为Firefox使用，而Chrome和Safari主要使用是Webkit</p>
+<a id="more"></a>
+
 <p>Webkit渲染引擎流程如下：</p>
 <p><img src="https://user-gold-cdn.xitu.io/2018/2/22/161bb3c9b220f8cb?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
 <p>渲染的五个步骤如下：</p>
@@ -330,7 +331,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/DOM-Clobbering-Attack/" rel="tag">DOM Clobbering Attack</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP%E6%AD%A3%E5%88%99%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/" rel="tag">PHP正则安全研究</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Variable-hijacking/" rel="tag">Variable hijacking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/" rel="tag">Web</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web%E5%AE%89%E5%85%A8/" rel="tag">Web安全</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XSS/" rel="tag">XSS</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/DOM-Clobbering-Attack/" rel="tag">DOM Clobbering Attack</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Javascript/" rel="tag">Javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP%E6%AD%A3%E5%88%99%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/" rel="tag">PHP正则安全研究</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Variable-hijacking/" rel="tag">Variable hijacking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/" rel="tag">Web</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web%E5%AE%89%E5%85%A8/" rel="tag">Web安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/intigriti-Easter-XSS-challenge/" rel="tag">intigriti Easter XSS challenge</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -339,7 +340,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/DOM-Clobbering-Attack/" style="font-size: 10px;">DOM Clobbering Attack</a> <a href="/tags/PHP%E6%AD%A3%E5%88%99%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/" style="font-size: 10px;">PHP正则安全研究</a> <a href="/tags/Variable-hijacking/" style="font-size: 10px;">Variable hijacking</a> <a href="/tags/Web/" style="font-size: 10px;">Web</a> <a href="/tags/Web%E5%AE%89%E5%85%A8/" style="font-size: 20px;">Web安全</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a>
+      <a href="/tags/DOM-Clobbering-Attack/" style="font-size: 10px;">DOM Clobbering Attack</a> <a href="/tags/Javascript/" style="font-size: 10px;">Javascript</a> <a href="/tags/PHP%E6%AD%A3%E5%88%99%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/" style="font-size: 10px;">PHP正则安全研究</a> <a href="/tags/Variable-hijacking/" style="font-size: 10px;">Variable hijacking</a> <a href="/tags/Web/" style="font-size: 10px;">Web</a> <a href="/tags/Web%E5%AE%89%E5%85%A8/" style="font-size: 10px;">Web安全</a> <a href="/tags/intigriti-Easter-XSS-challenge/" style="font-size: 10px;">intigriti Easter XSS challenge</a>
     </div>
   </div>
 
