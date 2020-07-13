@@ -622,7 +622,9 @@
     <title>前端全局变量劫持</title>
     <url>/2020/04/06/%E5%89%8D%E7%AB%AF%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E5%8A%AB%E6%8C%81/</url>
     <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>关于前段变量劫持的一些学习与思考</p>
-<p>&lt; !–more–&gt;</p>
+<a id="more"></a>
+
+
 <h3 id="iframe之间的访问与同源关系"><a href="#iframe之间的访问与同源关系" class="headerlink" title="iframe之间的访问与同源关系"></a>iframe之间的访问与同源关系</h3><h4 id="父页面访问子页面"><a href="#父页面访问子页面" class="headerlink" title="父页面访问子页面"></a>父页面访问子页面</h4><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">document</span>.getElementById(<span class="string">"id"</span>).contentWindow; <span class="comment">// 获取iframe的window对象</span></span><br><span class="line"><span class="built_in">window</span>.frames[<span class="number">0</span>]; <span class="comment">// 获取iframe的window对象</span></span><br><span class="line"><span class="built_in">window</span>[<span class="number">0</span>] ; <span class="comment">// 这个比较有意思， window 是本页面的window对象，window[0] 是子页面的window对象</span></span><br></pre></td></tr></table></figure>
 
 <h4 id="子页面访问父页面"><a href="#子页面访问父页面" class="headerlink" title="子页面访问父页面"></a>子页面访问父页面</h4><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">window</span>.parent;  <span class="comment">//获取上一级的window对象，如果还是iframe则是该iframe的window对象</span></span><br><span class="line"><span class="built_in">window</span>.top ;   <span class="comment">// 获取最顶级容器的window对象，即，就是你打开页面的文档</span></span><br></pre></td></tr></table></figure>
@@ -662,7 +664,7 @@
 <p><a href="https://hpdoger.cn/2019/07/02/前端全局变量劫持/" target="_blank" rel="noopener">https://hpdoger.cn/2019/07/02/%E5%89%8D%E7%AB%AF%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E5%8A%AB%E6%8C%81/</a></p>
 ]]></content>
       <tags>
-        <tag>Web安全</tag>
+        <tag>Variable hijacking</tag>
       </tags>
   </entry>
   <entry>
