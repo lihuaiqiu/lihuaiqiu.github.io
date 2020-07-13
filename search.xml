@@ -802,6 +802,8 @@
 ]]></content>
       <tags>
         <tag>JSONP</tag>
+        <tag>跨域</tag>
+        <tag>前端安全</tag>
       </tags>
   </entry>
 </search>
