@@ -3,7 +3,8 @@
   <entry>
     <title>DOM Clobbering Attack</title>
     <url>/2020/04/15/DOM-Clobbering-Attack/</url>
-    <content><![CDATA[<h3 id="Dom-Clobbering-Attack概述"><a href="#Dom-Clobbering-Attack概述" class="headerlink" title="Dom Clobbering Attack概述"></a>Dom Clobbering Attack概述</h3><p>大概简述下这个技术的主要攻击手法：</p>
+    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>一种很有趣的攻击手法：DOM Clobbering Attack</p>
+<h3 id="Dom-Clobbering-Attack概述"><a href="#Dom-Clobbering-Attack概述" class="headerlink" title="Dom Clobbering Attack概述"></a>Dom Clobbering Attack概述</h3><p>大概简述下这个技术的主要攻击手法：</p>
 <p>通过标签中定义的name和id属性进行全局变量覆盖或劫持，进而造成其他通过全局变量实现效果的代码出现可控情况，造成漏洞。</p>
 <h4 id="简单了解下id与name"><a href="#简单了解下id与name" class="headerlink" title="简单了解下id与name"></a>简单了解下id与name</h4><p><img src="https://s1.ax1x.com/2020/04/12/GO03h6.png" alt="GO03h6.png"></p>
 <p>通过这种方式我们实现了全局变量的声明，不过有一点需要注意的是id无法通过document来获取，不过可以通过document.getElementById(‘test1’)或者document.querySelector(‘test1’)进行获取.</p>
@@ -57,7 +58,7 @@
 <p><a href="https://xz.aliyun.com/t/7329" target="_blank" rel="noopener">https://xz.aliyun.com/t/7329</a></p>
 ]]></content>
       <tags>
-        <tag>Web安全</tag>
+        <tag>DOM Clobbering Attack</tag>
       </tags>
   </entry>
   <entry>
@@ -606,6 +607,8 @@
     <title>正则与经典写配置漏洞学习</title>
     <url>/2020/03/24/%E6%AD%A3%E5%88%99%E4%B8%8E%E7%BB%8F%E5%85%B8%E5%86%99%E9%85%8D%E7%BD%AE%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/</url>
     <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>看到P牛的小密圈发了这篇文章 感觉很棒 所以来学习一下.</p>
+<a id="more"></a>
+
 <h3 id="前置知识铺垫"><a href="#前置知识铺垫" class="headerlink" title="前置知识铺垫"></a>前置知识铺垫</h3><h4 id="single-line和multi-line"><a href="#single-line和multi-line" class="headerlink" title="single-line和multi-line"></a>single-line和multi-line</h4><p>single-line与multi-line分别对应了/s和/m修饰符。</p>
 <h5 id="multi-line"><a href="#multi-line" class="headerlink" title="multi-line"></a>multi-line</h5><p>multi-line表示按行来进行正则匹配：将待匹配的文本利用换行符分割，并对每一部分进行正则匹配，将每部分的结果用or进行运算，得出最终的结果。</p>
 <p>举一个例子</p>
@@ -703,7 +706,7 @@
 <h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="https://www.leavesongs.com/PENETRATION/thinking-about-config-file-arbitrary-write.html" target="_blank" rel="noopener">https://www.leavesongs.com/PENETRATION/thinking-about-config-file-arbitrary-write.html</a></p>
 ]]></content>
       <tags>
-        <tag>Web安全</tag>
+        <tag>PHP正则安全研究</tag>
       </tags>
   </entry>
 </search>
