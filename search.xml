@@ -204,7 +204,7 @@
     <title>intigriti Easter XSS challenge</title>
     <url>/2020/05/12/intigriti-Easter-XSS-challenge/</url>
     <content><![CDATA[<p>文章首发于先知</p>
-<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>国外的一个xss challenge(规定时间内做出可得一年的Burp Suite正版证书)</p>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>国外的一个xss challenge(规定时间内做出可得一年的Burp Suite正版证书)test</p>
 <a id="more"></a>
 
 <p><img src="https://s1.ax1x.com/2020/04/22/JY7U10.png" alt="JY7U10.png"></p>
