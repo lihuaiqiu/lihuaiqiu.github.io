@@ -492,7 +492,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>忙完了一些杂事，学一些新的东西吧（虽说心情有点难受</p>
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>关于前段变量劫持的一些学习与思考</p>
+<p>&lt; !–more–&gt;</p>
 <h3 id="iframe之间的访问与同源关系"><a href="#iframe之间的访问与同源关系" class="headerlink" title="iframe之间的访问与同源关系"></a>iframe之间的访问与同源关系</h3><h4 id="父页面访问子页面"><a href="#父页面访问子页面" class="headerlink" title="父页面访问子页面"></a>父页面访问子页面</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.getElementById(<span class="string">"id"</span>).contentWindow; <span class="comment">// 获取iframe的window对象</span></span><br><span class="line"><span class="built_in">window</span>.frames[<span class="number">0</span>]; <span class="comment">// 获取iframe的window对象</span></span><br><span class="line"><span class="built_in">window</span>[<span class="number">0</span>] ; <span class="comment">// 这个比较有意思， window 是本页面的window对象，window[0] 是子页面的window对象</span></span><br></pre></td></tr></table></figure>
 
 <h4 id="子页面访问父页面"><a href="#子页面访问父页面" class="headerlink" title="子页面访问父页面"></a>子页面访问父页面</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.parent;  <span class="comment">//获取上一级的window对象，如果还是iframe则是该iframe的window对象</span></span><br><span class="line"><span class="built_in">window</span>.top ;   <span class="comment">// 获取最顶级容器的window对象，即，就是你打开页面的文档</span></span><br></pre></td></tr></table></figure>
