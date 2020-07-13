@@ -6,16 +6,16 @@
   
   <title>从浏览器渲染与解码原理重新认识xss | 离怀秋</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="前言在家瘫了很多天了（夹杂着一些个人感情问题 花了很多时间，虽然没有学习，但是理清了一些东西吧，也算是另一种收获了。 我可能算是一个比较感性的人吧，过去，我觉得人活的过于理性实在是太累了，所以没必要那么理性的去生活，现在反而觉得理性的活着其实是更轻松的生活态度，毕竟有些感情上的事情真的让人很难过(我似乎每天都很难过，从高二开始，真想做一个完全理性化的人啊.jpg(正在努力转变的过程)(不说了,开始">
+  <meta name="description" content="前言从浏览器渲染的角度重新理解一下xss">
 <meta property="og:type" content="article">
 <meta property="og:title" content="从浏览器渲染与解码原理重新认识xss">
 <meta property="og:url" content="http://yoursite.com/2020/02/14/%E4%BB%8E%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93%E4%B8%8E%E8%A7%A3%E7%A0%81%E5%8E%9F%E7%90%86%E9%87%8D%E6%96%B0%E8%AE%A4%E8%AF%86xss/index.html">
 <meta property="og:site_name" content="离怀秋">
-<meta property="og:description" content="前言在家瘫了很多天了（夹杂着一些个人感情问题 花了很多时间，虽然没有学习，但是理清了一些东西吧，也算是另一种收获了。 我可能算是一个比较感性的人吧，过去，我觉得人活的过于理性实在是太累了，所以没必要那么理性的去生活，现在反而觉得理性的活着其实是更轻松的生活态度，毕竟有些感情上的事情真的让人很难过(我似乎每天都很难过，从高二开始，真想做一个完全理性化的人啊.jpg(正在努力转变的过程)(不说了,开始">
+<meta property="og:description" content="前言从浏览器渲染的角度重新理解一下xss">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/2/22/161bb3c9b220f8cb?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://s2.ax1x.com/2020/02/12/1bsdcF.png">
 <meta property="article:published_time" content="2020-02-14T06:44:07.000Z">
-<meta property="article:modified_time" content="2020-02-14T06:46:42.000Z">
+<meta property="article:modified_time" content="2020-07-13T04:08:34.577Z">
 <meta property="article:author" content="离怀秋">
 <meta property="article:tag" content="Web">
 <meta name="twitter:card" content="summary">
@@ -95,9 +95,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在家瘫了很多天了（夹杂着一些个人感情问题</p>
-<p>花了很多时间，虽然没有学习，但是理清了一些东西吧，也算是另一种收获了。</p>
-<p>我可能算是一个比较感性的人吧，过去，我觉得人活的过于理性实在是太累了，所以没必要那么理性的去生活，现在反而觉得理性的活着其实是更轻松的生活态度，毕竟有些感情上的事情真的让人很难过(我似乎每天都很难过，从高二开始，真想做一个完全理性化的人啊.jpg(正在努力转变的过程)(不说了,开始正题吧</p>
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>从浏览器渲染的角度重新理解一下xss</p>
+<a id="more"></a>
 <h3 id="浏览器的渲染原理"><a href="#浏览器的渲染原理" class="headerlink" title="浏览器的渲染原理"></a>浏览器的渲染原理</h3><p>目前主要的两个渲染引擎为 webkit和Gecko</p>
 <p>Geoko为Firefox使用，而Chrome和Safari主要使用是Webkit</p>
 <p>Webkit渲染引擎流程如下：</p>
@@ -337,7 +336,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Variable-hijacking/" rel="tag">Variable hijacking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/" rel="tag">Web</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web%E5%AE%89%E5%85%A8/" rel="tag">Web安全</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XSS/" rel="tag">XSS</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Variable-hijacking/" rel="tag">Variable hijacking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/" rel="tag">Web</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web%E5%AE%89%E5%85%A8/" rel="tag">Web安全</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XSS/" rel="tag">XSS</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -355,7 +354,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -365,10 +364,6 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
-        
-          <li>
-            <a href="/2020/05/13/Apache-Common-Collections-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%86%E6%9E%90%E5%AD%A6%E4%B9%A0/">Apache Common Collections 反序列化分析学习</a>
-          </li>
         
           <li>
             <a href="/2020/05/12/intigriti-Easter-XSS-challenge/">intigriti Easter XSS challenge</a>
@@ -384,6 +379,10 @@
         
           <li>
             <a href="/2020/04/06/%E5%89%8D%E7%AB%AF%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E5%8A%AB%E6%8C%81/">前端全局变量劫持</a>
+          </li>
+        
+          <li>
+            <a href="/2020/03/24/%E6%AD%A3%E5%88%99%E4%B8%8E%E7%BB%8F%E5%85%B8%E5%86%99%E9%85%8D%E7%BD%AE%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/">正则与经典写配置漏洞学习</a>
           </li>
         
       </ul>
