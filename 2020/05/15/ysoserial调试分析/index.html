@@ -4,14 +4,29 @@
 <head>
   <meta charset="utf-8">
   
-  <title>离怀秋</title>
+  <title>ysoserial调试分析 | 离怀秋</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="离怀秋">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="前言本篇文章分析调试的是URLDNS以及CommonCollections系列 URLDNSURLDNS作为ysoserial系列最基础的链，作用还是蛮大的.具体作用如下：  判断当前环境是否存在反序列化安全问题 如果payload打失败了，是否有目标机环境中没有Payload中所需要的库或者java版本不对应  Gadget Chain12345Gadget Chain:  HashMap.re">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ysoserial调试分析">
+<meta property="og:url" content="http://yoursite.com/2020/05/15/ysoserial%E8%B0%83%E8%AF%95%E5%88%86%E6%9E%90/index.html">
 <meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="前言本篇文章分析调试的是URLDNS以及CommonCollections系列 URLDNSURLDNS作为ysoserial系列最基础的链，作用还是蛮大的.具体作用如下：  判断当前环境是否存在反序列化安全问题 如果payload打失败了，是否有目标机环境中没有Payload中所需要的库或者java版本不对应  Gadget Chain12345Gadget Chain:  HashMap.re">
+<meta property="og:image" content="https://s1.ax1x.com/2020/07/09/UmBY6O.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/07/09/Um5KFf.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/07/24/Uv9Z5t.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/07/10/UMBMhd.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/07/27/aFvZlR.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/07/27/aFv1te.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/08/09/aTBjbV.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/08/09/aTreLq.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/08/09/aT28SO.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/08/09/aTgKG8.png">
+<meta property="article:published_time" content="2020-05-15T15:53:32.000Z">
+<meta property="article:modified_time" content="2020-08-09T08:54:23.495Z">
 <meta property="article:author" content="离怀秋">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s1.ax1x.com/2020/07/09/UmBY6O.png">
   
     <link rel="alternative" href="/atom.xml" title="离怀秋" type="application/atom+xml">
   
@@ -67,9 +82,7 @@
   </div>
 </header>
     <div class="outer">
-      <section id="main">
-  
-    <article id="post-ysoserial调试分析" class="article article-type-post" itemscope itemprop="blogPost">
+      <section id="main"><article id="post-ysoserial调试分析" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/05/15/ysoserial%E8%B0%83%E8%AF%95%E5%88%86%E6%9E%90/" class="article-date">
   <time datetime="2020-05-15T15:53:32.000Z" itemprop="datePublished">2020-05-15</time>
@@ -82,8 +95,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/05/15/ysoserial%E8%B0%83%E8%AF%95%E5%88%86%E6%9E%90/">ysoserial调试分析</a>
+    <h1 class="article-title" itemprop="name">
+      ysoserial调试分析
     </h1>
   
 
@@ -424,389 +437,19 @@
     </footer>
   </div>
   
-</article>
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-intigriti-Easter-XSS-challenge" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/05/12/intigriti-Easter-XSS-challenge/" class="article-date">
-  <time datetime="2020-05-12T01:31:23.000Z" itemprop="datePublished">2020-05-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/05/12/intigriti-Easter-XSS-challenge/">intigriti Easter XSS challenge</a>
-    </h1>
+    <a href="/2020/05/12/intigriti-Easter-XSS-challenge/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">intigriti Easter XSS challenge</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>文章首发于先知</p>
-<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>国外的一个xss challenge(规定时间内做出可得一年的Burp Suite正版证书)</p>
-        
-          <p class="article-more-link">
-            <a href="/2020/05/12/intigriti-Easter-XSS-challenge/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://yoursite.com/2020/05/12/intigriti-Easter-XSS-challenge/" data-id="ckck0icdp000604wb6yak4vmh" class="article-share-link" data-share="baidu" data-title="intigriti Easter XSS challenge">Share</a>
-      
-
-      
-
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/intigriti-Easter/" rel="tag">intigriti Easter</a></li></ul>
-
-    </footer>
-  </div>
   
 </article>
-
-
-  
-    <article id="post-DOM-Clobbering-Attack" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/04/15/DOM-Clobbering-Attack/" class="article-date">
-  <time datetime="2020-04-15T07:09:48.000Z" itemprop="datePublished">2020-04-15</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/04/15/DOM-Clobbering-Attack/">DOM Clobbering Attack</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>介绍一种很有趣的攻击手法：DOM Clobbering Attack</p>
-        
-          <p class="article-more-link">
-            <a href="/2020/04/15/DOM-Clobbering-Attack/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://yoursite.com/2020/04/15/DOM-Clobbering-Attack/" data-id="ckck0icdp000504wbg1129noo" class="article-share-link" data-share="baidu" data-title="DOM Clobbering Attack">Share</a>
-      
-
-      
-
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DOM-Clobbering-Attack/" rel="tag">DOM Clobbering Attack</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-Javascript中变量声明带来的Tags-Broken" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/04/09/Javascript%E4%B8%AD%E5%8F%98%E9%87%8F%E5%A3%B0%E6%98%8E%E5%B8%A6%E6%9D%A5%E7%9A%84Tags-Broken/" class="article-date">
-  <time datetime="2020-04-09T08:16:05.000Z" itemprop="datePublished">2020-04-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/04/09/Javascript%E4%B8%AD%E5%8F%98%E9%87%8F%E5%A3%B0%E6%98%8E%E5%B8%A6%E6%9D%A5%E7%9A%84Tags-Broken/">Javascript中变量声明带来的Tags Broken</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="问题产生"><a href="#问题产生" class="headerlink" title="问题产生"></a>问题产生</h3><p>问题代码如下</p>
-        
-          <p class="article-more-link">
-            <a href="/2020/04/09/Javascript%E4%B8%AD%E5%8F%98%E9%87%8F%E5%A3%B0%E6%98%8E%E5%B8%A6%E6%9D%A5%E7%9A%84Tags-Broken/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://yoursite.com/2020/04/09/Javascript%E4%B8%AD%E5%8F%98%E9%87%8F%E5%A3%B0%E6%98%8E%E5%B8%A6%E6%9D%A5%E7%9A%84Tags-Broken/" data-id="ckck0icdm000204wb1bg88o73" class="article-share-link" data-share="baidu" data-title="Javascript中变量声明带来的Tags Broken">Share</a>
-      
-
-      
-
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Javascript/" rel="tag">Javascript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-前端全局变量劫持" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/04/06/%E5%89%8D%E7%AB%AF%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E5%8A%AB%E6%8C%81/" class="article-date">
-  <time datetime="2020-04-06T12:13:46.000Z" itemprop="datePublished">2020-04-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/04/06/%E5%89%8D%E7%AB%AF%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E5%8A%AB%E6%8C%81/">前端全局变量劫持</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>关于前段变量劫持的一些学习与思考</p>
-        
-          <p class="article-more-link">
-            <a href="/2020/04/06/%E5%89%8D%E7%AB%AF%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E5%8A%AB%E6%8C%81/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://yoursite.com/2020/04/06/%E5%89%8D%E7%AB%AF%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E5%8A%AB%E6%8C%81/" data-id="ckck0icde000004wbb29wepec" class="article-share-link" data-share="baidu" data-title="前端全局变量劫持">Share</a>
-      
-
-      
-
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Variable-hijacking/" rel="tag">Variable hijacking</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-正则与经典写配置漏洞学习" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/03/24/%E6%AD%A3%E5%88%99%E4%B8%8E%E7%BB%8F%E5%85%B8%E5%86%99%E9%85%8D%E7%BD%AE%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/" class="article-date">
-  <time datetime="2020-03-23T17:01:45.000Z" itemprop="datePublished">2020-03-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/03/24/%E6%AD%A3%E5%88%99%E4%B8%8E%E7%BB%8F%E5%85%B8%E5%86%99%E9%85%8D%E7%BD%AE%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/">正则与经典写配置漏洞学习</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>看到P牛的小密圈发了这篇文章 感觉很棒 所以来学习一下.</p>
-        
-          <p class="article-more-link">
-            <a href="/2020/03/24/%E6%AD%A3%E5%88%99%E4%B8%8E%E7%BB%8F%E5%85%B8%E5%86%99%E9%85%8D%E7%BD%AE%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://yoursite.com/2020/03/24/%E6%AD%A3%E5%88%99%E4%B8%8E%E7%BB%8F%E5%85%B8%E5%86%99%E9%85%8D%E7%BD%AE%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/" data-id="ckck0icdq000704wb1me17jik" class="article-share-link" data-share="baidu" data-title="正则与经典写配置漏洞学习">Share</a>
-      
-
-      
-
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP%E6%AD%A3%E5%88%99%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/" rel="tag">PHP正则安全研究</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-从浏览器渲染与解码原理重新认识xss" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/02/14/%E4%BB%8E%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93%E4%B8%8E%E8%A7%A3%E7%A0%81%E5%8E%9F%E7%90%86%E9%87%8D%E6%96%B0%E8%AE%A4%E8%AF%86xss/" class="article-date">
-  <time datetime="2020-02-14T06:44:07.000Z" itemprop="datePublished">2020-02-14</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/02/14/%E4%BB%8E%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93%E4%B8%8E%E8%A7%A3%E7%A0%81%E5%8E%9F%E7%90%86%E9%87%8D%E6%96%B0%E8%AE%A4%E8%AF%86xss/">从浏览器渲染与解码原理重新认识xss</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>从浏览器渲染的角度重新理解一下xss</p>
-<h3 id="浏览器的渲染原理"><a href="#浏览器的渲染原理" class="headerlink" title="浏览器的渲染原理"></a>浏览器的渲染原理</h3><p>目前主要的两个渲染引擎为 webkit和Gecko</p>
-<p>Geoko为Firefox使用，而Chrome和Safari主要使用是Webkit</p>
-        
-          <p class="article-more-link">
-            <a href="/2020/02/14/%E4%BB%8E%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93%E4%B8%8E%E8%A7%A3%E7%A0%81%E5%8E%9F%E7%90%86%E9%87%8D%E6%96%B0%E8%AE%A4%E8%AF%86xss/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://yoursite.com/2020/02/14/%E4%BB%8E%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93%E4%B8%8E%E8%A7%A3%E7%A0%81%E5%8E%9F%E7%90%86%E9%87%8D%E6%96%B0%E8%AE%A4%E8%AF%86xss/" data-id="ckck0icdz000h04wbbfou37er" class="article-share-link" data-share="baidu" data-title="从浏览器渲染与解码原理重新认识xss">Share</a>
-      
-
-      
-
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/" rel="tag">XSS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93/" rel="tag">浏览器渲染</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-Prototype-Pollution-Attack" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/09/25/Prototype-Pollution-Attack/" class="article-date">
-  <time datetime="2019-09-25T10:25:28.000Z" itemprop="datePublished">2019-09-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/09/25/Prototype-Pollution-Attack/">Prototype Pollution Attack</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="原型与原型链"><a href="#原型与原型链" class="headerlink" title="原型与原型链"></a>原型与原型链</h3><h4 id="javascript对象"><a href="#javascript对象" class="headerlink" title="javascript对象"></a>javascript对象</h4><p>在Javascript中同样是有一切皆对象这种说法的，下面是在javascript中创建对象的三种方式</p>
-        
-          <p class="article-more-link">
-            <a href="/2019/09/25/Prototype-Pollution-Attack/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://yoursite.com/2019/09/25/Prototype-Pollution-Attack/" data-id="ckck0ice0000i04wbeumlayux" class="article-share-link" data-share="baidu" data-title="Prototype Pollution Attack">Share</a>
-      
-
-      
-
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web%E5%AE%89%E5%85%A8/" rel="tag">Web安全</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-JSONP劫持" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/07/20/JSONP%E5%8A%AB%E6%8C%81/" class="article-date">
-  <time datetime="2019-07-20T06:03:02.000Z" itemprop="datePublished">2019-07-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/07/20/JSONP%E5%8A%AB%E6%8C%81/">JSONP劫持</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="JSONP跨域"><a href="#JSONP跨域" class="headerlink" title="JSONP跨域"></a>JSONP跨域</h3><p>主要介绍下JSONP，JSONP跨域巧妙的利用了script标签能跨域的特点,实现了json的跨域传输。</p>
-        
-          <p class="article-more-link">
-            <a href="/2019/07/20/JSONP%E5%8A%AB%E6%8C%81/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://yoursite.com/2019/07/20/JSONP%E5%8A%AB%E6%8C%81/" data-id="ckck4t3ob000004wb893r889q" class="article-share-link" data-share="baidu" data-title="JSONP劫持">Share</a>
-      
-
-      
-
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JSONP/" rel="tag">JSONP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8/" rel="tag">前端安全</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%B7%A8%E5%9F%9F/" rel="tag">跨域</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 </section>
       
